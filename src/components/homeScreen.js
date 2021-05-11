@@ -7,7 +7,7 @@ export default function homeScreen( {navigation }) {
   }
   return (
     <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
+      <Text style = {[styles.welcomeText]}>asdfQuick brown fox jumps over{"\n"}the lazy dog</Text>
       <TouchableOpacity onPress={pressHandler}>
          <Text style = {[styles.buttonText]}>
              Button
