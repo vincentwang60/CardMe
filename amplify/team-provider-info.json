@@ -1,15 +1,20 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-cardme-dev-154230-authRole",
-      "UnauthRoleArn": "arn:aws:iam::516082858297:role/amplify-cardme-dev-154230-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::516082858297:role/amplify-cardme-dev-154230-authRole",
+      "AuthRoleName": "amplify-cardme-dev-150710-authRole",
+      "UnauthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-dev-150710-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-dev-150710-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-cardme-dev-154230-deployment",
-      "UnauthRoleName": "amplify-cardme-dev-154230-unauthRole",
-      "StackName": "amplify-cardme-dev-154230",
-      "StackId": "arn:aws:cloudformation:us-east-2:516082858297:stack/amplify-cardme-dev-154230/2e7cb000-b2aa-11eb-816a-02d1361fc9ae",
-      "AmplifyAppId": "dv96u3qk6jjqi"
+      "DeploymentBucketName": "amplify-cardme-dev-150710-deployment",
+      "UnauthRoleName": "amplify-cardme-dev-150710-unauthRole",
+      "StackName": "amplify-cardme-dev-150710",
+      "StackId": "arn:aws:cloudformation:us-east-2:478142532996:stack/amplify-cardme-dev-150710/e8b23860-b5c9-11eb-9ef6-0a258bdba43c",
+      "AmplifyAppId": "d2ar99ufdmgu4e"
+    },
+    "categories": {
+      "auth": {
+        "cardme2ae03ed7": {}
+      }
     }
   }
 }
