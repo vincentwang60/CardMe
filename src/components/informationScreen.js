@@ -1,15 +1,23 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, Button, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, Button, View, StatusBar, TouchableOpacity } from 'react-native';
 import { listUsers } from '../graphql/queries.js';
+import * as mutations from '../graphql/mutations.js';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
+const initialFormState = {
+  name: '',
+  nickname: ''
+}
+
 export default function homeScreen( {navigation }) {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState([]);
+  const [formData, setFormData] = useState(initialFormState);
 
   useEffect(()=>{
     fetchUsers();
   },[]);
+
   const fetchUsers = async () => {
     try{
       const userData = await API.graphql(graphqlOperation(listUsers))
@@ -21,15 +29,40 @@ export default function homeScreen( {navigation }) {
       console.log('error on fetchUsers', error);
     }
   };
-  const pressHandler = () => {
-    navigation.navigate('styleSelectScreen')
+  const setInformation = async () => {
+    if (!formData.name || !formData.nickname){
+      console.log('fields are empty!', initialFormState);
+      return;
+    }
+    try{
+      console.log('formData:', formData)
+      await API.graphql({ query: mutations.createUser, variables: {input: formData}});
+      setUsers([...users, formData]);
+      setFormData(initialFormState);
+      navigation.navigate('styleSelectScreen')
+    }
+    catch (error){
+      console.log('error on setInformation', error);
+    }
   }
+
   return (
     <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog!</Text>
-      <TouchableOpacity onPress={pressHandler}>
+      <TextInput
+        label="Name"
+        placeholder="Set name!"
+        onChangeText={(text) => setFormData({...formData, name: text})}
+        style={styles.welcomeText}
+      />
+      <TextInput
+        label="Nickname"
+        placeholder="Set nickname"
+        onChangeText={(text) => setFormData({...formData, nickname: text})}
+        style={styles.welcomeText}
+      />
+      <TouchableOpacity onPress={setInformation}>
          <Text style = {[styles.buttonText]}>
-             Button
+             Set information
          </Text>
       </TouchableOpacity >
       <StatusBar
@@ -52,7 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#fff',
     fontFamily: 'Inter_300Light',
-    flex:0.15
   },
   buttonText: {
     paddingVertical: 10,
