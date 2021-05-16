@@ -1,0 +1,5 @@
+type User @model {
+  id: ID!
+  data: String!
+  description: String
+}

@@ -1,13 +1,32 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, Button, View, StatusBar, TouchableOpacity } from 'react-native';
+import { listUsers } from '../graphql/queries.js';
+
+import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 export default function homeScreen( {navigation }) {
+  const [users, setUsers] = useState([])
+
+  useEffect(()=>{
+    fetchUsers();
+  },[]);
+  const fetchUsers = async () => {
+    try{
+      const userData = await API.graphql(graphqlOperation(listUsers))
+      const userList = userData.data.listUsers.items;
+      console.log('user list', userList);
+      setUsers(userList)
+    }
+    catch (error) {
+      console.log('error on fetchUsers', error);
+    }
+  };
   const pressHandler = () => {
     navigation.navigate('styleSelectScreen')
   }
   return (
     <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
+      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog!</Text>
       <TouchableOpacity onPress={pressHandler}>
          <Text style = {[styles.buttonText]}>
              Button
