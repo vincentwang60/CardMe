@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, Button, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+
+import Button from './shared/button.js'
 
 export default function homeScreen( {navigation }) {
   const pressHandler = () => {
@@ -7,12 +9,8 @@ export default function homeScreen( {navigation }) {
   }
   return (
     <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>asdfQuick brown fox jumps over{"\n"}the lazy dog</Text>
-      <TouchableOpacity onPress={pressHandler}>
-         <Text style = {[styles.buttonText]}>
-             Button
-         </Text>
-      </TouchableOpacity >
+      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
+      <Button label='Button' onPress = {pressHandler} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
