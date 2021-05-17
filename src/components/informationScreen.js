@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, TextInput, Button, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, StatusBar, TouchableOpacity } from 'react-native';
 import { listUsers } from '../graphql/queries.js';
 import * as mutations from '../graphql/mutations.js';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import Input from './shared/input.js';
+import Button from './shared/button.js';
 
 const initialFormState = {
   id: '',
@@ -58,19 +59,13 @@ export default function homeScreen( {navigation }) {
     <View style={styles.container}>
       <Input
         label="Name"
-        placeholder="Set name"
         onChangeText={(text) => setFormData({...formData, name: text})}
       />
       <Input
         label="Nickname"
-        placeholder="Set nickname"
         onChangeText={(text) => setFormData({...formData, nickname: text})}
       />
-      <TouchableOpacity onPress={setInformation}>
-         <Text style = {[styles.buttonText]}>
-             Set information
-         </Text>
-      </TouchableOpacity >
+    <Button label="SET INFORMATION" onPress={setInformation} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
@@ -81,19 +76,9 @@ export default function homeScreen( {navigation }) {
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#325F71',
-    alignItems: 'center',
     justifyContent: 'center',
+    flex:1,
+    padding:8,
   },
-  buttonText: {
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderWidth: 2,
-    borderColor: 'black',
-    backgroundColor: '#AACCDA',
-    fontSize: 20,
-    color: 'black',
-    fontFamily: 'Inter_600SemiBold',
-  }
 });
