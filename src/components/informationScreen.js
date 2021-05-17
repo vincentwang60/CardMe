@@ -5,6 +5,8 @@ import * as mutations from '../graphql/mutations.js';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
+import Input from './shared/input.js';
+
 const initialFormState = {
   id: '',
   name: '',
@@ -54,17 +56,15 @@ export default function homeScreen( {navigation }) {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <Input
         label="Name"
-        placeholder="Set name!"
+        placeholder="Set name"
         onChangeText={(text) => setFormData({...formData, name: text})}
-        style={styles.welcomeText}
       />
-      <TextInput
+      <Input
         label="Nickname"
         placeholder="Set nickname"
         onChangeText={(text) => setFormData({...formData, nickname: text})}
-        style={styles.welcomeText}
       />
       <TouchableOpacity onPress={setInformation}>
          <Text style = {[styles.buttonText]}>
@@ -85,12 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#325F71',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  welcomeText: {
-    textAlign: 'center',
-    fontSize: 24,
-    color: '#fff',
-    fontFamily: 'Inter_300Light',
   },
   buttonText: {
     paddingVertical: 10,

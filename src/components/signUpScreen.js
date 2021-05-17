@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 
 import Amplify, {Auth} from "aws-amplify";
 import AWSConfig from '../../aws-exports'
 Amplify.configure(AWSConfig)
+
+import Input from './shared/input.js';
 
 export default function homeScreen( {navigation }) {
   const [isNewUser, setIsNewUser] = useState(false); //if isNewUser = true, show sign up. otherwise, show log-in screen
@@ -46,31 +48,25 @@ export default function homeScreen( {navigation }) {
   if (isNewUser){
     return (
       <View style={styles.container}>
-        <TextInput
+        <Input
           label="Email"
           placeholder="Set Email"
-          value={email}
           onChangeText={(text) => setEmail(text)}
-          style={styles.welcomeText}
         />
-        <TextInput
+      <Input
           label="Password"
           placeholder="Set Password"
-          value={password}
           onChangeText={(text) => setPassword(text)}
-          style={styles.welcomeText}
         />
       <TouchableOpacity onPress={() => signUp( email, password)}>
          <Text style = {[styles.buttonText]}>
              Sign Up
          </Text>
         </TouchableOpacity >
-        <TextInput
+        <Input
           label="Confirmation Code"
           placeholder="Enter Confirmation Code"
-          value={confirmationCode}
           onChangeText={(text) => setConfirmationCode(text)}
-          style={styles.welcomeText}
         />
       <TouchableOpacity onPress={() => confirmSignUp(email, confirmationCode)}>
              <Text style = {[styles.buttonText]}>
@@ -90,19 +86,15 @@ export default function homeScreen( {navigation }) {
   }
   return (
     <View style={styles.container}>
-      <TextInput
+      <Input
         label="Email"
         placeholder="Email"
-        value={email}
         onChangeText={(text) => setEmail(text)}
-        style={styles.welcomeText}
       />
-      <TextInput
+    <Input
         label="Password"
         placeholder="Password"
-        value={password}
         onChangeText={(text) => setPassword(text)}
-        style={styles.welcomeText}
       />
     <TouchableOpacity onPress={() => signIn( email,password)}>
        <Text style = {[styles.buttonText]}>
