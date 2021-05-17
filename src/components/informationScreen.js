@@ -6,36 +6,42 @@ import * as mutations from '../graphql/mutations.js';
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 const initialFormState = {
+  id: '',
   name: '',
   nickname: ''
 }
 
 export default function homeScreen( {navigation }) {
+  const currentUserEmail = ''
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
 
   useEffect(()=>{
-    fetchUsers();
+    getUserEmail();
+    //fetchUsers();
   },[]);
-
-  const fetchUsers = async () => {
+  const getUserEmail = async () => {
+    const currentUserInfo = await Auth.currentUserInfo();
+    setFormData({...formData, id: currentUserInfo.attributes.email});
+  }
+  /*const fetchUsers = async () => {//will fetch all users from dynamodb
     try{
       const userData = await API.graphql(graphqlOperation(listUsers))
       const userList = userData.data.listUsers.items;
-      console.log('user list', userList);
+      //console.log('user list', userList);
       setUsers(userList)
     }
     catch (error) {
       console.log('error on fetchUsers', error);
     }
-  };
+  };*/
   const setInformation = async () => {
     if (!formData.name || !formData.nickname){
       console.log('fields are empty!', initialFormState);
       return;
     }
     try{
-      console.log('formData:', formData)
+      console.log('formData:', formData);
       await API.graphql({ query: mutations.createUser, variables: {input: formData}});
       setUsers([...users, formData]);
       setFormData(initialFormState);

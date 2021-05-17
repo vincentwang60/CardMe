@@ -24,6 +24,9 @@ export default function homeScreen( {navigation }) {
     })
     .catch(err=>console.log('error on signup!',err))
   }
+  function skip(gEmail, gPassword) {
+    navigation.navigate('informationScreen')
+  }
   function confirmSignUp(gUsername, gConfirmationCode){
     Auth.confirmSignUp(gUsername, gConfirmationCode)
     .then(()=>{
@@ -32,10 +35,10 @@ export default function homeScreen( {navigation }) {
     })
     .catch(err=>console.log('confirm error!',err))
   }
-  function signIn(gEmail, gPassword){
+  function signIn (gEmail, gPassword){
     const user = Auth.signIn(gEmail, gPassword)
     .then(()=>{
-      console.log('successful login!',email);
+      console.log('successful login!');
       navigation.navigate('informationScreen')
     })
     .catch(err=>console.log('error on login!',err))
@@ -109,6 +112,11 @@ export default function homeScreen( {navigation }) {
       <TouchableOpacity onPress={toggleIsNewUser}>
          <Text style = {[styles.buttonText]}>
              Create An Account
+         </Text>
+      </TouchableOpacity >
+      <TouchableOpacity onPress={skip}>
+         <Text style = {[styles.buttonText]}>
+             DELETE ME
          </Text>
       </TouchableOpacity >
       <StatusBar
