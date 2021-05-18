@@ -23,9 +23,13 @@ export default function homeScreen( {navigation }) {
     getUserEmail();
     //fetchUsers();
   },[]);
+
   const getUserEmail = async () => {
     const currentUserInfo = await Auth.currentUserInfo();
     setFormData({...formData, id: currentUserInfo.attributes.email});
+  }
+  const skip = () => {
+    navigation.navigate('styleSelectScreen')
   }
   /*const fetchUsers = async () => {//will fetch all users from dynamodb
     try{
@@ -57,15 +61,10 @@ export default function homeScreen( {navigation }) {
 
   return (
     <View style={styles.container}>
-      <Input
-        label="Name"
-        onChangeText={(text) => setFormData({...formData, name: text})}
-      />
-      <Input
-        label="Nickname"
-        onChangeText={(text) => setFormData({...formData, nickname: text})}
-      />
-    <Button label="SET INFORMATION" onPress={setInformation} />
+      <Input label="Name"  onChangeText={(text) => setFormData({...formData, name: text})} />
+      <Input label="Nickname"  onChangeText={(text) => setFormData({...formData, nickname: text})} />
+      <Button label="SET INFORMATION" onPress={setInformation} />
+      <Button label="skip delete me" onPress={skip} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>

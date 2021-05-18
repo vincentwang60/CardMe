@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#325F71',
-    alignItems: 'center',
+    padding:8,
     justifyContent: 'center',
   },
   welcomeText: {
@@ -31,16 +31,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#fff',
     fontFamily: 'Inter_300Light',
-    flex:0.15
   },
-  buttonText: {
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderWidth: 2,
-    borderColor: 'black',
-    backgroundColor: '#AACCDA',
-    fontSize: 20,
-    color: 'black',
-    fontFamily: 'Inter_600SemiBold',
-  }
 });

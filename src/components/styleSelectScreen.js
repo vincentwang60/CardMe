@@ -1,18 +1,38 @@
-import React from 'react';
-import { StyleSheet, Text, Button, View, StatusBar, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { listUsers, getUser } from '../graphql/queries.js';
+
+import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
+
+import Button from './shared/button.js'
+import Card1 from './shared/card1.js'
 
 export default function homeScreen( {navigation }) {
+  const [userData, setUserData] = useState([]);
   const pressHandler = () => {
     navigation.navigate('homeScreen')
   }
+
+  useEffect(()=>{
+    fetchUserData();
+  },[]);
+
+  const fetchUserData = async () => {//will fetch all users from dynamodb
+    try{
+      const currentUserInfo = await Auth.currentUserInfo();
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: currentUserInfo.attributes.email}))
+      //console.log('userdata', fetchedUserData.data.getUser);
+      setUserData(fetchedUserData.data.getUser);
+    }
+    catch (error) {
+      console.log('Error on fetchUserData', error);
+    }
+  };
   return (
     <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
-      <TouchableOpacity onPress={pressHandler}>
-         <Text style = {[styles.buttonText]}>
-             Button
-         </Text>
-      </TouchableOpacity >
+      <Text style = {[styles.text]}>Card placeholder</Text>
+      <Card1 data={userData} />
+      <Button label='Continue' onPress = {pressHandler} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
@@ -25,24 +45,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#325F71',
-    alignItems: 'center',
+    padding:8,
     justifyContent: 'center',
   },
-  welcomeText: {
+  text: {
     textAlign: 'center',
     fontSize: 24,
     color: '#fff',
-    fontFamily: 'Inter_300Light',
-    flex:0.15
-  },
-  buttonText: {
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderWidth: 2,
-    borderColor: 'black',
-    backgroundColor: '#AACCDA',
-    fontSize: 20,
-    color: 'black',
     fontFamily: 'Inter_600SemiBold',
-  }
+  },
 });
