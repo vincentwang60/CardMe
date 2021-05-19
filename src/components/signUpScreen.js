@@ -18,15 +18,20 @@ export default function homeScreen( {navigation }) {
   function toggleIsNewUser() {
     setIsNewUser(!isNewUser);
   }
-  function signUp(gEmail, gPassword) {
-    Auth.signUp({
-      username: gEmail,
-      password: gPassword
-    })
-    .then(()=>{
-      console.log('successful signup!',email);
-    })
-    .catch(err=>console.log('error on signup!',err))
+  function signUp() {
+    if(password==confirmPassword){
+      Auth.signUp({
+        username: email,
+        password: password
+      })
+      .then(()=>{
+        console.log('successful signup!',email);
+      })
+      .catch(err=>console.log('error on signup!',err))
+    }
+    else{
+      console.log('passwords dont match')
+    }
   }
   function skip(gEmail, gPassword) {
     navigation.navigate('informationScreen')
@@ -40,6 +45,7 @@ export default function homeScreen( {navigation }) {
     .catch(err=>console.log('confirm error!',err))
   }
   function signIn (gEmail, gPassword){
+    console.log('test', gEmail, gPassword)
     const user = Auth.signIn(gEmail, gPassword)
     .then(()=>{
       console.log('successful login!');
@@ -54,9 +60,9 @@ export default function homeScreen( {navigation }) {
         <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
         <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
         <Input containerStyle={[styles.input, { top: '29.0%'}]} label="Email" onChangeText={(text) => setEmail(text)} />
-        <Input containerStyle={[styles.input, { top: '38.8%'}]} label="Password" onChangeText={(text) => setPassword(text)} />
-        <Input containerStyle={[styles.input, { top: '48.4%'}]} label="Confirm Password" onChangeText={(text) => setConfirmPassword(text)} />
-        <Button containerStyle={[styles.input, { top: '85.0%'}]} label="Next stsdfsdfep!" onPress={() => signUp( email, password)} />
+        <Input containerStyle={[styles.input, { top: '38.8%'}]} secure = {true} label="Password" onChangeText={(text) => setPassword(text)} />
+        <Input containerStyle={[styles.input, { top: '48.4%'}]} secure = {true} label="Confirm Password" onChangeText={(text) => setConfirmPassword(text)} />
+        <Button containerStyle={[styles.input, { top: '85.0%'}]} label="Next step" onPress={() => signUp()} />
         <View style={styles.textContainer}>
           <Text style={[styles.signInText]}>Already have an account? </Text>
           <TouchableOpacity onPress={toggleIsNewUser}>
@@ -77,13 +83,21 @@ export default function homeScreen( {navigation }) {
   //IF RETURNING USER, SHOW LOG IN PAGE
   return (
     <View style={styles.container}>
-      <Input label="Email" onChangeText={(text) => setEmail(text)} />
-      <Input label="Password" onChangeText={(text) => setPassword(text)} />
-      <Button label="LOG IN" onPress={() => signIn( email, password)} />
-      <Button label="CREATE AN ACCOUNT" onPress={toggleIsNewUser} />
-      <Button label="SKIP DELETE ME" onPress={skip} />
+      <Text style={[styles.text, { top: '10.9%'}]}>Welcome back!</Text>
+      <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Sign in to continue. </Text>
+      <Input containerStyle={[styles.input, { top: '56.5%'}]}label="Email" onChangeText={(text) => setEmail(text)} />
+      <Input containerStyle={[styles.input, { top: '65.5%'}]} secure = {true} label="Password" onChangeText={(text) => setPassword(text)} />
+      <Button containerStyle={[styles.input, { top: '81.5%'}]}label="Sign in" onPress={() => signIn( email, password)} />
+      <TouchableOpacity onPress={toggleIsNewUser} style={[styles.touchable]}>
+        <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Forgot your password? </Text>
+      </TouchableOpacity>
+      <View style={[styles.textContainer, {top: '90.0%'}]}>
+        <TouchableOpacity onPress={toggleIsNewUser}>
+          <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Create an account! </Text>
+        </TouchableOpacity>
+      </View>
       <StatusBar
-        barStyle = "light-content"
+        barStyle = 'dark-content'
         backgroundColor = '#fff'/>
     </View>
   );
@@ -91,29 +105,35 @@ export default function homeScreen( {navigation }) {
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  touchable:{
+    position: 'absolute',
+    left: "6.2%",
+    top: "73%",
+  },
   textContainer:{
-    alignItems: 'center',
+    position: 'absolute',
     justifyContent: 'center',
+    width: "100%",
+    top: "92.5%",
     flexDirection: 'row',
-    top: "84.5%",
   },
   container: {
     backgroundColor: '#FFF',
     justifyContent: 'center',
     flex: 1,
-    padding: '2%',
   },
   text:{
     fontSize: 20,
-    left:"7.2%",
+    left:"6.2%",
     position: 'absolute',
     fontFamily: 'Nunito_700Bold',
   },
   input:{
     position: 'absolute',
-    left: "7.2%",
+    left: "6.2%",
   },
   signInText:{
+    alignItems: 'center',
     fontFamily: 'Nunito_400Regular',
     fontSize: 13,
   },

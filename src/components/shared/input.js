@@ -7,12 +7,14 @@ export default function Input({
   labelStyle = styles.label,
   containerStyle = styles.container,
   onChangeText,
+  secure = false,
 }){
   return (
     <View style={containerStyle}>
       <Text style={labelStyle}>{label}</Text>
       <TextInput
         autoCapitalize="none"
+        secureTextEntry = {secure}
         style={inputStyle}
         onChangeText= {onChangeText}
       />
