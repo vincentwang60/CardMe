@@ -1,15 +1,15 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
-import PropTypes from 'prop-types'
+import {View, TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 
 export default function Button({
   label,
   labelStyle = styles.label,
+  containerStyle = styles.container,
   onPress,
 }){
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={onPress}>
+    <View style={containerStyle}>
+      <TouchableOpacity onPress={onPress} style={styles.button}>
          <Text style = {labelStyle}>
              {label}
          </Text>
@@ -21,17 +21,17 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 5,
   },
+  button: {
+    width: Dimensions.get('window').width*.853,
+  },
   label: {
     textAlign: 'center',
-    paddingVertical: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+    paddingVertical: Dimensions.get('window').height*.012,
     paddingHorizontal: 0,
-    borderWidth: 2,
-    borderColor: 'black',
-    letterSpacing: 3,
-    backgroundColor: '#AACCDA',
-    fontSize: 20,
-    color: 'black',
-    fontFamily: 'Inter_600SemiBold',
+    backgroundColor: '#000',
+    fontSize: 15,
+    color: '#fff',
+    fontFamily: 'Nunito_700Bold',
   },
 });

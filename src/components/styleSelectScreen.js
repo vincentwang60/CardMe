@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { listUsers, getUser } from '../graphql/queries.js';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
@@ -13,7 +13,7 @@ export default function homeScreen( {navigation }) {
     navigation.navigate('homeScreen')
   }
 
-  useEffect(()=>{
+  useEffect(()=>{//runs once every time this screen is loaded
     fetchUserData();
   },[]);
 

@@ -5,6 +5,10 @@ import {
   Inter_300Light,
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
+import {
+  Nunito_400Regular,
+  Nunito_700Bold,
+} from '@expo-google-fonts/nunito';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -22,13 +26,14 @@ function MyStack() {
       mode="modal"
       screenOptions={{
         animationEnabled: false,
-        headerStyle: {
-          backgroundColor: '#040F0F',
+        headerShown: false,
+        /*headerStyle: {//shows header, useful to keep track of what screen you're on
+          backgroundColor: '#fff',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontFamily: 'Inter_600SemiBold',
-        },
+        },*/
       }}
     >
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
@@ -43,6 +48,8 @@ export default function App() {
   let [fontsLoaded] = useFonts({
     Inter_300Light,
     Inter_600SemiBold,
+    Nunito_700Bold,
+    Nunito_400Regular,
   });
   if (!fontsLoaded){
     return <AppLoading />;

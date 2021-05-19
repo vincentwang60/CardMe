@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, TextInput, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, StatusBar } from 'react-native';
 import { listUsers } from '../graphql/queries.js';
 import * as mutations from '../graphql/mutations.js';
 
