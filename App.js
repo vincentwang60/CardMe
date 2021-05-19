@@ -13,6 +13,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import signUpScreen from './src/components/signUpScreen';
+import verificationScreen from './src/components/verificationScreen';
 import homeScreen from './src/components/homeScreen';
 import informationScreen from './src/components/informationScreen';
 import libraryScreen from './src/components/libraryScreen';
@@ -27,15 +28,9 @@ function MyStack() {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-        /*headerStyle: {//shows header, useful to keep track of what screen you're on
-          backgroundColor: '#fff',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontFamily: 'Inter_600SemiBold',
-        },*/
       }}
     >
+      <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
       <Stack.Screen name="homeScreen" component={homeScreen} />
       <Stack.Screen name="informationScreen" component={informationScreen} />

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth} from "aws-amplify";
 import AWSConfig from '../../aws-exports'
@@ -25,7 +26,8 @@ export default function homeScreen( {navigation }) {
         password: password
       })
       .then(()=>{
-        console.log('successful signup!',email);
+        console.log('successful signup! still need to confirm',email);
+        navigation.navigate('verificationScreen');
       })
       .catch(err=>console.log('error on signup!',err))
     }
@@ -35,14 +37,6 @@ export default function homeScreen( {navigation }) {
   }
   function skip(gEmail, gPassword) {
     navigation.navigate('informationScreen')
-  }
-  function confirmSignUp(gUsername, gConfirmationCode){
-    Auth.confirmSignUp(gUsername, gConfirmationCode)
-    .then(()=>{
-      console.log('confirm success', email);
-      navigation.navigate('informationScreen')
-    })
-    .catch(err=>console.log('confirm error!',err))
   }
   function signIn (gEmail, gPassword){
     console.log('test', gEmail, gPassword)
@@ -56,7 +50,7 @@ export default function homeScreen( {navigation }) {
 
   if (isNewUser){
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
         <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
         <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
         <Input containerStyle={[styles.input, { top: '29.0%'}]} label="Email" onChangeText={(text) => setEmail(text)} />
@@ -72,7 +66,7 @@ export default function homeScreen( {navigation }) {
         <StatusBar
           barStyle = 'dark-content'
           backgroundColor = '#fff'/>
-      </View>
+      </LinearGradient>
     );
   }
   /*//code for confirmation code
@@ -82,7 +76,7 @@ export default function homeScreen( {navigation }) {
   //<Button containerStyle={[styles.input, { top: '90.8%'}]} label="SIGN IN INSTEAD" onPress={toggleIsNewUser} />
   //IF RETURNING USER, SHOW LOG IN PAGE
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Welcome back!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Sign in to continue. </Text>
       <Input containerStyle={[styles.input, { top: '56.5%'}]}label="Email" onChangeText={(text) => setEmail(text)} />
@@ -99,7 +93,7 @@ export default function homeScreen( {navigation }) {
       <StatusBar
         barStyle = 'dark-content'
         backgroundColor = '#fff'/>
-    </View>
+    </LinearGradient>
   );
 }
 
