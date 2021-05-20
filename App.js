@@ -13,6 +13,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import signUpScreen from './src/components/signUpScreen';
+import logInScreen from './src/components/logInScreen';
 import verificationScreen from './src/components/verificationScreen';
 import homeScreen from './src/components/homeScreen';
 import informationScreen from './src/components/informationScreen';
@@ -31,6 +32,7 @@ function MyStack() {
       }}
     >
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
+      <Stack.Screen name="logInScreen" component={logInScreen} />
       <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="homeScreen" component={homeScreen} />
       <Stack.Screen name="informationScreen" component={informationScreen} />

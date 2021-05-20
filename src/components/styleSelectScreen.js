@@ -8,7 +8,8 @@ import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 import Button from './shared/button.js'
 import Card1 from './shared/card1.js'
 
-export default function homeScreen( {navigation }) {
+export default function homeScreen( {route, navigation }) {
+  const {email} = route.params;
   const [userData, setUserData] = useState([]);
   const pressHandler = () => {
     navigation.navigate('homeScreen')
@@ -20,9 +21,8 @@ export default function homeScreen( {navigation }) {
 
   const fetchUserData = async () => {//will fetch all users from dynamodb
     try{
-      const currentUserInfo = await Auth.currentUserInfo();
-      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: currentUserInfo.attributes.email}))
-      //console.log('userdata', fetchedUserData.data.getUser);
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
+      console.log('fetched user data:', fetchedUserData.data.getUser);
       setUserData(fetchedUserData.data.getUser);
     }
     catch (error) {
@@ -31,9 +31,16 @@ export default function homeScreen( {navigation }) {
   };
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style = {[styles.text, {top: '10%'}]}>Card placeholder</Text>
-      <Card1 containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]} data={userData} />
-      <Button containerStyle={[styles.items, { top: '79.0%'}]} label='Continue' onPress = {pressHandler} />
+      <Text style = {[styles.text, {top: '10%'}]}>Style select screen{'\n'}placeholder</Text>
+      <Card1
+        containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]}
+        data={userData}
+      />
+      <Button
+        containerStyle={[styles.items, { top: '79.0%'}]}
+        label='Continue'
+        onPress = {pressHandler}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>

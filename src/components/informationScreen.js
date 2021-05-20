@@ -1,59 +1,32 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, TextInput, View, StatusBar } from 'react-native';
-import { listUsers } from '../graphql/queries.js';
-import * as mutations from '../graphql/mutations.js';
+import React from 'react';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
+import { useForm, Controller } from "react-hook-form";
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
+import { listUsers } from '../graphql/queries.js';
+import * as mutations from '../graphql/mutations.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
-const initialFormState = {
-  id: '',
-  name: '',
-  nickname: ''
-}
+export default function informationScreen( {route, navigation }) {
+  const {email} = route.params;
+  const { handleSubmit, control, formState: {errors} } = useForm();
 
-export default function homeScreen( {navigation }) {
-  const currentUserEmail = ''
-  const [users, setUsers] = useState([]);
-  const [formData, setFormData] = useState(initialFormState);
-
-  useEffect(()=>{
-    getUserEmail();
-    //fetchUsers();
-  },[]);
-
-  const getUserEmail = async () => {
-    const currentUserInfo = await Auth.currentUserInfo();
-    setFormData({...formData, id: currentUserInfo.attributes.email});
+  function onSubmit(data){
+    data.id = email;
+    console.log('data', data)
+    setInformation(data)
   }
   const skip = () => {
-    navigation.navigate('styleSelectScreen')
+    navigation.navigate('styleSelectScreen', {email: email})
   }
-  /*const fetchUsers = async () => {//will fetch all users from dynamodb
+  async function setInformation(data){
+    console.log('made it!', data)
     try{
-      const userData = await API.graphql(graphqlOperation(listUsers))
-      const userList = userData.data.listUsers.items;
-      //console.log('user list', userList);
-      setUsers(userList)
-    }
-    catch (error) {
-      console.log('error on fetchUsers', error);
-    }
-  };*/
-  const setInformation = async () => {
-    if (!formData.name || !formData.nickname){
-      console.log('fields are empty!', initialFormState);
-      return;
-    }
-    try{
-      console.log('formData:', formData);
-      await API.graphql({ query: mutations.createUser, variables: {input: formData}});
-      setUsers([...users, formData]);
-      setFormData(initialFormState);
-      navigation.navigate('styleSelectScreen')
+      await API.graphql({ query: mutations.createUser, variables: {input: data}});
+      navigation.navigate('styleSelectScreen', {email: email})
     }
     catch (error){
       console.log('error on setInformation', error);
@@ -62,10 +35,47 @@ export default function homeScreen( {navigation }) {
 
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Input containerStyle={[styles.input, { top: '29.0%'}]} label="Name"  onChangeText={(text) => setFormData({...formData, name: text})} />
-      <Input containerStyle={[styles.input, { top: '39.0%'}]} label="Nickname"  onChangeText={(text) => setFormData({...formData, nickname: text})} />
-      <Button containerStyle={[styles.input, { top: '69.0%'}]} label="Set information" onPress={setInformation} />
-      <Button containerStyle={[styles.input, { top: '79.0%'}]} label="Skip" onPress={skip} />
+      <Controller
+        name='name'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Please enter your name'},
+        }}
+        render={({field: {onChange, value}})=>(
+          <Input
+            error={errors.name}
+            containerStyle={[styles.input, { top: '29.0%'}]}
+            label="Name"
+            onChangeText={(text) => onChange(text)}
+            value={value}
+          />
+        )}
+      />
+      <Controller
+        name='nickname'
+        control={control}
+        rules={{
+          //
+        }}
+        render={({field: {onChange, value}})=>(
+          <Input
+            error={errors.nickname}
+            containerStyle={[styles.input, { top: '39.0%'}]}
+            label="Nickname"
+            onChangeText={(text) => onChange(text)}
+          />
+        )}
+      />
+      <Button
+        containerStyle={[styles.input, { top: '69.0%'}]}
+        label="Set information"
+        onPress={handleSubmit(onSubmit)}
+      />
+      <Button
+        containerStyle={[styles.input, { top: '79.0%'}]}
+        label="Skip"
+        onPress={skip}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
