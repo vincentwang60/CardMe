@@ -30,8 +30,8 @@ function MyStack() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
+      <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="homeScreen" component={homeScreen} />
       <Stack.Screen name="informationScreen" component={informationScreen} />
       <Stack.Screen name="libraryScreen" component={libraryScreen} />

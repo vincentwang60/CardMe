@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { StyleSheet, Text, View, StatusBar, Dimensions, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth} from "aws-amplify";
@@ -8,24 +8,32 @@ Amplify.configure(AWSConfig)
 
 import Button from './shared/button.js';
 
-export default function homeScreen( {navigation }) {
+export default function verificationScreen( {route, navigation }) {
+  const {passedEmail} = route.params;
+  const {passedPassword} = route.params;
+
+  const [input1, setInput1] = useState('');
+  const [input2, setInput2] = useState('');
+  const [input3, setInput3] = useState('');
+  const [input4, setInput4] = useState('');
+  const [input5, setInput5] = useState('');
+  const [input6, setInput6] = useState('');
   const ref_input1 = useRef();
   const ref_input2 = useRef();
   const ref_input3 = useRef();
   const ref_input4 = useRef();
   const ref_input5 = useRef();
   const ref_input6 = useRef();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [confirmationCode, setConfirmationCode] = useState('');
 
   function toggleIsNewUser() {
     setIsNewUser(!isNewUser);
   }
-  function confirmSignUp(gUsername, gConfirmationCode){
-    Auth.confirmSignUp(gUsername, gConfirmationCode)
+  function confirmSignUp(){
+    const code = input1+input2+input3+input4+input5+input6
+    Auth.confirmSignUp(passedEmail, code)
     .then(()=>{
-      console.log('confirm success', email);
+      console.log('confirm success', passedEmail);
       navigation.navigate('informationScreen')
     })
     .catch(err=>console.log('confirm error!',err))
@@ -42,7 +50,6 @@ export default function homeScreen( {navigation }) {
     })
     .catch(err=>console.log('error on login!',err))
   }
-  //<Input containerStyle={[styles.input, { top: '56.5%'}]}label="Email" onChangeText={(text) => setEmail(text)} />
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Authenticate your account!</Text>
@@ -52,6 +59,7 @@ export default function homeScreen( {navigation }) {
         <TextInput style={styles.textInput}
           autoFocus = {true}
           autoCapitalize = {"characters"}
+          onChangeText={(text) => setInput1(text)}
           onKeyPress={({ nativeEvent }) => {
             if(nativeEvent.key != 'Backspace') {ref_input2.current.focus()}
           }}
@@ -60,46 +68,70 @@ export default function homeScreen( {navigation }) {
         />
         <TextInput style={styles.textInput}
           autoCapitalize = {"characters"}
+          onChangeText={(text) => setInput2(text)}
           onKeyPress={({ nativeEvent }) => {
-            nativeEvent.key === 'Backspace' ? ref_input1.current.focus() : ref_input3.current.focus()
+            if(nativeEvent.key === 'Backspace'){
+              ref_input1.current.focus();
+              if (input2 == ''){ ref_input1.current.clear(); setInput1('') }
+            }
+            else{ref_input3.current.focus()}
           }}
           maxLength={1}
           ref={ref_input2}
         />
         <TextInput style={styles.textInput}
           autoCapitalize = {"characters"}
+          onChangeText={(text) => setInput3(text)}
           onKeyPress={({ nativeEvent }) => {
-            nativeEvent.key === 'Backspace' ? ref_input2.current.focus() : ref_input4.current.focus()
+            if(nativeEvent.key === 'Backspace'){
+              ref_input2.current.focus();
+              if (input3 == ''){ ref_input2.current.clear(); setInput2('') }
+            }
+            else{ref_input4.current.focus()}
           }}
           maxLength={1}
           ref={ref_input3}
         />
         <TextInput style={styles.textInput}
           autoCapitalize = {"characters"}
+          onChangeText={(text) => setInput4(text)}
           onKeyPress={({ nativeEvent }) => {
-            nativeEvent.key === 'Backspace' ? ref_input3.current.focus() : ref_input5.current.focus()
+            if(nativeEvent.key === 'Backspace'){
+              ref_input3.current.focus();
+              if (input4 == ''){ ref_input3.current.clear(); setInput3('') }
+            }
+            else{ref_input5.current.focus()}
           }}
           maxLength={1}
           ref={ref_input4}
         />
         <TextInput style={styles.textInput}
           autoCapitalize = {"characters"}
+          onChangeText={(text) => setInput5(text)}
           onKeyPress={({ nativeEvent }) => {
-            nativeEvent.key === 'Backspace' ? ref_input4.current.focus() : ref_input6.current.focus()
+            if(nativeEvent.key === 'Backspace'){
+              ref_input4.current.focus();
+              if (input5 == ''){ ref_input4.current.clear(); setInput4('') }
+            }
+            else{ref_input6.current.focus()}
           }}
           maxLength={1}
           ref={ref_input5}
         />
         <TextInput style={styles.textInput}
           autoCapitalize = {"characters"}
-          onKeyPress={({ nativeEvent }) => {
-            if(nativeEvent.key === 'Backspace'){ ref_input5.current.focus() }
+          onChangeText={(text) => setInput6(text)}
+          onKeyPress={({nativeEvent}) =>{
+            if(nativeEvent.key === 'Backspace'){
+              ref_input5.current.focus();
+              if (input6 == ''){ ref_input5.current.clear(); setInput5('') }
+            }
           }}
           maxLength={1}
           ref={ref_input6}
         />
       </View>
-      <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={() => signIn( email, password)} />
+      <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={() => confirmSignUp()} />
       <View style={styles.textContainer}>
         <Text style={[styles.signInText]}>Haven't received it? </Text>
         <TouchableOpacity onPress={resendCode}>

@@ -27,7 +27,7 @@ export default function homeScreen( {navigation }) {
       })
       .then(()=>{
         console.log('successful signup! still need to confirm',email);
-        navigation.navigate('verificationScreen');
+        navigation.navigate('verificationScreen', {passedEmail: email, passedPassword: password});
       })
       .catch(err=>console.log('error on signup!',err))
     }
