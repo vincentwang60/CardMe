@@ -1,4 +1,4 @@
-import React, { useRef} from 'react';
+import React, { useState, useRef} from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
@@ -11,6 +11,7 @@ import Input from './shared/input.js';
 import Button from './shared/button.js';
 
 export default function logInScreen( {navigation }) {
+  const [methodChosen, setMethodChosen] = useState(false);
   const { handleSubmit, watch, control } = useForm();
 
   function onSubmit(data) {
@@ -22,6 +23,15 @@ export default function logInScreen( {navigation }) {
   function toggleIsNewUser() {
     navigation.navigate('signUpScreen')
   }
+  function appleIdLogin(){
+    console.log('apple login TODO')
+  }
+  function facebookLogin(){
+    console.log('facebook login TODO')
+  }
+  function googleLogin(){
+    console.log('google login TODO')
+  }
   function signIn (email, password){
     const user = Auth.signIn(email, password)
     .then(()=>{
@@ -29,6 +39,43 @@ export default function logInScreen( {navigation }) {
       navigation.navigate('informationScreen', {email: email})
     })
     .catch(err=>console.log('error on login!',err))
+  }
+
+  if(!methodChosen){
+    return (
+      <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+        <Text style={[styles.text, { top: '10.9%'}]}>Welcome back!</Text>
+        <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Sign in to continue. </Text>
+        <View style={[styles.textContainer, {top: '90.0%'}]}>
+          <TouchableOpacity onPress={toggleIsNewUser}>
+            <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Create an account! </Text>
+          </TouchableOpacity>
+        </View>
+        <Button
+          containerStyle={[styles.input, { top: '61%'}]}
+          label='Use email'
+          onPress={() => {setMethodChosen(!methodChosen)}}
+        />
+        <Button
+          containerStyle={[styles.input, { top: '68%'}]}
+          label='Use Apple ID'
+          onPress={appleIdLogin}
+        />
+        <Button
+          containerStyle={[styles.input, { top: '75%'}]}
+          label='Use Facebook'
+          onPress={facebookLogin}
+        />
+        <Button
+          containerStyle={[styles.input, { top: '82%'}]}
+          label='Use Google'
+          onPress={googleLogin}
+        />
+        <StatusBar
+          barStyle = 'dark-content'
+          backgroundColor = '#fff'/>
+      </LinearGradient>
+    )
   }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
