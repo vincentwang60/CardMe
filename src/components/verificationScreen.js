@@ -58,6 +58,7 @@ export default function verificationScreen( {route, navigation }) {
       <View style={styles.inputContainer}>
         <TextInput style={styles.textInput}
           autoFocus = {true}
+          keyboardType = {'numeric'}
           autoCapitalize = {"characters"}
           onChangeText={(text) => setInput1(text)}
           onKeyPress={({ nativeEvent }) => {

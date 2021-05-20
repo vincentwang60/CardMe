@@ -22,6 +22,7 @@ import styleSelectScreen from './src/components/styleSelectScreen';
 
 const Stack = createStackNavigator();
 
+// <element attributes> Content </element>
 function MyStack() {
   return (
     <Stack.Navigator

@@ -7,6 +7,7 @@ export default function homeScreen( {navigation }) {
   const pressHandler = () => {
     navigation.navigate('libraryScreen')
   }
+  
   return (
     <View style={styles.container}>
       <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
