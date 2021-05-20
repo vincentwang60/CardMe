@@ -34,16 +34,16 @@ export default function verificationScreen( {route, navigation }) {
     Auth.confirmSignUp(passedEmail, code)
     .then(()=>{
       console.log('confirm success', passedEmail);
-      navigation.navigate('informationScreen')
+      signIn()
     })
     .catch(err=>console.log('confirm error!',err))
   }
   function resendCode(){
     console.log('you thought')
   }
-  function signIn (gEmail, gPassword){
-    console.log('test', gEmail, gPassword)
-    const user = Auth.signIn(gEmail, gPassword)
+  function signIn (){
+    console.log('signing in as', passedEmail)
+    const user = Auth.signIn(passedEmail, passedPassword)
     .then(()=>{
       console.log('successful login!');
       navigation.navigate('informationScreen')

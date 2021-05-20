@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { listUsers, getUser } from '../graphql/queries.js';
+import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -29,29 +30,31 @@ export default function homeScreen( {navigation }) {
     }
   };
   return (
-    <View style={styles.container}>
-      <Text style = {[styles.text]}>Card placeholder</Text>
-      <Card1 data={userData} />
-      <Button label='Continue' onPress = {pressHandler} />
+   <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <Text style = {[styles.text, {top: '10%'}]}>Card placeholder</Text>
+      <Card1 containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]} data={userData} />
+      <Button containerStyle={[styles.items, { top: '79.0%'}]} label='Continue' onPress = {pressHandler} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
-    </View>
+    </LinearGradient>
   );
 }
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFF',
     flex: 1,
-    backgroundColor: '#325F71',
-    padding:8,
-    justifyContent: 'center',
   },
   text: {
     textAlign: 'center',
     fontSize: 24,
-    color: '#fff',
+    color: '#000',
     fontFamily: 'Inter_600SemiBold',
   },
+  items:{
+    position: 'absolute',
+    left: "6.2%",
+  }
 });

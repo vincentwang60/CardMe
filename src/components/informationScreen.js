@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, TextInput, View, StatusBar } from 'react-native';
 import { listUsers } from '../graphql/queries.js';
 import * as mutations from '../graphql/mutations.js';
+import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -60,24 +61,27 @@ export default function homeScreen( {navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Input label="Name"  onChangeText={(text) => setFormData({...formData, name: text})} />
-      <Input label="Nickname"  onChangeText={(text) => setFormData({...formData, nickname: text})} />
-      <Button label="SET INFORMATION" onPress={setInformation} />
-      <Button label="skip delete me" onPress={skip} />
+    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <Input containerStyle={[styles.input, { top: '29.0%'}]} label="Name"  onChangeText={(text) => setFormData({...formData, name: text})} />
+      <Input containerStyle={[styles.input, { top: '39.0%'}]} label="Nickname"  onChangeText={(text) => setFormData({...formData, nickname: text})} />
+      <Button containerStyle={[styles.input, { top: '69.0%'}]} label="Set information" onPress={setInformation} />
+      <Button containerStyle={[styles.input, { top: '79.0%'}]} label="Skip" onPress={skip} />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
-    </View>
+    </LinearGradient>
   );
 }
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#325F71',
+    backgroundColor: '#FFF',
     justifyContent: 'center',
-    flex:1,
-    padding:8,
+    flex: 1,
+  },
+  input:{
+    position: 'absolute',
+    left: "6.2%",
   },
 });

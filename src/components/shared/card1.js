@@ -6,20 +6,23 @@ import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 export default function Card1({
   data,
   labelStyle = styles.label,
+  containerStyle,
 }){
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
+      <View style={styles.container}>
          <Text style = {labelStyle}>
            Name: {data.name}{"\n"}Nickname: {data.nickname}
          </Text>
+      </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     marginVertical: 5,
-    width: Dimensions.get('window').width-16,
-    height: Dimensions.get('window').width/2,
+    width: Dimensions.get('window').width*.8,
+    height: Dimensions.get('window').width*.4,
     backgroundColor: '#fff',
     borderRadius: 5,
     borderColor: 'black',
@@ -31,6 +34,6 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     fontSize: 20,
     color: 'black',
-    fontFamily: 'Inter_300Light',
+    fontFamily: 'Nunito_700Bold',
   },
 });

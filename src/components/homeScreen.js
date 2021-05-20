@@ -21,10 +21,9 @@ export default function homeScreen( {navigation }) {
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#325F71',
-    padding:8,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
+    flex: 1,
   },
   welcomeText: {
     textAlign: 'center',
