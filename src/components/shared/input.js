@@ -8,6 +8,7 @@ export default function Input({
   containerStyle = styles.container,
   onChangeText,
   secure = false,
+  error,
 }){
   return (
     <View style={containerStyle}>
@@ -18,6 +19,7 @@ export default function Input({
         style={inputStyle}
         onChangeText= {onChangeText}
       />
+      <Text style={styles.error}>{error && error.message}</Text>
     </View>
   );
 }
@@ -45,10 +47,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold'
   },
   error: {//TODO
-    marginVertical: 5,
+    marginVertical: 2,
     paddingVertical: 0,
-    fontSize: 14,
-    color: '#F76C26',
-    fontFamily: 'Inter_300Light'
+    fontSize: 15,
+    color: '#FF0000',
+    fontFamily: 'Nunito_400Regular'
   }
 });
