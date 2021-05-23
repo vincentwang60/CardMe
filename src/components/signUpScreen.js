@@ -37,7 +37,7 @@ export default function signUpScreen( {navigation }) {
 
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
+      <Text style={[styles.text, { top: '10.9%'}]}>Hey olivia! Create an account!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
       <Controller
         name='email'
