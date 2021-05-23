@@ -1,5 +1,5 @@
 import React, { useState, useRef} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 
@@ -13,6 +13,17 @@ import Button from './shared/button.js';
 export default function logInScreen( {navigation }) {
   const [methodChosen, setMethodChosen] = useState(false);
   const { handleSubmit, watch, control } = useForm();
+  let appleIdButton;
+  if(Platform.OS === "android"){
+  }
+  else{
+    appleIdButton =
+      <Button
+        containerStyle={[styles.input, { top: '61%'}]}
+        label='Use Apple ID'
+        onPress={appleIdLogin}
+      />
+  }
 
   function onSubmit(data) {
     signIn(data.email,data.password)
@@ -51,15 +62,11 @@ export default function logInScreen( {navigation }) {
             <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Create an account! </Text>
           </TouchableOpacity>
         </View>
-        <Button
-          containerStyle={[styles.input, { top: '61%'}]}
-          label='Use email'
-          onPress={() => {setMethodChosen(!methodChosen)}}
-        />
+        {appleIdButton}
         <Button
           containerStyle={[styles.input, { top: '68%'}]}
-          label='Use Apple ID'
-          onPress={appleIdLogin}
+          label='Use email'
+          onPress={() => {setMethodChosen(!methodChosen)}}
         />
         <Button
           containerStyle={[styles.input, { top: '75%'}]}

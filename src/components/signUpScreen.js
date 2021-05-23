@@ -34,6 +34,7 @@ export default function signUpScreen( {navigation }) {
     })
     .catch(err=>console.log('error on signup!',err))
   }
+
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
