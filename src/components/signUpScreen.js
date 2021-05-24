@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 
@@ -32,12 +32,23 @@ export default function signUpScreen( {navigation }) {
       console.log('successful signup! still need to confirm',email);
       navigation.navigate('verificationScreen', {passedEmail: email, passedPassword: password});
     })
-    .catch(err=>console.log('error on signup!',err))
+    .catch(err=>{
+      if (err['code'] === 'UsernameExistsException'){
+        console.log('username exists!')
+        Alert.alert(
+          'Sign up error',
+          'An account already exists with this email. Please choose another email or sign in with "' + email + '"',
+        )
+      }
+      else{
+        console.log('error on signup asdf!',err)
+      }
+    })
   }
 
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style={[styles.text, { top: '10.9%'}]}>Hey olivia! Create an account!</Text>
+      <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
       <Controller
         name='email'
