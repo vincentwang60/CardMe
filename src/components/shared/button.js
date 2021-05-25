@@ -1,11 +1,12 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Dimensions, Image} from 'react-native';
 
 export default function Button({
   label,
   labelStyle = styles.label,
   containerStyle = styles.container,
   onPress,
+  img,
 }){
   return (
     <View style={containerStyle}>
@@ -14,10 +15,17 @@ export default function Button({
              {label}
          </Text>
       </TouchableOpacity >
+      <View style={styles.imageContainer}>
+        {img}
+      </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+  imageContainer:{
+    top: '-75%',
+    left: '3%',
+  },
   container: {
     marginVertical: 5,
   },

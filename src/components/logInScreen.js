@@ -1,5 +1,5 @@
 import React, { useState, useRef} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Platform, Image } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 
@@ -22,6 +22,11 @@ export default function logInScreen( {navigation }) {
         containerStyle={[styles.input, { top: '61%'}]}
         label='Use Apple ID'
         onPress={appleIdLogin}
+        img =
+          <Image
+            style={{left: '1%',width:'5%', height: '70%', resizeMode: 'stretch'}}
+            source={require('../assets/apple_icon.png')}
+          />
       />
   }
 
@@ -67,16 +72,31 @@ export default function logInScreen( {navigation }) {
           containerStyle={[styles.input, { top: '68%'}]}
           label='Use email'
           onPress={() => {setMethodChosen(!methodChosen)}}
+          img =
+            <Image
+              style={{top: '5%', width:'7%', height: '65%', resizeMode: 'stretch'}}
+              source={require('../assets/email_icon.png')}
+            />
         />
         <Button
           containerStyle={[styles.input, { top: '75%'}]}
           label='Use Facebook'
           onPress={facebookLogin}
+          img =
+            <Image
+              style={{top: '5%', left: '1.5%',width:'2.5%', height: '65%', resizeMode: 'stretch'}}
+              source={require('../assets/facebook_icon.png')}
+            />
         />
         <Button
           containerStyle={[styles.input, { top: '82%'}]}
           label='Use Google'
           onPress={googleLogin}
+          img =
+            <Image
+              style={{top: '5%',width:'5%', height: '65%', resizeMode: 'stretch'}}
+              source={require('../assets/google_icon.png')}
+            />
         />
         <StatusBar
           barStyle = 'dark-content'
