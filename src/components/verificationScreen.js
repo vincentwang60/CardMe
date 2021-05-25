@@ -75,7 +75,7 @@ export default function verificationScreen( {route, navigation }) {
         ref = {ref}
         value={confirmationCode}
         onChangeText={setConfirmationCode}
-        keyboardType="number-pad"
+        keyboardType="numeric"
         returnKeyDone="done"
         textContentType="oneTimeCode"
         maxLength={6}
