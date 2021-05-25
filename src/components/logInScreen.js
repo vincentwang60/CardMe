@@ -44,6 +44,7 @@ export default function logInScreen( {navigation }) {
   }
   function facebookLogin(){
     console.log('facebook login TODO')
+    Auth.federatedSignIn({ provider: "Facebook" })
   }
   function googleLogin(){
     console.log('google login TODO')

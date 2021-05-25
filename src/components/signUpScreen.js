@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
+import * as Linking from 'expo-linking';
 
 import Amplify, {Auth} from "aws-amplify";
 import AWSConfig from '../../aws-exports'
@@ -15,6 +16,9 @@ export default function signUpScreen( {navigation }) {
   const password = useRef({});
   password.current = watch("password","");
 
+  function logger() {
+    console.log("test")
+  }
   function onSubmit(data) {
     console.log('data',data)
     signUp(data.email, data.password)
@@ -45,7 +49,7 @@ export default function signUpScreen( {navigation }) {
       }
     })
   }
-
+  console.log("test", Linking.createURL())
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
@@ -105,6 +109,11 @@ export default function signUpScreen( {navigation }) {
         containerStyle={[styles.input, { top: '85.0%'}]}
         label="Next step"
         onPress={handleSubmit(onSubmit)}
+      />
+      <Button
+        containerStyle={[styles.input, { top: '5.0%'}]}
+        label="Debug"
+        onPress={logger()}
       />
       <View style={[styles.textContainer, {top: "92.5%"}]}>
         <Text style={[styles.signUpText]}>Already have an account? </Text>

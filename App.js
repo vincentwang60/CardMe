@@ -56,6 +56,7 @@ export default function App() {
     return <AppLoading />;
   }
   else{
+
     return (
       <NavigationContainer>
         <MyStack />
