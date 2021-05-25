@@ -15,6 +15,7 @@ export default function verificationScreen( {route, navigation }) {
   const [containerIsFocused, setContainerIsFocused] = useState(false);
   const codeDigitsArray = new Array(6).fill(0)
   const ref = useRef();
+  const [spamTimeout, setSpamTimeout] = useState(false); 
 
   function handleOnPress() {
     setContainerIsFocused(true);
@@ -51,9 +52,15 @@ export default function verificationScreen( {route, navigation }) {
     })
     .catch(err=>console.log('confirm error!',err))
   }
-  function resendCode(){
-    console.log('you thought')
-  }
+  async function resendConfirmationCode() {
+    try {
+        //await Auth.resendSignUp(passedEmail);
+        console.log('code resent successfully');
+        
+    } catch (err) {
+        console.log('error resending code: ', err);
+    }
+}
   function signIn (){
     console.log('signing in as', passedEmail)
     const user = Auth.signIn(passedEmail, passedPassword)
@@ -84,7 +91,15 @@ export default function verificationScreen( {route, navigation }) {
       <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={() => confirmSignUp()} />
       <View style={styles.textContainer}>
         <Text style={[styles.signInText]}>Haven't received it? </Text>
-        <TouchableOpacity onPress={resendCode}>
+        <TouchableOpacity 
+        disabled = {spamTimeout}
+          onPress={() => { //Resend Code Btton
+            setSpamTimeout(true); 
+            resendConfirmationCode();
+            setTimeout(() => { setSpamTimeout(false);}, 30000); //Prevent Spamming Button
+          }
+        }
+        >
           <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Resend code! </Text>
         </TouchableOpacity>
       </View>
