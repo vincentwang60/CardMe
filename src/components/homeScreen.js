@@ -3,11 +3,12 @@ import { StyleSheet, Text, View, StatusBar } from 'react-native';
 
 import Button from './shared/button.js'
 
+//HomeScreen shows the card currently selected, displays ways to share
 export default function homeScreen( {navigation }) {
   const pressHandler = () => {
     navigation.navigate('libraryScreen')
   }
-  
+
   return (
     <View style={styles.container}>
       <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>

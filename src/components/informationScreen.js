@@ -10,10 +10,13 @@ import * as mutations from '../graphql/mutations.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
+//Form for user to add or edit information about themselves (ie Name, nickname, email, university, socials)
+//TODO allow mutations of User in graphQl database rather than just creating
 export default function informationScreen( {route, navigation }) {
   const {email} = route.params;
   const { handleSubmit, control, formState: {errors} } = useForm();
 
+  //Called when submit button is pressed, calls setInformation
   function onSubmit(data){
     data.id = email;
     console.log('data', data)
@@ -22,6 +25,7 @@ export default function informationScreen( {route, navigation }) {
   const skip = () => {
     navigation.navigate('styleSelectScreen', {email: email})
   }
+  //Called by onSubmit, creates User on graphQl database based on information in form
   async function setInformation(data){
     console.log('made it!', data)
     try{
