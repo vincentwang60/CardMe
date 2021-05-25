@@ -16,9 +16,6 @@ export default function signUpScreen( {navigation }) {
   const password = useRef({});
   password.current = watch("password","");
 
-  function logger() {
-    console.log("test")
-  }
   function onSubmit(data) {
     console.log('data',data)
     signUp(data.email, data.password)
@@ -109,11 +106,6 @@ export default function signUpScreen( {navigation }) {
         containerStyle={[styles.input, { top: '85.0%'}]}
         label="Next step"
         onPress={handleSubmit(onSubmit)}
-      />
-      <Button
-        containerStyle={[styles.input, { top: '5.0%'}]}
-        label="Debug"
-        onPress={logger()}
       />
       <View style={[styles.textContainer, {top: "92.5%"}]}>
         <Text style={[styles.signUpText]}>Already have an account? </Text>
