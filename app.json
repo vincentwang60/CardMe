@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "cardme",
+    "fbscheme": "fb3931214220290227",
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
