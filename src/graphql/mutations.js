@@ -9,8 +9,9 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -24,8 +25,9 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -39,8 +41,51 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createCard = /* GraphQL */ `
+  mutation CreateCard(
+    $input: CreateCardInput!
+    $condition: ModelCardConditionInput
+  ) {
+    createCard(input: $input, condition: $condition) {
+      id
+      name
+      facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateCard = /* GraphQL */ `
+  mutation UpdateCard(
+    $input: UpdateCardInput!
+    $condition: ModelCardConditionInput
+  ) {
+    updateCard(input: $input, condition: $condition) {
+      id
+      name
+      facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteCard = /* GraphQL */ `
+  mutation DeleteCard(
+    $input: DeleteCardInput!
+    $condition: ModelCardConditionInput
+  ) {
+    deleteCard(input: $input, condition: $condition) {
+      id
+      name
+      facebook
       createdAt
       updatedAt
     }

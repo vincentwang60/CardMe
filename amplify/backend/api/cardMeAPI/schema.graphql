@@ -1,6 +1,11 @@
 type User @model {
   id: String!
   name: String!
-  nickname: String
-  description: String
+  cards: [Card] @connection(keyName: "byUser", fields:["id"])
+}
+type Card @model
+  @key(name:"byUser", fields: ["name", "facebook"]) {
+  id: String!
+  name: String!
+  facebook: String
 }

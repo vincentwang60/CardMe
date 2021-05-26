@@ -55,21 +55,6 @@ export default function informationScreen( {route, navigation }) {
           />
         )}
       />
-      <Controller
-        name='nickname'
-        control={control}
-        rules={{
-          //
-        }}
-        render={({field: {onChange, value}})=>(
-          <Input
-            error={errors.nickname}
-            containerStyle={[styles.input, { top: '39.0%'}]}
-            label="Nickname"
-            onChangeText={(text) => onChange(text)}
-          />
-        )}
-      />
       <Button
         containerStyle={[styles.input, { top: '69.0%'}]}
         label="Set information"

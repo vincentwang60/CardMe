@@ -6,8 +6,9 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -23,8 +24,35 @@ export const listUsers = /* GraphQL */ `
       items {
         id
         name
-        nickname
-        description
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getCard = /* GraphQL */ `
+  query GetCard($id: String!) {
+    getCard(id: $id) {
+      id
+      name
+      facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listCards = /* GraphQL */ `
+  query ListCards(
+    $filter: ModelCardFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        facebook
         createdAt
         updatedAt
       }

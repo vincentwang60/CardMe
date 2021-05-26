@@ -6,8 +6,9 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -18,8 +19,9 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -30,8 +32,42 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser {
       id
       name
-      nickname
-      description
+      cards {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateCard = /* GraphQL */ `
+  subscription OnCreateCard {
+    onCreateCard {
+      id
+      name
+      facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateCard = /* GraphQL */ `
+  subscription OnUpdateCard {
+    onUpdateCard {
+      id
+      name
+      facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteCard = /* GraphQL */ `
+  subscription OnDeleteCard {
+    onDeleteCard {
+      id
+      name
+      facebook
       createdAt
       updatedAt
     }
