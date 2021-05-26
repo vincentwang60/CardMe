@@ -6,7 +6,10 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -31,9 +34,9 @@ export const listUsers = /* GraphQL */ `
     }
   }
 `;
-export const getCard = /* GraphQL */ `
-  query GetCard($id: String!) {
-    getCard(id: $id) {
+export const getOwnedCard = /* GraphQL */ `
+  query GetOwnedCard($id: ID!) {
+    getOwnedCard(id: $id) {
       id
       name
       facebook
@@ -42,17 +45,46 @@ export const getCard = /* GraphQL */ `
     }
   }
 `;
-export const listCards = /* GraphQL */ `
-  query ListCards(
-    $filter: ModelCardFilterInput
+export const listOwnedCards = /* GraphQL */ `
+  query ListOwnedCards(
+    $filter: ModelownedCardFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listOwnedCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         name
         facebook
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getSavedCard = /* GraphQL */ `
+  query GetSavedCard($id: ID!) {
+    getSavedCard(id: $id) {
+      id
+      creatorId
+      cardId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listSavedCards = /* GraphQL */ `
+  query ListSavedCards(
+    $filter: ModelsavedCardFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSavedCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        creatorId
+        cardId
         createdAt
         updatedAt
       }

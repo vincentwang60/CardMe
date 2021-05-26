@@ -15,7 +15,7 @@ export default function verificationScreen( {route, navigation }) {
   const [containerIsFocused, setContainerIsFocused] = useState(false);
   const codeDigitsArray = new Array(6).fill(0)
   const ref = useRef();
-  const [spamTimeout, setSpamTimeout] = useState(false); 
+  const [spamTimeout, setSpamTimeout] = useState(false);
 
   function handleOnPress() {
     setContainerIsFocused(true);
@@ -56,7 +56,7 @@ export default function verificationScreen( {route, navigation }) {
     try {
         //await Auth.resendSignUp(passedEmail);
         console.log('code resent successfully');
-        
+
     } catch (err) {
         console.log('error resending code: ', err);
     }
@@ -66,7 +66,7 @@ export default function verificationScreen( {route, navigation }) {
     const user = Auth.signIn(passedEmail, passedPassword)
     .then(()=>{
       console.log('successful login!');
-      navigation.navigate('informationScreen', {email: passedEmail})
+      navigation.navigate('editScreen', {email: passedEmail})
     })
     .catch(err=>console.log('error on login!',err))
   }
@@ -91,10 +91,10 @@ export default function verificationScreen( {route, navigation }) {
       <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={() => confirmSignUp()} />
       <View style={styles.textContainer}>
         <Text style={[styles.signInText]}>Haven't received it? </Text>
-        <TouchableOpacity 
+        <TouchableOpacity
         disabled = {spamTimeout}
           onPress={() => { //Resend Code Btton
-            setSpamTimeout(true); 
+            setSpamTimeout(true);
             resendConfirmationCode();
             setTimeout(() => { setSpamTimeout(false);}, 30000); //Prevent Spamming Button
           }

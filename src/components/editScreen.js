@@ -12,7 +12,7 @@ import Button from './shared/button.js';
 
 //Form for user to add or edit information about themselves (ie Name, nickname, email, university, socials)
 //TODO allow mutations of User in graphQl database rather than just creating
-export default function informationScreen( {route, navigation }) {
+export default function editScreen( {route, navigation }) {
   const {email} = route.params;
   const { handleSubmit, control, formState: {errors} } = useForm();
 
@@ -23,14 +23,14 @@ export default function informationScreen( {route, navigation }) {
     setInformation(data)
   }
   const skip = () => {
-    navigation.navigate('styleSelectScreen', {email: email})
+    navigation.navigate('homeScreen', {email: email})
   }
   //Called by onSubmit, creates User on graphQl database based on information in form
   async function setInformation(data){
     console.log('made it!', data)
     try{
       await API.graphql({ query: mutations.createUser, variables: {input: data}});
-      navigation.navigate('styleSelectScreen', {email: email})
+      navigation.navigate('homeScreen', {email: email})
     }
     catch (error){
       console.log('error on setInformation', error);

@@ -9,7 +9,10 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -25,7 +28,10 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -41,7 +47,10 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -49,12 +58,12 @@ export const deleteUser = /* GraphQL */ `
     }
   }
 `;
-export const createCard = /* GraphQL */ `
-  mutation CreateCard(
-    $input: CreateCardInput!
-    $condition: ModelCardConditionInput
+export const createOwnedCard = /* GraphQL */ `
+  mutation CreateOwnedCard(
+    $input: CreateOwnedCardInput!
+    $condition: ModelownedCardConditionInput
   ) {
-    createCard(input: $input, condition: $condition) {
+    createOwnedCard(input: $input, condition: $condition) {
       id
       name
       facebook
@@ -63,12 +72,12 @@ export const createCard = /* GraphQL */ `
     }
   }
 `;
-export const updateCard = /* GraphQL */ `
-  mutation UpdateCard(
-    $input: UpdateCardInput!
-    $condition: ModelCardConditionInput
+export const updateOwnedCard = /* GraphQL */ `
+  mutation UpdateOwnedCard(
+    $input: UpdateOwnedCardInput!
+    $condition: ModelownedCardConditionInput
   ) {
-    updateCard(input: $input, condition: $condition) {
+    updateOwnedCard(input: $input, condition: $condition) {
       id
       name
       facebook
@@ -77,15 +86,57 @@ export const updateCard = /* GraphQL */ `
     }
   }
 `;
-export const deleteCard = /* GraphQL */ `
-  mutation DeleteCard(
-    $input: DeleteCardInput!
-    $condition: ModelCardConditionInput
+export const deleteOwnedCard = /* GraphQL */ `
+  mutation DeleteOwnedCard(
+    $input: DeleteOwnedCardInput!
+    $condition: ModelownedCardConditionInput
   ) {
-    deleteCard(input: $input, condition: $condition) {
+    deleteOwnedCard(input: $input, condition: $condition) {
       id
       name
       facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createSavedCard = /* GraphQL */ `
+  mutation CreateSavedCard(
+    $input: CreateSavedCardInput!
+    $condition: ModelsavedCardConditionInput
+  ) {
+    createSavedCard(input: $input, condition: $condition) {
+      id
+      creatorId
+      cardId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateSavedCard = /* GraphQL */ `
+  mutation UpdateSavedCard(
+    $input: UpdateSavedCardInput!
+    $condition: ModelsavedCardConditionInput
+  ) {
+    updateSavedCard(input: $input, condition: $condition) {
+      id
+      creatorId
+      cardId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteSavedCard = /* GraphQL */ `
+  mutation DeleteSavedCard(
+    $input: DeleteSavedCardInput!
+    $condition: ModelsavedCardConditionInput
+  ) {
+    deleteSavedCard(input: $input, condition: $condition) {
+      id
+      creatorId
+      cardId
       createdAt
       updatedAt
     }

@@ -53,7 +53,7 @@ export default function logInScreen( {navigation }) {
     const user = Auth.signIn(email, password)
     .then(()=>{
       console.log('successfully logged in as!', email);
-      navigation.navigate('informationScreen', {email: email})
+      navigation.navigate('editScreen', {email: email})
     })
     .catch(err=>console.log('error on login!',err))
   }

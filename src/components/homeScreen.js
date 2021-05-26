@@ -1,22 +1,50 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { listUsers, getUser } from '../graphql/queries.js';
+import {LinearGradient} from 'expo-linear-gradient';
+
+import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import Button from './shared/button.js'
+import Card1 from './shared/card1.js'
 
-//HomeScreen shows the card currently selected, displays ways to share
-export default function homeScreen( {navigation }) {
+export default function homeScreen( {route, navigation }) {
+  const {email} = route.params;
+  const [userData, setUserData] = useState([]);
   const pressHandler = () => {
     navigation.navigate('libraryScreen')
   }
 
+  useEffect(()=>{//runs once every time this screen is loaded
+    fetchUserData();
+  },[]);
+
+  const fetchUserData = async () => {//will fetch all users from dynamodb
+    try{
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
+      console.log('fetched user data:', fetchedUserData.data.getUser);
+      setUserData(fetchedUserData.data.getUser);
+    }
+    catch (error) {
+      console.log('Error on fetchUserData', error);
+    }
+  };
   return (
-    <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
-      <Button label='Button' onPress = {pressHandler} />
+   <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <Text style = {[styles.text, {top: '10%'}]}>Home screen{'\n'}placeholder</Text>
+      <Card1
+        containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]}
+        data={userData}
+      />
+      <Button
+        containerStyle={[styles.items, { top: '79.0%'}]}
+        label='Continue'
+        onPress = {pressHandler}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -24,13 +52,16 @@ export default function homeScreen( {navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF',
-    justifyContent: 'center',
     flex: 1,
   },
-  welcomeText: {
+  text: {
     textAlign: 'center',
     fontSize: 24,
-    color: '#fff',
-    fontFamily: 'Inter_300Light',
+    color: '#000',
+    fontFamily: 'Inter_600SemiBold',
   },
+  items:{
+    position: 'absolute',
+    left: "6.2%",
+  }
 });

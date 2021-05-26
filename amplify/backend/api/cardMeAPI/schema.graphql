@@ -1,11 +1,18 @@
 type User @model {
   id: String!
   name: String!
-  cards: [Card] @connection(keyName: "byUser", fields:["id"])
+  ownedCards: [ownedCard] @connection(keyName: "byUser", fields:["id"])
+  savedCards: [savedCard] @connection(keyName: "byUser", fields:["id"])
 }
-type Card @model
+type ownedCard @model
   @key(name:"byUser", fields: ["name", "facebook"]) {
-  id: String!
+  id: ID!
   name: String!
   facebook: String
+}
+type savedCard @model
+  @key(name:"byUser", fields: ["creatorId", "cardId"]) {
+  id: ID!
+  creatorId: String!
+  cardId: ID!
 }

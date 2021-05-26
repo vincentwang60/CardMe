@@ -18,9 +18,8 @@ import signUpScreen from './src/components/signUpScreen';
 import logInScreen from './src/components/logInScreen';
 import verificationScreen from './src/components/verificationScreen';
 import homeScreen from './src/components/homeScreen';
-import informationScreen from './src/components/informationScreen';
+import editScreen from './src/components/editScreen';
 import libraryScreen from './src/components/libraryScreen';
-import styleSelectScreen from './src/components/styleSelectScreen';
 
 const Stack = createStackNavigator(); //Stack object that contains all the screens
 
@@ -38,9 +37,8 @@ function MyStack() {//creates and configures stack object
       <Stack.Screen name="logInScreen" component={logInScreen} />
       <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="homeScreen" component={homeScreen} />
-      <Stack.Screen name="informationScreen" component={informationScreen} />
+      <Stack.Screen name="editScreen" component={editScreen} />
       <Stack.Screen name="libraryScreen" component={libraryScreen} />
-      <Stack.Screen name="styleSelectScreen" component={styleSelectScreen} />
     </Stack.Navigator>
   );
 }

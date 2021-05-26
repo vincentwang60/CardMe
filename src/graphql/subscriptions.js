@@ -6,7 +6,10 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -19,7 +22,10 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -32,7 +38,10 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser {
       id
       name
-      cards {
+      ownedCards {
+        nextToken
+      }
+      savedCards {
         nextToken
       }
       createdAt
@@ -40,9 +49,9 @@ export const onDeleteUser = /* GraphQL */ `
     }
   }
 `;
-export const onCreateCard = /* GraphQL */ `
-  subscription OnCreateCard {
-    onCreateCard {
+export const onCreateOwnedCard = /* GraphQL */ `
+  subscription OnCreateOwnedCard {
+    onCreateOwnedCard {
       id
       name
       facebook
@@ -51,9 +60,9 @@ export const onCreateCard = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateCard = /* GraphQL */ `
-  subscription OnUpdateCard {
-    onUpdateCard {
+export const onUpdateOwnedCard = /* GraphQL */ `
+  subscription OnUpdateOwnedCard {
+    onUpdateOwnedCard {
       id
       name
       facebook
@@ -62,12 +71,45 @@ export const onUpdateCard = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteCard = /* GraphQL */ `
-  subscription OnDeleteCard {
-    onDeleteCard {
+export const onDeleteOwnedCard = /* GraphQL */ `
+  subscription OnDeleteOwnedCard {
+    onDeleteOwnedCard {
       id
       name
       facebook
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateSavedCard = /* GraphQL */ `
+  subscription OnCreateSavedCard {
+    onCreateSavedCard {
+      id
+      creatorId
+      cardId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateSavedCard = /* GraphQL */ `
+  subscription OnUpdateSavedCard {
+    onUpdateSavedCard {
+      id
+      creatorId
+      cardId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteSavedCard = /* GraphQL */ `
+  subscription OnDeleteSavedCard {
+    onDeleteSavedCard {
+      id
+      creatorId
+      cardId
       createdAt
       updatedAt
     }
