@@ -20,6 +20,8 @@ import verificationScreen from './src/components/verificationScreen';
 import homeScreen from './src/components/homeScreen';
 import editScreen from './src/components/editScreen';
 import libraryScreen from './src/components/libraryScreen';
+import forgotPasswordScreen from './src/components/forgotPasswordScreen';
+import verificationCodeForgotPassword from './src/components/verificationCodeForgotPassword';
 
 const Stack = createStackNavigator(); //Stack object that contains all the screens
 
@@ -39,6 +41,8 @@ function MyStack() {//creates and configures stack object
       <Stack.Screen name="homeScreen" component={homeScreen} />
       <Stack.Screen name="editScreen" component={editScreen} />
       <Stack.Screen name="libraryScreen" component={libraryScreen} />
+      <Stack.Screen name="forgotPasswordScreen" component={forgotPasswordScreen} />
+      <Stack.Screen name="verificationCodeForgotPassword" component={verificationCodeForgotPassword} />
     </Stack.Navigator>
   );
 }
