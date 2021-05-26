@@ -55,7 +55,6 @@ export default function signUpScreen( {navigation }) {
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
-      {/* <View style={styles.inputContainer}> */}
       <Controller
         name='email'
         control={control}
@@ -117,7 +116,6 @@ export default function signUpScreen( {navigation }) {
           />
         )
       }/>
-      {/* </View> */}
       <Button
         containerStyle={[styles.input, { top: '85.0%'}]}
         label="Next step"
@@ -158,9 +156,6 @@ const styles = StyleSheet.create({
   input:{
     position: 'absolute',
     left: "6.2%",
-  },
-  inputContainer:{
-    flex: 0.5
   },
   signUpText:{
     alignItems: 'center',
