@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert,Dimensions } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 import * as Linking from 'expo-linking';
@@ -15,6 +15,10 @@ export default function signUpScreen( {navigation }) {
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const password = useRef({});
   password.current = watch("password","");
+  
+  // state of password (secure or not)
+  const [isSecure, setIsSecure] = useState(true);
+
 
   function onSubmit(data) {
     console.log('data',data)
@@ -51,6 +55,7 @@ export default function signUpScreen( {navigation }) {
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>Register with your email.</Text>
+      {/* <View style={styles.inputContainer}> */}
       <Controller
         name='email'
         control={control}
@@ -78,7 +83,17 @@ export default function signUpScreen( {navigation }) {
           <Input
             error={errors.password}
             containerStyle={[styles.input, { top: '34.8%'}]}
-            secure = {true}
+            secure = {isSecure}
+            // show and hide password
+            // need to fix — clears password on toggle for iphone
+            icon={
+              <TouchableOpacity
+                onPress={() => {
+                  isSecure ? setIsSecure(false) : setIsSecure(true)
+                }}>
+                <Text style={styles.icon}>{isSecure ? 'Show' : 'Hide'}</Text>
+              </TouchableOpacity>
+            }
             label="Password"
             onChangeText={(text) => onChange(text)}
             value={value}
@@ -102,6 +117,7 @@ export default function signUpScreen( {navigation }) {
           />
         )
       }/>
+      {/* </View> */}
       <Button
         containerStyle={[styles.input, { top: '85.0%'}]}
         label="Next step"
@@ -143,9 +159,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: "6.2%",
   },
+  inputContainer:{
+    flex: 0.5
+  },
   signUpText:{
     alignItems: 'center',
     fontFamily: 'Nunito_400Regular',
     fontSize: 13,
   },
+  icon: {
+    fontSize: 14,
+    color: '#8F8F8F',
+    fontFamily: 'Inter_600SemiBold',
+    position: 'absolute',
+  }
 });

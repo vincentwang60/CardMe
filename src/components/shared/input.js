@@ -9,25 +9,45 @@ export default function Input({
   onChangeText,
   secure = false,
   error,
+  icon,
 }){
-  return (
-    <View style={containerStyle}>
-      <Text style={labelStyle}>{label}</Text>
-      <TextInput
-        autoCapitalize="none"
-        secureTextEntry = {secure}
-        style={inputStyle}
-        onChangeText= {onChangeText}
-      />
-      <Text style={styles.error}>{error && error.message}</Text>
-    </View>
-  );
+
+  if (icon) {
+    return (
+        <View style={containerStyle}>
+        <Text style={labelStyle}>{label}</Text>
+        <TextInput
+          autoCapitalize="none"
+          secureTextEntry = {secure}
+          style={[inputStyle, {paddingHorizontal:50,}]}
+          onChangeText= {onChangeText}
+        />
+        <View style={styles.icon}>{icon}</View>
+        <Text style={styles.error}>{error && error.message}</Text>
+      </View>
+      );
+  }
+  else {
+    return (
+        <View style={containerStyle}>
+          <Text style={labelStyle}>{label}</Text>
+          <TextInput
+            autoCapitalize="none"
+            secureTextEntry = {secure}
+            style={inputStyle}
+            onChangeText= {onChangeText}
+          />
+          <Text style={styles.error}>{error && error.message}</Text>
+        </View>
+      );
+  }
 }
 
 
 const styles = StyleSheet.create({
   container: {
     marginVertical: 2,
+    backgroundColor: '#000'
   },
   input: {
     paddingVertical: 5,
@@ -39,6 +59,7 @@ const styles = StyleSheet.create({
     borderBottomColor:'#8F8F8F',
     borderBottomWidth: 1,
     fontFamily: 'Nunito_700Bold',
+    position: 'relative'
   },
   label: {
     paddingVertical: 0,
@@ -52,5 +73,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#FF0000',
     fontFamily: 'Nunito_400Regular'
+  },
+   icon: {
+   left:"90%",
+    fontSize: 14,
+    color: '#8F8F8F',
+    fontFamily: 'Inter_600SemiBold',
+    position: 'absolute',
+    paddingVertical: 26,
   }
 });
