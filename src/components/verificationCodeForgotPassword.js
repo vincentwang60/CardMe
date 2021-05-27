@@ -51,15 +51,6 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
   function toggleIsNewUser() {
     setIsNewUser(!isNewUser);
   }
-  async function resendConfirmationCode() {
-    try {
-       await Auth.resendSignUp(passedEmail);
-        console.log('code resent successfully');
-        
-    } catch (err) {
-        console.log('error resending code: ', err);
-    }
-}
   function signIn (){
     console.log('signing in as', passedEmail)
     const user = Auth.signIn(passedEmail, passedPassword)
@@ -74,6 +65,13 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
     Auth.forgotPasswordSubmit(email, code, new_password)
     .then(data => console.log(data))
     .catch(err => console.log(err));
+  }
+  function forgotPassword(email){
+    // Send confirmation code to user's email
+    Auth.forgotPassword(email)
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
+        
   }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
@@ -117,8 +115,8 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
         disabled = {spamTimeout}
           onPress={() => { //Resend Code Btton
             setSpamTimeout(true); 
-            resendConfirmationCode();
-            setTimeout(() => { setSpamTimeout(false);}, 30000); //Prevent Spamming Button
+            forgotPassword(email);
+            setTimeout(() => { setSpamTimeout(false);}, 3000); //Prevent Spamming Button
           }
         }
         >

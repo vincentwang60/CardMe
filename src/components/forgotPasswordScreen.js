@@ -59,9 +59,6 @@ export default function logInScreen( {navigation }) {
         label="Send Confirmation Code"
         onPress={handleSubmit(onSubmit)}
       />
-      <TouchableOpacity onPress={navigation.navigate('forgotPasswordScreen')} style={[styles.touchable, {top: '52.5%'}]}>
-        <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Forgot your password? </Text>
-      </TouchableOpacity>
       <StatusBar
         barStyle = 'dark-content'
         backgroundColor = '#fff'/>
