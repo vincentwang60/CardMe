@@ -4,18 +4,21 @@ import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth} from "aws-amplify";
 import AWSConfig from '../../aws-exports'
+import { useForm, Controller } from "react-hook-form";
 Amplify.configure(AWSConfig)
 
-import Button from './shared/button.js';
 
-export default function verificationScreen( {route, navigation }) {
-  const {passedEmail} = route.params;
-  const {passedPassword} = route.params;
+import Button from './shared/button.js';
+import Input from './shared/input.js';
+
+export default function verificationCodeForgotPassword( {route, navigation }) {
+  const {email} = route.params;
   const [confirmationCode, setConfirmationCode] = useState('');
   const [containerIsFocused, setContainerIsFocused] = useState(false);
   const codeDigitsArray = new Array(6).fill(0)
   const ref = useRef();
-  const [spamTimeout, setSpamTimeout] = useState(false);
+  const [spamTimeout, setSpamTimeout] = useState(false); 
+  const { handleSubmit, watch, control, formState:{errors} } = useForm();
 
   function handleOnPress() {
     setContainerIsFocused(true);
@@ -41,38 +44,38 @@ export default function verificationScreen( {route, navigation }) {
       </View>
     );
   }
+  function onSubmit(data){
+    console.log(data)
+    forgotPasswordSubmit(email,confirmationCode,data.newPassword)
+  }
   function toggleIsNewUser() {
     setIsNewUser(!isNewUser);
   }
-  function confirmSignUp(){
-    Auth.confirmSignUp(passedEmail, confirmationCode)
-    .then(()=>{
-      console.log('confirm success', passedEmail);
-      signIn()
-    })
-    .catch(err=>console.log('confirm error!',err))
-  }
-  async function resendConfirmationCode() {
-    try {
-       await Auth.resendSignUp(passedEmail);
-        console.log('code resent successfully');
-
-    } catch (err) {
-        console.log('error resending code: ', err);
-    }
-}
   function signIn (){
     console.log('signing in as', passedEmail)
     const user = Auth.signIn(passedEmail, passedPassword)
     .then(()=>{
       console.log('successful login!');
-      navigation.navigate('editScreen', {email: passedEmail})
+      navigation.navigate('informationScreen', {email: passedEmail})
     })
     .catch(err=>console.log('error on login!',err))
   }
+
+  function forgotPasswordSubmit(email, code, new_password){
+    Auth.forgotPasswordSubmit(email, code, new_password)
+    .then(data => console.log(data))
+    .catch(err => console.log(err));
+  }
+  function forgotPassword(email){
+    // Send confirmation code to user's email
+    Auth.forgotPassword(email)
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
+        
+  }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style={[styles.text, { top: '10.9%'}]}>Authenticate your account!</Text>
+      <Text style={[styles.text, { top: '10.9%'}]}>Authenticate your request!</Text>
       <Text style={[styles.text, { top: '15.2%'}, {color: '#8F8F8F'}]}>We sent a verification code to{'\n'}your email address. </Text>
       <Text style={styles.labelStyle}> Verification code </Text>
       <Pressable style={styles.inputsContainer} onPress={handleOnPress}>
@@ -88,15 +91,32 @@ export default function verificationScreen( {route, navigation }) {
         maxLength={6}
         style={styles.hiddenCodeInput}
       />
-      <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={() => confirmSignUp()} />
+      <Controller
+        name='newPassword'
+        rules={{
+          required:{value:true, message:'Please enter a password'}
+        }}
+        control={control}
+        render={({field: {onChange, value }})=>(
+          <Input
+            containerStyle={[styles.input, { top: '0.8%', left: '7.5%'}]}
+            errors={errors.newPassword}
+            //Centering is ok visually, but most likely not technically centered see 7.5% fix later
+            label="New Password"
+            onChangeText={text => onChange(text)}
+            value={value}
+          />
+        )}
+      />
+      <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={handleSubmit(onSubmit)} />
       <View style={styles.textContainer}>
         <Text style={[styles.signInText]}>Haven't received it? </Text>
-        <TouchableOpacity
+        <TouchableOpacity 
         disabled = {spamTimeout}
           onPress={() => { //Resend Code Btton
-            setSpamTimeout(true);
-            resendConfirmationCode();
-            setTimeout(() => { setSpamTimeout(false);}, 30000); //Prevent Spamming Button
+            setSpamTimeout(true); 
+            forgotPassword(email);
+            setTimeout(() => { setSpamTimeout(false);}, 3000); //Prevent Spamming Button
           }
         }
         >

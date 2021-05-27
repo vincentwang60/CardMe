@@ -36,7 +36,7 @@ export default function logInScreen( {navigation }) {
     signIn(data.email,data.password)
   };
   function forgotPassword(){
-    console.log('TODO')
+    navigation.navigate('forgotPasswordScreen')
   }
   function toggleIsNewUser() {
     navigation.navigate('signUpScreen')
