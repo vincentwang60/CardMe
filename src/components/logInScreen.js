@@ -13,6 +13,8 @@ import Button from './shared/button.js';
 export default function logInScreen( {navigation }) {
   const [methodChosen, setMethodChosen] = useState(false);
   const { handleSubmit, watch, control } = useForm();
+  // state of password (secure or not)
+  const [isSecure, setIsSecure] = useState(true);
   let appleIdButton;
   if(Platform.OS === "android"){
   }
@@ -127,7 +129,15 @@ export default function logInScreen( {navigation }) {
         render={({field: {onChange, value }})=>(
           <Input
             containerStyle={[styles.input, { top: '44.8%'}]}
-            secure = {true}
+            secure = {isSecure}
+            icon={
+              <TouchableOpacity
+                onPress={() => {
+                  isSecure ? setIsSecure(false) : setIsSecure(true)
+                }}>
+                <Text style={styles.icon}>{isSecure ? 'Show' : 'Hide'}</Text>
+              </TouchableOpacity>
+            }
             label="Password"
             onChangeText={(text) => onChange(text)}
             value={value}
@@ -187,4 +197,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
     fontSize: 13,
   },
+  icon: {
+    fontSize: 14,
+    color: '#8F8F8F',
+    fontFamily: 'Inter_600SemiBold',
+    position: 'absolute',
+  }
 });
