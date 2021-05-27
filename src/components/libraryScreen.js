@@ -1,35 +1,85 @@
-import React from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
+
+import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import Button from './shared/button.js'
+import Card1 from './shared/card1.js'
+import { listUsers, getUser } from '../graphql/queries.js';
+import { updateUser } from '../graphql/mutations.js';
 
-export default function homeScreen( {navigation }) {
-  const pressHandler = () => {
-    //
+export default function libraryScreen( {route, navigation }) {
+  const {email} = route.params;
+  const [userData, setUserData] = useState([]);
+
+  useEffect(()=>{//runs once every time this screen is loaded
+    //fetchUserData();
+  },[]);
+
+  const toHome = () => {
+    navigation.navigate('homeScreen')
   }
+  const createCard = async() => {
+    const receivedData = await API.graphql(graphqlOperation(getUser, {id: email}))
+    const user = receivedData.data.getUser
+    const newCard = {id: 'new id!', title: 'Title placeholder', content: 'Content placeholder'}
+    const newUpdateUser = {
+      id: user.id,
+      name: user.name,
+      cardsCreated: user.cardsCreated ? [...user.cardsCreated, newCard]: [newCard]
+    }
+    const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+  }
+  const fetchUserData = async () => {//will fetch all users from dynamodb
+    try{
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
+      console.log('fetched user data:', fetchedUserData.data.getUser);
+      setUserData(fetchedUserData.data.getUser);
+    }
+    catch (error) {
+      console.log('Error on fetchUserData', error);
+    }
+  };
   return (
-    <View style={styles.container}>
-      <Text style = {[styles.welcomeText]}>Quick brown fox jumps over{"\n"}the lazy dog</Text>
-      <Button label='Button' onPress = {pressHandler} />
+   <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <Text style = {[styles.text, {top: '10%'}]}>Library screen{'\n'}placeholder</Text>
+      <Button
+        containerStyle={[styles.items, { top: '59.0%'}]}
+        label='Create Empty Card'
+        onPress = {createCard}
+      />
+      <Button
+        containerStyle={[styles.items, { top: '69.0%'}]}
+        label='Fetch user data'
+        onPress = {fetchUserData}
+      />
+      <Button
+        containerStyle={[styles.items, { top: '79.0%'}]}
+        label='Go to home screen'
+        onPress = {toHome}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
-    </View>
+    </LinearGradient>
   );
 }
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFF',
     flex: 1,
-    backgroundColor: '#325F71',
-    padding:8,
-    justifyContent: 'center',
   },
-  welcomeText: {
+  text: {
     textAlign: 'center',
     fontSize: 24,
-    color: '#fff',
-    fontFamily: 'Inter_300Light',
+    color: '#000',
+    fontFamily: 'Inter_600SemiBold',
   },
+  items:{
+    position: 'absolute',
+    left: "6.2%",
+  }
 });

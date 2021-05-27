@@ -1,24 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
-import { listUsers, getUser } from '../graphql/queries.js';
 import {LinearGradient} from 'expo-linear-gradient';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import Button from './shared/button.js'
 import Card1 from './shared/card1.js'
+import { listUsers, getUser } from '../graphql/queries.js';
 
 export default function homeScreen( {route, navigation }) {
   const {email} = route.params;
   const [userData, setUserData] = useState([]);
-  const pressHandler = () => {
-    navigation.navigate('libraryScreen')
-  }
 
   useEffect(()=>{//runs once every time this screen is loaded
     fetchUserData();
   },[]);
 
+  const toLibrary = () => {
+    navigation.navigate('libraryScreen', {email: email})
+  }
   const fetchUserData = async () => {//will fetch all users from dynamodb
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
@@ -38,8 +38,8 @@ export default function homeScreen( {route, navigation }) {
       />
       <Button
         containerStyle={[styles.items, { top: '79.0%'}]}
-        label='Continue'
-        onPress = {pressHandler}
+        label='Go to library'
+        onPress = {toLibrary}
       />
       <StatusBar
         barStyle = "light-content"

@@ -6,11 +6,10 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser {
       id
       name
-      ownedCards {
-        nextToken
-      }
-      savedCards {
-        nextToken
+      cardsCreated {
+        id
+        title
+        content
       }
       createdAt
       updatedAt
@@ -22,11 +21,10 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser {
       id
       name
-      ownedCards {
-        nextToken
-      }
-      savedCards {
-        nextToken
+      cardsCreated {
+        id
+        title
+        content
       }
       createdAt
       updatedAt
@@ -38,78 +36,11 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser {
       id
       name
-      ownedCards {
-        nextToken
+      cardsCreated {
+        id
+        title
+        content
       }
-      savedCards {
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateOwnedCard = /* GraphQL */ `
-  subscription OnCreateOwnedCard {
-    onCreateOwnedCard {
-      id
-      name
-      facebook
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateOwnedCard = /* GraphQL */ `
-  subscription OnUpdateOwnedCard {
-    onUpdateOwnedCard {
-      id
-      name
-      facebook
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteOwnedCard = /* GraphQL */ `
-  subscription OnDeleteOwnedCard {
-    onDeleteOwnedCard {
-      id
-      name
-      facebook
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateSavedCard = /* GraphQL */ `
-  subscription OnCreateSavedCard {
-    onCreateSavedCard {
-      id
-      creatorId
-      cardId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateSavedCard = /* GraphQL */ `
-  subscription OnUpdateSavedCard {
-    onUpdateSavedCard {
-      id
-      creatorId
-      cardId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteSavedCard = /* GraphQL */ `
-  subscription OnDeleteSavedCard {
-    onDeleteSavedCard {
-      id
-      creatorId
-      cardId
       createdAt
       updatedAt
     }

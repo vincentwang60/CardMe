@@ -15,7 +15,7 @@ export default function signUpScreen( {navigation }) {
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const password = useRef({});
   password.current = watch("password","");
-  
+
   // state of password (secure or not)
   const [isSecure, setIsSecure] = useState(true);
 
@@ -50,7 +50,6 @@ export default function signUpScreen( {navigation }) {
       }
     })
   }
-  console.log("test", Linking.createURL())
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Create an account!</Text>

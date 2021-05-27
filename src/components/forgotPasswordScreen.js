@@ -10,23 +10,19 @@ Amplify.configure(AWSConfig)
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
-export default function logInScreen( {navigation }) {
+export default function forgotPassword( {navigation }) {
   const { handleSubmit, watch, control } = useForm();
- 
 
   function onSubmit(data) {
     console.log('Email is: ' + data.email)
     forgotPassword(data.email);
     navigation.navigate('verificationCodeForgotPassword', {email: data.email})
   };
-
-
   function forgotPassword(email){
     // Send confirmation code to user's email
     Auth.forgotPassword(email)
         .then(data => console.log(data))
         .catch(err => console.log(err));
-        
   }
   function forgotPasswordSubmit(email, code, new_password){
     // Collect confirmation code and new password, then
@@ -34,10 +30,6 @@ export default function logInScreen( {navigation }) {
         .then(data => console.log(data))
         .catch(err => console.log(err));
 }
-
-
-
-  
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style={[styles.text, { top: '10.9%'}]}>Change Password Below</Text>
@@ -59,9 +51,6 @@ export default function logInScreen( {navigation }) {
         label="Send Confirmation Code"
         onPress={handleSubmit(onSubmit)}
       />
-      <TouchableOpacity onPress={navigation.navigate('forgotPasswordScreen')} style={[styles.touchable, {top: '52.5%'}]}>
-        <Text style={[styles.signInText, {fontFamily: 'Nunito_700Bold'}]}> Forgot your password? </Text>
-      </TouchableOpacity>
       <StatusBar
         barStyle = 'dark-content'
         backgroundColor = '#fff'/>

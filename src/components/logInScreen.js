@@ -49,11 +49,14 @@ export default function logInScreen( {navigation }) {
   function googleLogin(){
     console.log('google login TODO')
   }
+  function quickLogin(){
+    signIn('vkwang@mit.edu', 'newPassword')
+  }
   function signIn (email, password){
     const user = Auth.signIn(email, password)
     .then(()=>{
       console.log('successfully logged in as!', email);
-      navigation.navigate('editScreen', {email: email})
+      navigation.navigate('homeScreen', {email: email})
     })
     .catch(err=>console.log('error on login!',err))
   }
@@ -69,6 +72,11 @@ export default function logInScreen( {navigation }) {
           </TouchableOpacity>
         </View>
         {appleIdButton}
+        <Button
+          containerStyle={[styles.input, { top: '51%'}]}
+          label='Quick login for debug'
+          onPress={() => {quickLogin()}}
+        />
         <Button
           containerStyle={[styles.input, { top: '68%'}]}
           label='Use email'
