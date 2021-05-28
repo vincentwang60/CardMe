@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
+import { v4 as uuidv4 } from 'uuid';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -23,12 +24,16 @@ export default function libraryScreen( {route, navigation }) {
   const createCard = async() => {
     const receivedData = await API.graphql(graphqlOperation(getUser, {id: email}))
     const user = receivedData.data.getUser
-    const newCard = {id: 'new id!', title: 'Title placeholder', content: 'Content placeholder'}
+    const newContent = {id: uuidv4(), name: 'New content name', data: 'New data name'}
+    console.log('---new content:', newContent)
+    const newOwnedCard = { id: uuidv4(), title: 'New card title!!', content: newContent}
+    console.log('---new owned card:', newOwnedCard)
     const newUpdateUser = {
       id: user.id,
       name: user.name,
-      cardsCreated: user.cardsCreated ? [...user.cardsCreated, newCard]: [newCard]
+      cardsCreated: user.cardsCreated ? [...user.cardsCreated, newOwnedCard]: [newOwnedCard]
     }
+    console.log('---new user', newUpdateUser)
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
   }
   const fetchUserData = async () => {//will fetch all users from dynamodb

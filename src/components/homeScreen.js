@@ -11,6 +11,7 @@ import { listUsers, getUser } from '../graphql/queries.js';
 export default function homeScreen( {route, navigation }) {
   const {email} = route.params;
   const [userData, setUserData] = useState([]);
+  const [loading, setLoading] = useState(true)
 
   useEffect(()=>{//runs once every time this screen is loaded
     fetchUserData();
@@ -19,22 +20,30 @@ export default function homeScreen( {route, navigation }) {
   const toLibrary = () => {
     navigation.navigate('libraryScreen', {email: email})
   }
-  const fetchUserData = async () => {//will fetch all users from dynamodb
+  const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
       console.log('fetched user data:', fetchedUserData.data.getUser);
       setUserData(fetchedUserData.data.getUser);
+      console.log('fetched user cards:', fetchedUserData.data.getUser.cardsCreated[0]);
+      setLoading(false)
     }
     catch (error) {
       console.log('Error on fetchUserData', error);
     }
   };
+
+  if (loading){
+    return(
+      <Text>loading</Text>
+    )
+  }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '10%'}]}>Home screen{'\n'}placeholder</Text>
       <Card1
         containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]}
-        data={userData}
+        data={userData.cardsCreated[0]}
       />
       <Button
         containerStyle={[styles.items, { top: '79.0%'}]}

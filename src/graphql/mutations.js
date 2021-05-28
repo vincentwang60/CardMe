@@ -12,7 +12,11 @@ export const createUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt
@@ -30,7 +34,11 @@ export const updateUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt
@@ -48,7 +56,11 @@ export const deleteUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt

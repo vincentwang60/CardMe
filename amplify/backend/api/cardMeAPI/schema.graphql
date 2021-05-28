@@ -2,11 +2,25 @@ type User @model
 {
   id: String!
   name: String!
-  cardsCreated: [Card]
+  cardsCreated: [ownedCard]
+  savedCards: [savedCard]
 }
-type Card
+type ownedCard
 {
   id: String!
   title: String!
-  content: String!
+  content: [content] @connection(name: "cardContent")
+}
+type content
+{
+  id: String!
+  name: String!
+  data: String!
+  card: ownedCard @connection(name: "cardContent")
+}
+type savedCard
+{
+  id: String!
+  creatorID: String!
+  cardId: String!
 }

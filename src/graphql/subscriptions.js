@@ -9,7 +9,11 @@ export const onCreateUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt
@@ -24,7 +28,11 @@ export const onUpdateUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt
@@ -39,7 +47,11 @@ export const onDeleteUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt

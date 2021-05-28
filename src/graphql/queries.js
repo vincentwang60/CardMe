@@ -9,7 +9,11 @@ export const getUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content
+      }
+      savedCards {
+        id
+        creatorID
+        cardId
       }
       createdAt
       updatedAt
