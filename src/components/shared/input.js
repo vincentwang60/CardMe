@@ -10,6 +10,7 @@ export default function Input({
   secure = false,
   error,
   icon,
+  value
 }){
 
   if (icon) {
@@ -36,6 +37,7 @@ export default function Input({
             secureTextEntry = {secure}
             style={inputStyle}
             onChangeText= {onChangeText}
+            value={value}
           />
           <Text style={styles.error}>{error && error.message}</Text>
         </View>

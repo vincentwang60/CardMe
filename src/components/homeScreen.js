@@ -27,7 +27,6 @@ export default function homeScreen( {route, navigation }) {
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
       setUserData(fetchedUserData.data.getUser);
-      console.log('loaded cards:', fetchedUserData.data.getUser.cardsCreated)
       setLoading(false)
     }
     catch (error) {
