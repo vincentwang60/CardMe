@@ -21,14 +21,13 @@ export default function signUpScreen( {navigation }) {
 
 
   function onSubmit(data) {
-    console.log('data',data)
     signUp(data.email, data.password)
   };
   function toggleIsNewUser() {
     navigation.navigate('logInScreen')
   }
-  function signUp(email, password) {
-    console.log('sign up attempt with', email, password)
+  function signUp(email, password, name) {
+    console.log('signing up with', email, password)
     Auth.signUp({
       username: email,
       password: password
@@ -39,14 +38,13 @@ export default function signUpScreen( {navigation }) {
     })
     .catch(err=>{
       if (err['code'] === 'UsernameExistsException'){
-        console.log('username exists!')
         Alert.alert(
           'Sign up error',
           'An account already exists with this email. Please choose another email or sign in with "' + email + '"',
         )
       }
       else{
-        console.log('error on signup asdf!',err)
+        console.log('error on signup:',err)
       }
     })
   }

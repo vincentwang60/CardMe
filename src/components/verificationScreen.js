@@ -19,7 +19,6 @@ export default function verificationScreen( {route, navigation }) {
 
   function handleOnPress() {
     setContainerIsFocused(true);
-    console.log('pressed', containerIsFocused)
     ref.current.focus();
   }
   const toDigitInput = (_value: number, i: number) =>{
@@ -66,7 +65,7 @@ export default function verificationScreen( {route, navigation }) {
     const user = Auth.signIn(passedEmail, passedPassword)
     .then(()=>{
       console.log('successful login!');
-      navigation.navigate('editScreen', {email: passedEmail})
+      navigation.navigate('informationEditScreen', {email: passedEmail})
     })
     .catch(err=>console.log('error on login!',err))
   }

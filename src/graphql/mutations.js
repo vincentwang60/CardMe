@@ -8,7 +8,6 @@ export const createUser = /* GraphQL */ `
   ) {
     createUser(input: $input, condition: $condition) {
       id
-      name
       cardsCreated {
         id
         title
@@ -30,7 +29,6 @@ export const updateUser = /* GraphQL */ `
   ) {
     updateUser(input: $input, condition: $condition) {
       id
-      name
       cardsCreated {
         id
         title
@@ -52,7 +50,6 @@ export const deleteUser = /* GraphQL */ `
   ) {
     deleteUser(input: $input, condition: $condition) {
       id
-      name
       cardsCreated {
         id
         title

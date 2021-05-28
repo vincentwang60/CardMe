@@ -5,7 +5,6 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      name
       cardsCreated {
         id
         title
@@ -24,7 +23,6 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      name
       cardsCreated {
         id
         title
@@ -43,7 +41,6 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      name
       cardsCreated {
         id
         title

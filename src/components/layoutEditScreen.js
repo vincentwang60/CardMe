@@ -12,7 +12,7 @@ import Button from './shared/button.js';
 
 //Form for user to add or edit information about themselves (ie Name, nickname, email, university, socials)
 //TODO allow mutations of User in graphQl database rather than just creating
-export default function editScreen( {route, navigation }) {
+export default function layoutEditScreen( {route, navigation }) {
   const {email} = route.params;
   const { handleSubmit, control, formState: {errors} } = useForm();
 
@@ -22,7 +22,10 @@ export default function editScreen( {route, navigation }) {
     console.log('data', data)
     setInformation(data)
   }
-  const skip = () => {
+  const toInformationEdit = () => {
+    navigation.navigate('informationEditScreen', {email: email})
+  }
+  const toHome = () => {
     navigation.navigate('homeScreen', {email: email})
   }
   //Called by onSubmit, creates User on graphQl database based on information in form
@@ -39,6 +42,7 @@ export default function editScreen( {route, navigation }) {
 
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <Text style = {[styles.text, {top: '10%'}]}>Layout edit{'\n'}screen placeholder</Text>
       <Controller
         name='name'
         control={control}
@@ -61,9 +65,14 @@ export default function editScreen( {route, navigation }) {
         onPress={handleSubmit(onSubmit)}
       />
       <Button
-        containerStyle={[styles.input, { top: '79.0%'}]}
-        label="Skip"
-        onPress={skip}
+        containerStyle={[styles.input, { top: '76.0%'}]}
+        label="To info edit"
+        onPress={toInformationEdit}
+      />
+      <Button
+        containerStyle={[styles.input, { top: '83.0%'}]}
+        label="To home"
+        onPress={toHome}
       />
       <StatusBar
         barStyle = "light-content"
@@ -76,8 +85,13 @@ export default function editScreen( {route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF',
-    justifyContent: 'center',
     flex: 1,
+  },
+  text: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: '#000',
+    fontFamily: 'Inter_600SemiBold',
   },
   input:{
     position: 'absolute',

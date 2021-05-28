@@ -12,7 +12,7 @@ export default function Card1({
     <View style={containerStyle}>
       <View style={styles.container}>
          <Text style = {labelStyle}>
-           ID: {data.id}{"\n"}title: {data.title}{"\n"}content: {data.content}
+           title: {data.title}{"\n"}content name: {data.content[0].name}{"\n"}content data: {data.content[0].data}
          </Text>
       </View>
     </View>

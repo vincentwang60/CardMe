@@ -1,7 +1,6 @@
 type User @model
 {
   id: String!
-  name: String!
   cardsCreated: [ownedCard]
   savedCards: [savedCard]
 }
@@ -9,14 +8,13 @@ type ownedCard
 {
   id: String!
   title: String!
-  content: [content] @connection(name: "cardContent")
+  content: [content]
 }
 type content
 {
   id: String!
   name: String!
   data: String!
-  card: ownedCard @connection(name: "cardContent")
 }
 type savedCard
 {

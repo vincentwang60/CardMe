@@ -20,12 +20,14 @@ export default function homeScreen( {route, navigation }) {
   const toLibrary = () => {
     navigation.navigate('libraryScreen', {email: email})
   }
+  const toEdit = () => {
+    navigation.navigate('informationEditScreen', {email: email})
+  }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
-      console.log('fetched user data:', fetchedUserData.data.getUser);
       setUserData(fetchedUserData.data.getUser);
-      console.log('fetched user cards:', fetchedUserData.data.getUser.cardsCreated[0]);
+      console.log('loaded cards:', fetchedUserData.data.getUser.cardsCreated)
       setLoading(false)
     }
     catch (error) {
@@ -49,6 +51,11 @@ export default function homeScreen( {route, navigation }) {
         containerStyle={[styles.items, { top: '79.0%'}]}
         label='Go to library'
         onPress = {toLibrary}
+      />
+      <Button
+        containerStyle={[styles.items, { top: '86.0%'}]}
+        label='Go to edit screen'
+        onPress = {toEdit}
       />
       <StatusBar
         barStyle = "light-content"

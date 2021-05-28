@@ -18,7 +18,8 @@ import signUpScreen from './src/components/signUpScreen';
 import logInScreen from './src/components/logInScreen';
 import verificationScreen from './src/components/verificationScreen';
 import homeScreen from './src/components/homeScreen';
-import editScreen from './src/components/editScreen';
+import informationEditScreen from './src/components/informationEditScreen';
+import layoutEditScreen from './src/components/layoutEditScreen';
 import libraryScreen from './src/components/libraryScreen';
 import forgotPasswordScreen from './src/components/forgotPasswordScreen';
 import verificationCodeForgotPassword from './src/components/verificationCodeForgotPassword';
@@ -39,7 +40,8 @@ function MyStack() {//creates and configures stack object
       <Stack.Screen name="logInScreen" component={logInScreen} />
       <Stack.Screen name="verificationScreen" component={verificationScreen} />
       <Stack.Screen name="homeScreen" component={homeScreen} />
-      <Stack.Screen name="editScreen" component={editScreen} />
+      <Stack.Screen name="informationEditScreen" component={informationEditScreen} />
+      <Stack.Screen name="layoutEditScreen" component={layoutEditScreen} />
       <Stack.Screen name="libraryScreen" component={libraryScreen} />
       <Stack.Screen name="forgotPasswordScreen" component={forgotPasswordScreen} />
       <Stack.Screen name="verificationCodeForgotPassword" component={verificationCodeForgotPassword} />
