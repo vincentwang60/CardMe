@@ -31,9 +31,8 @@ const styles = StyleSheet.create({
   label: {
     textAlign: 'center',
     paddingVertical: 10,
-    letterSpacing: 3,
-    fontSize: 20,
+    fontSize: 16,
     color: 'black',
-    fontFamily: 'Nunito_700Bold',
+    fontFamily: 'Nunito_400Regular',
   },
 });

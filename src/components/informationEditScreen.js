@@ -19,9 +19,11 @@ export default function informationEditScreen( {route, navigation }) {
   const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState([])
   const [card, setCard] = useState([]) //the card currently being edited
+  const [inputArr, setInputArr] = useState([]) //array of the input components basedon data from the card
 
   useEffect(()=>{//runs once every time this screen is loaded
     fetchUserData();
+    setLoading(false)
   },[]);
 
   //creates a new empty card under the user and sets it as 'card' state
@@ -34,6 +36,7 @@ export default function informationEditScreen( {route, navigation }) {
     }
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
     setCard(newOwnedCard)
+    createInputArr(newOwnedCard)
     console.log('created new card', newOwnedCard, '\nfor user:', user)
   }
   //create an empty new user
@@ -43,6 +46,34 @@ export default function informationEditScreen( {route, navigation }) {
     console.log('created new user:', newUser)
     createCard(newUser)
     return newUser
+  }
+  //sets up inputArr
+  function createInputArr(gCard) {
+    console.log('card is', gCard)
+    var tempArr = [] //temp array that inputArr is set to once completed
+    for (var i = 0; i < gCard.content.length; i++){
+      const name = gCard.content[i].name
+      console.log('looping', i, 'card content:', gCard.content[i])
+      const newInput =
+        <Controller
+          name={name}
+          control={control}
+          rules={{
+            required: {value: true, message: 'Please enter your name'},
+          }}
+          render={({field: {onChange, value}})=>(
+            <Input
+              error={errors.name}
+              containerStyle={[styles.input, { top: '29.0%'}]}
+              label={name}
+              onChangeText={(text) => onChange(text)}
+              prefill='test'
+            />
+          )}
+        />
+      tempArr.push(newInput)
+    }
+    setInputArr(tempArr)
   }
   //called when screen is first loaded, sets userData state and creates card if none exist
   const fetchUserData = async () => {
@@ -58,17 +89,26 @@ export default function informationEditScreen( {route, navigation }) {
         if(cardsCreated == null) {
           createCard(fetchedUserData.data.getUser)
         }
+        else{
+          setCard(cardsCreated[0])
+          createInputArr(cardsCreated[0])
+        }
       }
-      setLoading(false)
     }
     catch (error) {
       console.log('Error on info screen fetchUserData', error);
     }
   }
+  const setInformation = async (data) => {
+    try{
+      console.log('received data:', data)
+    }
+    catch (error) {
+      console.log('Error on information edit screen setInformation', error)
+    }
+  }
   //Called when submit button is pressed, calls setInformation
   function onSubmit(data){
-    data.id = email;
-    console.log('data', data)
     setInformation(data)
   }
   const toLayoutEdit = () => {
@@ -77,6 +117,7 @@ export default function informationEditScreen( {route, navigation }) {
   const toHome = () => {
     navigation.navigate('homeScreen', {email: email})
   }
+
   if(loading){
     return(
       <Text>Loading</Text>
@@ -85,22 +126,7 @@ export default function informationEditScreen( {route, navigation }) {
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
      <Text style = {[styles.text, {top: '10%'}]}>Information edit{'\n'}screen placeholder</Text>
-      <Controller
-        name='name'
-        control={control}
-        rules={{
-          required: {value: true, message: 'Please enter your name'},
-        }}
-        render={({field: {onChange, value}})=>(
-          <Input
-            error={errors.name}
-            containerStyle={[styles.input, { top: '29.0%'}]}
-            label="Name"
-            onChangeText={(text) => onChange(text)}
-            value={value}
-          />
-        )}
-      />
+      {inputArr[0]}
       <Button
         containerStyle={[styles.input, { top: '69.0%'}]}
         label="Set information"
