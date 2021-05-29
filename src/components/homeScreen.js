@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
+import { useIsFocused } from "@react-navigation/native";
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -12,16 +13,19 @@ export default function homeScreen( {route, navigation }) {
   const {email} = route.params;
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true)
+  const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded, DONT COPY THIS IS SPECIAL CASE
 
   useEffect(()=>{//runs once every time this screen is loaded
-    fetchUserData();
-  },[]);
+    if(isFocused){
+      fetchUserData();
+    }
+  },[isFocused]);
 
   const toLibrary = () => {
     navigation.navigate('libraryScreen', {email: email})
   }
   const toEdit = () => {
-    navigation.navigate('informationEditScreen', {email: email})
+    navigation.navigate('informationEditScreen', {email: email, card: null})
   }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     try{
