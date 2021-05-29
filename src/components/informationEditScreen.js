@@ -172,8 +172,6 @@ export default function informationEditScreen( {route, navigation }) {
       </LinearGradient>
     )
   }
-  console.log('loading complete!', loading)
-  console.log('loading complete! here is inputArr', inputArr)
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
      <Text style = {[styles.text, {top: '10%'}]}>Information edit{'\n'}screen placeholder</Text>
