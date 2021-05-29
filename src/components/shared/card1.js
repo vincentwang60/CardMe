@@ -8,12 +8,21 @@ export default function Card1({
   labelStyle = styles.label,
   containerStyle,
 }){
+  var dataComponents = [] //array of the text components to display, created based on data
+  for(var i = 0; i < data.content.length; i++){
+    const newText =
+      <Text style = {labelStyle} key = {i}>
+        {data.content[i].name}: {data.content[i].data}
+      </Text>
+    dataComponents.push(newText)
+  }
   return (
     <View style={containerStyle}>
       <View style={styles.container}>
          <Text style = {labelStyle}>
-           title: {data.title}{"\n"}{data.content[0].name}: {data.content[0].data}
+           {data.title}
          </Text>
+         {dataComponents}
       </View>
     </View>
   );
@@ -30,7 +39,7 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlign: 'center',
-    paddingVertical: 10,
+    paddingVertical: 1,
     fontSize: 16,
     color: 'black',
     fontFamily: 'Nunito_400Regular',

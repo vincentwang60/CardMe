@@ -26,9 +26,6 @@ export default function informationEditScreen( {route, navigation }) {
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('--------LOADING INFO EDIT SCREEN--------')
     fetchUserData();
-    if (card != null){
-      setCardId(card.id) //sets card id based on passed in card (if passed anything)
-    }
   },[]);
 
   useEffect(()=>{//calls when inputarr is changed
@@ -37,6 +34,10 @@ export default function informationEditScreen( {route, navigation }) {
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
     }
   }, [inputArr])
+
+  useEffect(()=>{//just for debugging
+    console.log('card id set to:', cardId)
+  }, [cardId])
 
   useEffect(()=>{//sets the defaults when defaultValue is changed
     reset(defaultValue)
@@ -81,8 +82,34 @@ export default function informationEditScreen( {route, navigation }) {
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
     createInputArr(newOwnedCard)
     setDefaultValues(newOwnedCard)
+    console.log('setting card id createCard', newOwnedCard.id)
     setCardId(newOwnedCard.id)
     console.log('finished creating new card', newOwnedCard, '\nfor user:', user)
+  }
+  //creates a new field, called by add field Button
+  const addField = async() => {
+    console.log('info screen adding a field')
+    try{
+      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      var user = fetchedUserData.data.listUsers.items[0]
+      const tempCardId = user.cardsCreated[0].id //TODO DELETE THIS WHEN CARDID BUG IS FIXED
+      console.log('fetched user in addField', user)
+      const newContent = {id: uuidv4(), name: 'Enter field name', data: 'Enter information here'}
+      const currentCardIndex = user.cardsCreated.findIndex(x => x.id === tempCardId)//get the index of current card from the cardsCreated array
+      user.cardsCreated[currentCardIndex].content.push(newContent) //adds newContent to the end of the current card's content array
+      const newUpdateUser = {
+        id: user.id,
+        email: user.email,
+        cardsCreated: user.cardsCreated,
+        savedCards: user.savedCards
+      }
+      const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+      createInputArr(user.cardsCreated[currentCardIndex])
+      setDefaultValues(user.cardsCreated[currentCardIndex])
+    }
+    catch (error) {
+      console.log('error on info screen add field', error)
+    }
   }
   //create an empty new user, called if user doesn't exist yet
   const createNewUser = async() => {
@@ -111,6 +138,7 @@ export default function informationEditScreen( {route, navigation }) {
       const topPosition = (29+i*10).toString()+'%'
       const newInput =
         <Controller
+          key={i}
           name={card.content[i].id}
           control={control}
           rules={{
@@ -128,6 +156,15 @@ export default function informationEditScreen( {route, navigation }) {
         />
       tempArr.push(newInput)
     }
+    const topPosition = (29+card.content.length*10).toString()+'%'
+    const addFieldButton =
+      <Button
+        key={card.content.length}
+        containerStyle={[styles.input, { top: topPosition}]}
+        label="add field"
+        onPress={()=>{addField()}}
+      />
+    tempArr.push(addFieldButton)
     setInputArr(tempArr)
   }
   const setInformation = async (data) => {
@@ -184,7 +221,7 @@ export default function informationEditScreen( {route, navigation }) {
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
      <Text style = {[styles.text, {top: '10%'}]}>Information edit{'\n'}screen placeholder</Text>
-      {inputArr[0]}
+      {inputArr}
       <Button
         containerStyle={[styles.input, { top: '69.0%'}]}
         label="Set information"

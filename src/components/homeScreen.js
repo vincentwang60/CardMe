@@ -11,7 +11,7 @@ import { listUsers, getUser } from '../graphql/queries.js';
 
 export default function homeScreen( {route, navigation }) {
   const {email} = route.params;
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded, DONT COPY THIS IS SPECIAL CASE
 
@@ -20,6 +20,13 @@ export default function homeScreen( {route, navigation }) {
       fetchUserData();
     }
   },[isFocused]);
+
+  useEffect(()=>{//called when userData is changed
+    if(userData != null){
+      console.log('successfully fetched userData')
+      setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
+    }
+  }, [userData])
 
   const toLibrary = () => {
     navigation.navigate('libraryScreen', {email: email})
@@ -33,11 +40,9 @@ export default function homeScreen( {route, navigation }) {
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const user = fetchedUserData.data.listUsers.items[0]
       setUserData(user);
-      setLoading(false)
-      console.log('home screen successfully fetched user')
     }
     catch (error) {
-      console.log('Error on fetchUserData', error);
+      console.log('Error on home screen fetchUserData', error);
     }
   };
 
