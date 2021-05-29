@@ -8,6 +8,7 @@ import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import { listUsers, getUser } from '../graphql/queries.js';
 import { updateUser, createUser } from '../graphql/mutations.js';
+import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
@@ -34,10 +35,6 @@ export default function informationEditScreen( {route, navigation }) {
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
     }
   }, [inputArr])
-
-  useEffect(()=>{//just for debugging
-    console.log('card id set to:', cardId)
-  }, [cardId])
 
   useEffect(()=>{//sets the defaults when defaultValue is changed
     reset(defaultValue)
@@ -69,6 +66,7 @@ export default function informationEditScreen( {route, navigation }) {
       console.log('Error on info screen fetchUserData', error);
     }
   }
+
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
     console.log('info screen creating card')
@@ -86,6 +84,7 @@ export default function informationEditScreen( {route, navigation }) {
     setCardId(newOwnedCard.id)
     console.log('finished creating new card', newOwnedCard, '\nfor user:', user)
   }
+
   //creates a new field, called by add field Button
   const addField = async() => {
     console.log('info screen adding a field')
@@ -111,6 +110,7 @@ export default function informationEditScreen( {route, navigation }) {
       console.log('error on info screen add field', error)
     }
   }
+
   //create an empty new user, called if user doesn't exist yet
   const createNewUser = async() => {
     console.log('info screen creating new user')
@@ -120,40 +120,62 @@ export default function informationEditScreen( {route, navigation }) {
     createCard(newUser)
     return newUser
   }
+
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
     console.log('info screen setting default values')
     var defaultValueObj = {}
     for (var i = 0; i < card.content.length; i++){
-      defaultValueObj[card.content[i].id] = card.content[i].data
+      defaultValueObj['0'+card.content[i].id] = card.content[i].name
+      defaultValueObj['1'+card.content[i].id] = card.content[i].data
     }
     setDefaultValue(defaultValueObj)
   }
+
   //sets up array of inputs for react hook form based on user data
   function createInputArr(card) {
     console.log('creating input arr')
     var tempArr = [] //temp array that inputArr is set to once completed
     for (var i = 0; i < card.content.length; i++){
       const name = card.content[i].name
+      const id = card.content[i].id
       const topPosition = (29+i*10).toString()+'%'
       const newInput =
-        <Controller
-          key={i}
-          name={card.content[i].id}
-          control={control}
-          rules={{
-            required: {value: true, message: 'Please enter your name'},
-          }}
-          render={({field: {onChange, value}})=>(
-            <Input
-              error={errors.name}
-              containerStyle={[styles.input, { top: topPosition}]}
-              label={name}
-              onChangeText={(text) => onChange(text)}
-              value={value}
-            />
-          )}
-        />
+        <View style = {[styles.fieldInput, { top: topPosition}]} key={i}>
+          <Controller
+            name={'0'+id}
+            control={control}
+            rules={{
+              required: {value: true, message: 'Field can not be blank'},
+            }}
+            render={({field: {onChange, value}})=>(
+              <FieldInput
+                error={errors[id]}
+                containerStyle={[styles.fieldInputPart]}
+                label='Enter field name'
+                onChangeText={(text) => onChange(text)}
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            name={'1'+id}
+            control={control}
+            rules={{
+              required: {value: true, message: 'Field can not be blank'},
+            }}
+            render={({field: {onChange, value}})=>(
+              <FieldInput
+                error={errors[id]}
+                containerStyle={[styles.fieldInputPart]}
+                label='Enter information'
+                onChangeText={(text) => onChange(text)}
+                value={value}
+              />
+            )}
+          />
+        </View>
+
       tempArr.push(newInput)
     }
     const topPosition = (29+card.content.length*10).toString()+'%'
@@ -167,6 +189,7 @@ export default function informationEditScreen( {route, navigation }) {
     tempArr.push(addFieldButton)
     setInputArr(tempArr)
   }
+
   const setInformation = async (data) => {
     try{
       console.log('setting information with data:\n', data,'\nediting card:', cardId)
@@ -177,7 +200,7 @@ export default function informationEditScreen( {route, navigation }) {
       const currentCard = cardsCreated[currentCardIndex]
       const newContents = []
       for (var i = 0; i < currentCard.content.length; i++){//loop through content for the selected card to setup newContent0
-        var newContent = {id: currentCard.content[i].id, name: currentCard.content[i].name, data: data[currentCard.content[i].id]}
+        var newContent = {id: currentCard.content[i].id, name: data['0'+currentCard.content[i].id], data: data['1'+currentCard.content[i].id]}
         newContents.push(newContent)
       }
       currentCard.content = newContents
@@ -196,6 +219,7 @@ export default function informationEditScreen( {route, navigation }) {
     }
   }
   //Called when submit button is pressed, calls setInformation
+
   function onSubmit(data){
     setInformation(data)
   }
@@ -259,5 +283,13 @@ const styles = StyleSheet.create({
   input:{
     position: 'absolute',
     left: "6.2%",
+  },
+  fieldInput:{
+    position: 'absolute',
+    left: "5.2%",
+    flexDirection: 'row',
+  },
+
+  fieldInputPart:{
   },
 });
