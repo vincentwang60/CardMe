@@ -5,9 +5,15 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
+      email
       cardsCreated {
         id
         title
+        content {
+          id
+          name
+          data
+        }
       }
       savedCards {
         id
@@ -23,9 +29,15 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
+      email
       cardsCreated {
         id
         title
+        content {
+          id
+          name
+          data
+        }
       }
       savedCards {
         id
@@ -41,9 +53,15 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
+      email
       cardsCreated {
         id
         title
+        content {
+          id
+          name
+          data
+        }
       }
       savedCards {
         id

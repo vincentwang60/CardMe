@@ -28,10 +28,13 @@ export default function homeScreen( {route, navigation }) {
     navigation.navigate('informationEditScreen', {email: email, card: null})
   }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
+    console.log('home screen fetching user')
     try{
-      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
-      setUserData(fetchedUserData.data.getUser);
+      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      const user = fetchedUserData.data.listUsers.items[0]
+      setUserData(user);
       setLoading(false)
+      console.log('home screen successfully fetched user')
     }
     catch (error) {
       console.log('Error on fetchUserData', error);

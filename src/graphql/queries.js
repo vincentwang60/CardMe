@@ -5,13 +5,14 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
+      email
       cardsCreated {
         id
         title
         content {
-          data
           id
           name
+          data
         }
       }
       savedCards {
@@ -33,6 +34,21 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        email
+        cardsCreated {
+          id
+          title
+          content {
+            id
+            name
+            data
+          }
+        }
+        savedCards {
+          id
+          creatorID
+          cardId
+        }
         createdAt
         updatedAt
       }

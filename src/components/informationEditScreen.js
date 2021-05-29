@@ -24,15 +24,17 @@ export default function informationEditScreen( {route, navigation }) {
   const [cardId, setCardId] = useState() //id of card currently being edited
 
   useEffect(()=>{//runs once every time this screen is loaded
+    console.log('--------LOADING INFO EDIT SCREEN--------')
     fetchUserData();
     if (card != null){
-      setCardId(card.id)
+      setCardId(card.id) //sets card id based on passed in card (if passed anything)
     }
   },[]);
 
   useEffect(()=>{//calls when inputarr is changed
     if(inputArr != null){
-      setLoading(false)
+      console.log('successfully set up info screen')
+      setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
     }
   }, [inputArr])
 
@@ -42,18 +44,20 @@ export default function informationEditScreen( {route, navigation }) {
 
   //called when screen is first loaded, creates card/user if dont exist
   const fetchUserData = async () => {
+    console.log('fetching user data')
     try{
-      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
-      if (fetchedUserData.data.getUser == null){//if user not yet been created, create user and card
+      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      const user = fetchedUserData.data.listUsers.items[0]
+      if (user == null){//if user not yet been created, create user and card
         createNewUser()
       }
       else{//if user already created, check for cards
-        const cardsCreated = fetchedUserData.data.getUser.cardsCreated
+        const cardsCreated = user.cardsCreated
         if(cardsCreated == null) {
-          createCard(fetchedUserData.data.getUser)
+          createCard(user)
         }
         else{
-          console.log('setting up using existing card:', cardsCreated[0])
+          console.log('setting up using existing card')
           createInputArr(cardsCreated[0])
           setDefaultValues(cardsCreated[0])
           setCardId(cardsCreated[0].id)
@@ -66,22 +70,24 @@ export default function informationEditScreen( {route, navigation }) {
   }
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
-    const newContent = {id: uuidv4(), name: 'name', data: 'Enter name here'}
+    console.log('info screen creating card')
+    const newContent = {id: uuidv4(), name: 'Name', data: 'Enter name here'}
     const newOwnedCard = { id: uuidv4(), title: 'title', content: [newContent]}
     const newUpdateUser = {
       id: user.id,
+      email: user.email,
       cardsCreated: user.cardsCreated ? [...user.cardsCreated, newOwnedCard]: [newOwnedCard]
     }
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
-    console.log('setting up using new card:', newOwnedCard)
     createInputArr(newOwnedCard)
     setDefaultValues(newOwnedCard)
     setCardId(newOwnedCard.id)
-    console.log('created new card', newOwnedCard, '\nfor user:', user)
+    console.log('finished creating new card', newOwnedCard, '\nfor user:', user)
   }
   //create an empty new user, called if user doesn't exist yet
   const createNewUser = async() => {
-    const newUser = {id: email }
+    console.log('info screen creating new user')
+    const newUser = {id: uuidv4(), email: email }
     const output = await API.graphql(graphqlOperation(createUser, {input: newUser}))
     console.log('created new user:', newUser)
     createCard(newUser)
@@ -89,6 +95,7 @@ export default function informationEditScreen( {route, navigation }) {
   }
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
+    console.log('info screen setting default values')
     var defaultValueObj = {}
     for (var i = 0; i < card.content.length; i++){
       defaultValueObj[card.content[i].id] = card.content[i].data
@@ -97,11 +104,9 @@ export default function informationEditScreen( {route, navigation }) {
   }
   //sets up array of inputs for react hook form based on user data
   function createInputArr(card) {
-    console.log('creating inputs based on card:', card)
-    console.log('card content here:', card.content)
+    console.log('creating input arr')
     var tempArr = [] //temp array that inputArr is set to once completed
     for (var i = 0; i < card.content.length; i++){
-      console.log('looping for card content:', card.content[i])
       const name = card.content[i].name
       const topPosition = (29+i*10).toString()+'%'
       const newInput =
@@ -127,9 +132,10 @@ export default function informationEditScreen( {route, navigation }) {
   }
   const setInformation = async (data) => {
     try{
-      console.log('received data:', data,'\nediting card:', cardId)
-      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
-      const cardsCreated = fetchedUserData.data.getUser.cardsCreated
+      console.log('setting information with data:\n', data,'\nediting card:', cardId)
+      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      const user = fetchedUserData.data.listUsers.items[0]
+      const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
       const newContents = []
@@ -139,10 +145,14 @@ export default function informationEditScreen( {route, navigation }) {
       }
       currentCard.content = newContents
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
-      console.log('set info updated cardsCreated:', cardsCreated)
-      const newUpdateUser = {id: fetchedUserData.data.getUser.id, cardsCreated: cardsCreated, savedCards: fetchedUserData.data.getUser.savedCards}
+      const newUpdateUser = {
+        id: user.id,
+        email: user.email,
+        cardsCreated: cardsCreated,
+        savedCards: user.savedCards
+      }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
-      console.log('updated user', newUpdateUser)
+      console.log('successfully updated data')
     }
     catch (error) {
       console.log('Error on information edit screen setInformation', error)

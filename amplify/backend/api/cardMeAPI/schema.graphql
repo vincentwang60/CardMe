@@ -1,6 +1,7 @@
 type User @model
 {
   id: String!
+  email: String!
   cardsCreated: [ownedCard]
   savedCards: [savedCard]
 }

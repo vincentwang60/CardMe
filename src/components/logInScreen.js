@@ -55,6 +55,7 @@ export default function logInScreen( {navigation }) {
     signIn('vkwang@mit.edu', 'password')
   }
   function signIn (email, password){
+    console.log('signing in with:', email, password)
     const user = Auth.signIn(email, password)
     .then(()=>{
       console.log('successfully logged in as!', email);

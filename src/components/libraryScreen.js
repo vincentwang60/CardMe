@@ -22,25 +22,25 @@ export default function libraryScreen( {route, navigation }) {
     navigation.navigate('homeScreen')
   }
   const createCard = async() => {
-    const receivedData = await API.graphql(graphqlOperation(getUser, {id: email}))
-    const user = receivedData.data.getUser
+    console.log('library screen creating card')
+    const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+    const user = fetchedUserData.data.listUsers.items[0]
     const newContent = {id: uuidv4(), name: 'New content name', data: 'New data name'}
-    console.log('---new content:', newContent)
     const newOwnedCard = { id: uuidv4(), title: 'New card title!!', content: newContent}
-    console.log('---new owned card:', newOwnedCard)
     const newUpdateUser = {
       id: user.id,
+      email: user.email,
       name: user.name,
       cardsCreated: user.cardsCreated ? [...user.cardsCreated, newOwnedCard]: [newOwnedCard]
     }
-    console.log('---new user', newUpdateUser)
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+    console.log('library screen successfully created card')
   }
   const fetchUserData = async () => {//will fetch all users from dynamodb
     try{
-      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: email}))
-      console.log('fetched user data:', fetchedUserData.data.getUser);
-      setUserData(fetchedUserData.data.getUser);
+      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      console.log('fetched user data:', fetchedUserData.data.listUsers.items[0]);
+      setUserData(fetchedUserData.data.listUsers.items[0]);
     }
     catch (error) {
       console.log('Error on fetchUserData', error);

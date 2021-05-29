@@ -26,7 +26,7 @@ export default function signUpScreen( {navigation }) {
   function toggleIsNewUser() {
     navigation.navigate('logInScreen')
   }
-  function signUp(email, password, name) {
+  function signUp(email, password) {
     console.log('signing up with', email, password)
     Auth.signUp({
       username: email,
