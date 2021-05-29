@@ -123,7 +123,6 @@ export default function informationEditScreen( {route, navigation }) {
         />
       tempArr.push(newInput)
     }
-    console.log('temparr:', tempArr)
     setInputArr(tempArr)
   }
   const setInformation = async (data) => {
