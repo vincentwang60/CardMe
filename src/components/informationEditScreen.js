@@ -91,7 +91,7 @@ export default function informationEditScreen( {route, navigation }) {
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       var user = fetchedUserData.data.listUsers.items[0]
-      const tempCardId = user.cardsCreated[0].id //TODO DELETE THIS WHEN CARDID BUG IS FIXED
+      const tempCardId = user.cardsCreated[0].id //TODO REPLACE THIS WHEN CARDID IS PASSED IN
       console.log('fetched user in addField', user)
       const newContent = {id: uuidv4(), name: 'Enter field name', data: 'Enter information here'}
       const currentCardIndex = user.cardsCreated.findIndex(x => x.id === tempCardId)//get the index of current card from the cardsCreated array
@@ -194,10 +194,13 @@ export default function informationEditScreen( {route, navigation }) {
     try{
       console.log('setting information with data:\n', data,'\nediting card:', cardId)
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+      console.log('fetch info fetchedUserData', fetchedUserData)
       const user = fetchedUserData.data.listUsers.items[0]
+      console.log('fetch info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
+      console.log('current card', currentCard)
       const newContents = []
       for (var i = 0; i < currentCard.content.length; i++){//loop through content for the selected card to setup newContent0
         var newContent = {id: currentCard.content[i].id, name: data['0'+currentCard.content[i].id], data: data['1'+currentCard.content[i].id]}

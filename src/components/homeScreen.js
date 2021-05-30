@@ -2,18 +2,21 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useIsFocused } from "@react-navigation/native";
+import { useForm, Controller } from "react-hook-form";
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import Button from './shared/button.js'
+import Input from './shared/input.js';
 import Card1 from './shared/card1.js'
 import { listUsers, getUser } from '../graphql/queries.js';
 
 export default function homeScreen( {route, navigation }) {
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
-  const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded, DONT COPY THIS IS SPECIAL CASE
+  const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
   const [email, setEmail] = useState();
+  const { handleSubmit, watch, control, formState: {errors} } = useForm();
 
   useEffect(()=>{//runs once every time this screen is loaded
     if(isFocused){
@@ -23,7 +26,7 @@ export default function homeScreen( {route, navigation }) {
 
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData')
+      console.log('successfully fetched userData', userData)
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
     }
   }, [userData])
@@ -33,6 +36,10 @@ export default function homeScreen( {route, navigation }) {
       fetchUserData()
     }
   }, [email])
+
+  function onSubmit(data){
+    console.log('home screen submitting with data:', data)
+  }
 
   async function getUser(){
     const { attributes } = await Auth.currentAuthenticatedUser();
@@ -73,6 +80,28 @@ export default function homeScreen( {route, navigation }) {
         label='Go to edit screen'
         onPress = {toEdit}
       />
+      <Controller
+        name='email'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Please enter an email'},
+          pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
+        }}
+        render={({field: {onChange, value }})=>(
+          <Input
+            error={errors.email}
+            containerStyle={[styles.input, { top: '54.8%'}]}
+            label="Share via email"
+            onChangeText={(text) => onChange(text)}
+            value={value}
+          />
+        )}
+      />
+      <Button
+        containerStyle={[styles.input, { top: '65.0%'}]}
+        label="Share"
+        onPress={handleSubmit(onSubmit)}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
@@ -95,5 +124,9 @@ const styles = StyleSheet.create({
   items:{
     position: 'absolute',
     left: "6.2%",
-  }
+  },
+  input:{
+    position: 'absolute',
+    left: "6.2%",
+  },
 });
