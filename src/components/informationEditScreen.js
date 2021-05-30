@@ -223,11 +223,8 @@ export default function informationEditScreen( {route, navigation }) {
   function onSubmit(data){
     setInformation(data)
   }
-  const toLayoutEdit = () => {
-    navigation.navigate('layoutEditScreen', {email: email})
-  }
   const toHome = () => {
-    navigation.navigate('homeScreen', {email: email})
+    navigation.navigate('homeTabs')
   }
 
   if(loading){
@@ -247,17 +244,12 @@ export default function informationEditScreen( {route, navigation }) {
      <Text style = {[styles.text, {top: '10%'}]}>Information edit{'\n'}screen placeholder</Text>
       {inputArr}
       <Button
-        containerStyle={[styles.input, { top: '69.0%'}]}
+        containerStyle={[styles.input, { top: '83.0%'}]}
         label="Set information"
         onPress={handleSubmit(onSubmit)}
       />
       <Button
-        containerStyle={[styles.input, { top: '76.0%'}]}
-        label="To layout edit"
-        onPress={toLayoutEdit}
-      />
-      <Button
-        containerStyle={[styles.input, { top: '83.0%'}]}
+        containerStyle={[styles.input, { top: '90.0%'}]}
         label="To home"
         onPress={toHome}
       />

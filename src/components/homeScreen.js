@@ -10,14 +10,14 @@ import Card1 from './shared/card1.js'
 import { listUsers, getUser } from '../graphql/queries.js';
 
 export default function homeScreen( {route, navigation }) {
-  const {email} = route.params;
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded, DONT COPY THIS IS SPECIAL CASE
+  const [email, setEmail] = useState();
 
   useEffect(()=>{//runs once every time this screen is loaded
     if(isFocused){
-      fetchUserData();
+      getUser()
     }
   },[isFocused]);
 
@@ -28,11 +28,21 @@ export default function homeScreen( {route, navigation }) {
     }
   }, [userData])
 
-  const toLibrary = () => {
-    navigation.navigate('libraryScreen', {email: email})
+  useEffect(()=>{//called when email is changed
+    if(email != null){
+      fetchUserData()
+    }
+  }, [email])
+
+  async function getUser(){
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    setEmail(attributes.email)
   }
   const toEdit = () => {
-    navigation.navigate('informationEditScreen', {email: email, card: null})
+    navigation.navigate('editScreen', {
+      screen: 'informationEditScreen',
+      params: {email: email, card: null},
+    })
   }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     console.log('home screen fetching user')
@@ -57,11 +67,6 @@ export default function homeScreen( {route, navigation }) {
       <Card1
         containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]}
         data={userData.cardsCreated[0]}
-      />
-      <Button
-        containerStyle={[styles.items, { top: '79.0%'}]}
-        label='Go to library'
-        onPress = {toLibrary}
       />
       <Button
         containerStyle={[styles.items, { top: '86.0%'}]}

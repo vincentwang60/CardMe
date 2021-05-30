@@ -11,16 +11,18 @@ import { listUsers, getUser } from '../graphql/queries.js';
 import { updateUser } from '../graphql/mutations.js';
 
 export default function libraryScreen( {route, navigation }) {
-  const {email} = route.params;
   const [userData, setUserData] = useState([]);
+  const [email, setEmail] = useState();
 
   useEffect(()=>{//runs once every time this screen is loaded
-    //fetchUserData();
+    getUser()
   },[]);
 
-  const toHome = () => {
-    navigation.navigate('homeScreen')
+  async function getUser(){
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    setEmail(attributes.email)
   }
+  
   const createCard = async() => {
     console.log('library screen creating card')
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
@@ -58,11 +60,6 @@ export default function libraryScreen( {route, navigation }) {
         containerStyle={[styles.items, { top: '69.0%'}]}
         label='Fetch user data'
         onPress = {fetchUserData}
-      />
-      <Button
-        containerStyle={[styles.items, { top: '79.0%'}]}
-        label='Go to home screen'
-        onPress = {toHome}
       />
       <StatusBar
         barStyle = "light-content"

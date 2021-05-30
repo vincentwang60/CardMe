@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/nunito';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //Docs for react navigation: https://reactnavigation.org/docs/stack-navigator/
 
 //Screens for app
@@ -25,6 +26,34 @@ import forgotPasswordScreen from './src/components/forgotPasswordScreen';
 import verificationCodeForgotPassword from './src/components/verificationCodeForgotPassword';
 
 const Stack = createStackNavigator(); //Stack object that contains all the screens
+const Tab = createBottomTabNavigator();
+
+function editScreen() { //create tab navigation object that contains the two edit screens
+  return (
+    <Tab.Navigator
+      tabBarOptions={{
+        activeTintColor: 'black',
+        inactiveTintColor: 'gray',
+      }}
+    >
+      <Tab.Screen name = 'informationEditScreen' component = {informationEditScreen}/>
+      <Tab.Screen name = 'layoutEditScreen' component = {layoutEditScreen}/>
+    </Tab.Navigator>
+  )
+}
+function homeTabs() { //create tab navigation object that contains the two edit screens
+  return (
+    <Tab.Navigator
+      tabBarOptions={{
+        activeTintColor: 'black',
+        inactiveTintColor: 'gray',
+      }}
+    >
+      <Tab.Screen name = 'homeScreen' component = {homeScreen}/>
+      <Tab.Screen name = 'libraryScreen' component = {libraryScreen}/>
+    </Tab.Navigator>
+  )
+}
 
 function MyStack() {//creates and configures stack object
   return (
@@ -39,10 +68,8 @@ function MyStack() {//creates and configures stack object
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
       <Stack.Screen name="logInScreen" component={logInScreen} />
       <Stack.Screen name="verificationScreen" component={verificationScreen} />
-      <Stack.Screen name="homeScreen" component={homeScreen} />
-      <Stack.Screen name="informationEditScreen" component={informationEditScreen} />
-      <Stack.Screen name="layoutEditScreen" component={layoutEditScreen} />
-      <Stack.Screen name="libraryScreen" component={libraryScreen} />
+      <Stack.Screen name="editScreen" component={editScreen} />
+      <Stack.Screen name="homeTabs" component={homeTabs} />
       <Stack.Screen name="forgotPasswordScreen" component={forgotPasswordScreen} />
       <Stack.Screen name="verificationCodeForgotPassword" component={verificationCodeForgotPassword} />
     </Stack.Navigator>

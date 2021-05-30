@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
@@ -13,8 +13,18 @@ import Button from './shared/button.js';
 //Form for user to add or edit information about themselves (ie Name, nickname, email, university, socials)
 //TODO allow mutations of User in graphQl database rather than just creating
 export default function layoutEditScreen( {route, navigation }) {
-  const {email} = route.params;
+  //const {email} = route.params; //TODO DOESNT WORK WITH REACT TABS, hopefully not necessary??
   const { handleSubmit, control, formState: {errors} } = useForm();
+  const [email, setEmail] = useState();
+
+  useEffect(()=>{
+    getUser()
+  }, [])
+
+  async function getUser(){
+    const { attributes } = await Auth.currentAuthenticatedUser();
+    setEmail(attributes.email)
+  }
 
   //Called when submit button is pressed, calls setInformation
   function onSubmit(data){
@@ -22,18 +32,15 @@ export default function layoutEditScreen( {route, navigation }) {
     console.log('data', data)
     setInformation(data)
   }
-  const toInformationEdit = () => {
-    navigation.navigate('informationEditScreen', {email: email})
-  }
   const toHome = () => {
-    navigation.navigate('homeScreen', {email: email})
+    navigation.navigate('homeTabs', {email: email})
   }
   //Called by onSubmit, creates User on graphQl database based on information in form
   async function setInformation(data){
     console.log('made it!', data)
     try{
       await API.graphql({ query: mutations.createUser, variables: {input: data}});
-      navigation.navigate('homeScreen', {email: email})
+      navigation.navigate('homeTabs', {email: email})
     }
     catch (error){
       console.log('error on setInformation', error);
@@ -63,11 +70,6 @@ export default function layoutEditScreen( {route, navigation }) {
         containerStyle={[styles.input, { top: '69.0%'}]}
         label="Set information"
         onPress={handleSubmit(onSubmit)}
-      />
-      <Button
-        containerStyle={[styles.input, { top: '76.0%'}]}
-        label="To info edit"
-        onPress={toInformationEdit}
       />
       <Button
         containerStyle={[styles.input, { top: '83.0%'}]}
