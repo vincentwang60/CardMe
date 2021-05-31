@@ -112,20 +112,24 @@ export default function informationEditScreen( {route, navigation }) {
 
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
-    console.log('info screen setting default values')
+    console.log('info screen setting default values', card)
     var defaultValueObj = {}
-
-    if (card.content.filter(e => e.name === 'displayName').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'displayName')
-      defaultValueObj['displayName'] = card.content[index].data
+    if (card.content === null || !card.hasOwnProperty('content')){
+      console.log('card does not exist yet')
     }
-    if (card.content.filter(e => e.name === 'heading').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'heading')
-      defaultValueObj['heading'] = card.content[index].data
-    }
-    if (card.content.filter(e => e.name === 'subHeading').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'subHeading')
-      defaultValueObj['subHeading'] = card.content[index].data
+    else{
+      if (card.content.filter(e => e.name === 'displayName').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'displayName')
+        defaultValueObj['displayName'] = card.content[index].data
+      }
+      if (card.content.filter(e => e.name === 'heading').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'heading')
+        defaultValueObj['heading'] = card.content[index].data
+      }
+      if (card.content.filter(e => e.name === 'subHeading').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'subHeading')
+        defaultValueObj['subHeading'] = card.content[index].data
+      }
     }
     console.log('created default values:', defaultValueObj)
     setDefaultValue(defaultValueObj)
@@ -155,6 +159,7 @@ export default function informationEditScreen( {route, navigation }) {
       }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
       console.log('successfully updated data')
+      navigation.navigate('homeTabs')
     }
     catch (error) {
       console.log('Error on information edit screen setInformation', error)
@@ -164,7 +169,6 @@ export default function informationEditScreen( {route, navigation }) {
 
   function onSubmit(data){
     setInformation(data)
-    navigation.navigate('homeTabs')
   }
   const toHome = () => {
     navigation.navigate('homeTabs')

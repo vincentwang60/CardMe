@@ -80,7 +80,13 @@ export default function homeScreen( {route, navigation }) {
       }
       else{//if user already created, set userdata
         if (user.cardsCreated != null){
-          setNoCards(false)
+          console.log('cards created:', user.cardsCreated)
+          if (user.cardsCreated[0].content != null){
+            setNoCards(false)
+          }
+          else{
+            console.log('content is null')
+          }
         }
         else{
           console.log('home screen no cards found')

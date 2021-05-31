@@ -52,7 +52,7 @@ export default function logInScreen( {navigation }) {
     console.log('google login TODO')
   }
   function quickLogin(){
-    signIn('vkwang@mit.edu', 'password')
+    signIn('vincent.wang.60@gmail.com', 'password')
   }
   function signIn (email, password){
     console.log('signing in with:', email, password)
