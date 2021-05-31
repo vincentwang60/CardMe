@@ -7,6 +7,7 @@ export default function FieldInput({
   labelStyle = styles.label,
   containerStyle = styles.container,
   onChangeText,
+  placeholder = 'asdf',
   secure = false,
   error,
   value
@@ -14,17 +15,16 @@ export default function FieldInput({
 {
   return (
       <View style={containerStyle}>
-        <View style={styles.fieldStyle}>
-          <Text style={labelStyle}>{label}</Text>
-          <TextInput
-            autoCapitalize="none"
-            secureTextEntry = {secure}
-            style={inputStyle}
-            onChangeText= {onChangeText}
-            value={value}
-          />
-          <Text style={styles.error}>{error && error.message}</Text>
-        </View>
+        <Text style={labelStyle}>{label}</Text>
+        <TextInput
+          autoCapitalize="none"
+          secureTextEntry = {secure}
+          style={inputStyle}
+          onChangeText= {onChangeText}
+          value={value}
+          placeholder={placeholder}
+        />
+        <Text style={styles.error}>{error && error.message}</Text>
       </View>
   );
 }
@@ -33,14 +33,14 @@ export default function FieldInput({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 2,
+    marginVertical: 0,
     backgroundColor: '#000'
   },
   input: {
-    paddingVertical: 5,
+    marginVertical: 2,
     paddingLeft: 2,
     fontSize: 14,
-    width: Dimensions.get('window').width*.41,
+    width: Dimensions.get('window').width*.85,
     height: Dimensions.get('window').height*.037,
     color: '#000',
     borderBottomColor:'#8F8F8F',
@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
   },
   label: {
     paddingVertical: 0,
-    fontSize: 14,
-    color: '#8F8F8F',
-    fontFamily: 'Nunito_400Regular',
+    fontSize: 15,
+    color: '#000',
+    fontFamily: 'Nunito_700Bold',
   },
   error: {
     marginVertical: 2,
@@ -61,15 +61,4 @@ const styles = StyleSheet.create({
     color: '#FF0000',
     fontFamily: 'Nunito_400Regular',
   },
-  fieldStyle: {
-    paddingHorizontal: 5,
-  },
-   icon: {
-   left:"90%",
-    fontSize: 14,
-    color: '#8F8F8F',
-    fontFamily: 'Nunito_400Regular',
-    position: 'absolute',
-    paddingVertical: 26,
-  }
 });

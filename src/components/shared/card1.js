@@ -12,7 +12,7 @@ export default function Card1({
   for(var i = 0; i < data.content.length; i++){
     const newText =
       <Text style = {labelStyle} key = {i}>
-        {data.content[i].name}: {data.content[i].data}
+        {data.content[i].data}
       </Text>
     dataComponents.push(newText)
   }

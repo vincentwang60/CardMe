@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-nativ
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
+import { FontAwesome } from '@expo/vector-icons';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -19,8 +20,6 @@ export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
   const {card} = route.params; //card being edited can be passed to set cardId. if not passed will be set to new card
   const { handleSubmit, reset, control, formState: {errors} } = useForm();
-  const [loading, setLoading] = useState(true)
-  const [inputArr, setInputArr] = useState() //array of the input components based on data from the card
   const [defaultValue, setDefaultValue] = useState()
   const [cardId, setCardId] = useState() //id of card currently being edited
 
@@ -28,13 +27,6 @@ export default function informationEditScreen( {route, navigation }) {
     console.log('--------LOADING INFO EDIT SCREEN--------')
     fetchUserData();
   },[]);
-
-  useEffect(()=>{//calls when inputarr is changed
-    if(inputArr != null){
-      console.log('successfully set up info screen')
-      setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
-    }
-  }, [inputArr])
 
   useEffect(()=>{//sets the defaults when defaultValue is changed
     reset(defaultValue)
@@ -56,7 +48,6 @@ export default function informationEditScreen( {route, navigation }) {
         }
         else{
           console.log('setting up using existing card')
-          createInputArr(cardsCreated[0])
           setDefaultValues(cardsCreated[0])
           setCardId(cardsCreated[0].id)
         }
@@ -66,19 +57,20 @@ export default function informationEditScreen( {route, navigation }) {
       console.log('Error on info screen fetchUserData', error);
     }
   }
-
+  function cancel(){ //called by cancel button
+    console.log('cancel button doesnt actually cancel (yet)')
+    navigation.navigate('homeTabs')
+  }
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
     console.log('info screen creating card')
-    const newContent = {id: uuidv4(), name: 'Name', data: 'Enter name here'}
-    const newOwnedCard = { id: uuidv4(), title: 'title', content: [newContent]}
+    const newOwnedCard = { id: uuidv4(), title: 'title'}
     const newUpdateUser = {
       id: user.id,
       email: user.email,
       cardsCreated: user.cardsCreated ? [...user.cardsCreated, newOwnedCard]: [newOwnedCard]
     }
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
-    createInputArr(newOwnedCard)
     setDefaultValues(newOwnedCard)
     console.log('setting card id createCard', newOwnedCard.id)
     setCardId(newOwnedCard.id)
@@ -93,9 +85,7 @@ export default function informationEditScreen( {route, navigation }) {
       var user = fetchedUserData.data.listUsers.items[0]
       const tempCardId = user.cardsCreated[0].id //TODO REPLACE THIS WHEN CARDID IS PASSED IN
       console.log('fetched user in addField', user)
-      const newContent = {id: uuidv4(), name: 'Enter field name', data: 'Enter information here'}
       const currentCardIndex = user.cardsCreated.findIndex(x => x.id === tempCardId)//get the index of current card from the cardsCreated array
-      user.cardsCreated[currentCardIndex].content.push(newContent) //adds newContent to the end of the current card's content array
       const newUpdateUser = {
         id: user.id,
         email: user.email,
@@ -103,7 +93,6 @@ export default function informationEditScreen( {route, navigation }) {
         savedCards: user.savedCards
       }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
-      createInputArr(user.cardsCreated[currentCardIndex])
       setDefaultValues(user.cardsCreated[currentCardIndex])
     }
     catch (error) {
@@ -125,71 +114,22 @@ export default function informationEditScreen( {route, navigation }) {
   const setDefaultValues = async(card) => {
     console.log('info screen setting default values')
     var defaultValueObj = {}
-    for (var i = 0; i < card.content.length; i++){
-      defaultValueObj['0'+card.content[i].id] = card.content[i].name
-      defaultValueObj['1'+card.content[i].id] = card.content[i].data
+
+    if (card.content.filter(e => e.name === 'displayName').length > 0) {
+      const index = card.content.findIndex(content => content.name === 'displayName')
+      defaultValueObj['displayName'] = card.content[index].data
     }
+    if (card.content.filter(e => e.name === 'heading').length > 0) {
+      const index = card.content.findIndex(content => content.name === 'heading')
+      defaultValueObj['heading'] = card.content[index].data
+    }
+    if (card.content.filter(e => e.name === 'subHeading').length > 0) {
+      const index = card.content.findIndex(content => content.name === 'subHeading')
+      defaultValueObj['subHeading'] = card.content[index].data
+    }
+    console.log('created default values:', defaultValueObj)
     setDefaultValue(defaultValueObj)
   }
-
-  //sets up array of inputs for react hook form based on user data
-  function createInputArr(card) {
-    console.log('creating input arr')
-    var tempArr = [] //temp array that inputArr is set to once completed
-    for (var i = 0; i < card.content.length; i++){
-      const name = card.content[i].name
-      const id = card.content[i].id
-      const topPosition = (29+i*10).toString()+'%'
-      const newInput =
-        <View style = {[styles.fieldInput, { top: topPosition}]} key={i}>
-          <Controller
-            name={'0'+id}
-            control={control}
-            rules={{
-              required: {value: true, message: 'Field can not be blank'},
-            }}
-            render={({field: {onChange, value}})=>(
-              <FieldInput
-                error={errors[id]}
-                containerStyle={[styles.fieldInputPart]}
-                label='Enter field name'
-                onChangeText={(text) => onChange(text)}
-                value={value}
-              />
-            )}
-          />
-          <Controller
-            name={'1'+id}
-            control={control}
-            rules={{
-              required: {value: true, message: 'Field can not be blank'},
-            }}
-            render={({field: {onChange, value}})=>(
-              <FieldInput
-                error={errors[id]}
-                containerStyle={[styles.fieldInputPart]}
-                label='Enter information'
-                onChangeText={(text) => onChange(text)}
-                value={value}
-              />
-            )}
-          />
-        </View>
-
-      tempArr.push(newInput)
-    }
-    const topPosition = (29+card.content.length*10).toString()+'%'
-    const addFieldButton =
-      <Button
-        key={card.content.length}
-        containerStyle={[styles.input, { top: topPosition}]}
-        label="add field"
-        onPress={()=>{addField()}}
-      />
-    tempArr.push(addFieldButton)
-    setInputArr(tempArr)
-  }
-
   const setInformation = async (data) => {
     try{
       console.log('setting information with data:\n', data,'\nediting card:', cardId)
@@ -202,10 +142,9 @@ export default function informationEditScreen( {route, navigation }) {
       const currentCard = cardsCreated[currentCardIndex]
       console.log('current card', currentCard)
       const newContents = []
-      for (var i = 0; i < currentCard.content.length; i++){//loop through content for the selected card to setup newContent0
-        var newContent = {id: currentCard.content[i].id, name: data['0'+currentCard.content[i].id], data: data['1'+currentCard.content[i].id]}
-        newContents.push(newContent)
-      }
+      newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
+      newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
+      newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
       currentCard.content = newContents
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
       const newUpdateUser = {
@@ -225,43 +164,75 @@ export default function informationEditScreen( {route, navigation }) {
 
   function onSubmit(data){
     setInformation(data)
+    navigation.navigate('homeTabs')
   }
   const toHome = () => {
     navigation.navigate('homeTabs')
   }
-
-  if(loading){
-    return(
-      <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-        <Text>Loading</Text>
-        <Button
-          containerStyle={[styles.input, { top: '76.0%'}]}
-          label="force complete loading"
-          onPress={()=>{setLoading(false)}}
-        />
-        <StatusBar
-          barStyle = "dark-content"
-          backgroundColor = '#fff'/>
-      </LinearGradient>
-    )
-  }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-     <Text style = {[styles.text, {top: '5%'}]}>Edit info</Text>
-     <TouchableOpacity style = {styles.touchable} onPress={toHome}>
-       <Text style = {[styles.text, {top: '5%'}, {fontSize: 15}]}>Cancel</Text>
-     </TouchableOpacity>
-     <Text style = {[styles.text, {top: '5%'}, {fontSize: 15}]}>Done</Text>
-      {inputArr}
-      <Button
-        containerStyle={[styles.input, { top: '83.0%'}]}
-        label="Set information"
-        onPress={handleSubmit(onSubmit)}
+      <Text style = {[styles.text, {top: '5%'}]}>Edit info</Text>
+      <TouchableOpacity style = {[styles.touchable, {left: '5%'}]} onPress={cancel}>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style = {[styles.touchable, {left: '85%'}]} onPress={handleSubmit(onSubmit)}>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Done</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style = {[styles.profile]} onPress={()=>{console.log('TODO')}}>
+        <FontAwesome name="user-circle-o" size={80} color="black" />
+        <Text style= {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Upload photo</Text>
+      </TouchableOpacity>
+
+      <Controller
+        name='displayName'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Temp error message'},
+        }}
+        render={({field: {onChange, value}})=>(
+          <FieldInput
+            error={errors.displayName}
+            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
+            label='Display name'
+            onChangeText={(text) => onChange(text)}
+            value={value}
+            placeholder='John Smith'
+          />
+        )}
       />
-      <Button
-        containerStyle={[styles.input, { top: '90.0%'}]}
-        label="To home"
-        onPress={toHome}
+      <Controller
+        name='heading'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Temp error message'},
+        }}
+        render={({field: {onChange, value}})=>(
+          <FieldInput
+            error={errors.heading}
+            containerStyle={[styles.fieldInputPart, {top: '8%'}]}
+            label='Heading'
+            onChangeText={(text) => onChange(text)}
+            value={value}
+            placeholder='Co-president of CUAPAHM'
+          />
+        )}
+      />
+      <Controller
+        name='subHeading'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Temp error message'},
+        }}
+        render={({field: {onChange, value}})=>(
+          <FieldInput
+            error={errors.subHeading}
+            containerStyle={[styles.fieldInputPart, {top: '7%'}]}
+            label='Sub-heading'
+            onChangeText={(text) => onChange(text)}
+            value={value}
+            placeholder='Class of 2022'
+          />
+        )}
       />
       <StatusBar
         barStyle = "dark-content"
@@ -275,6 +246,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF',
     flex: 1,
+    alignItems: 'center',
+  },
+  profile:{
+    top: '8%',
+    alignItems: 'center',
   },
   text: {
     textAlign: 'center',
@@ -293,6 +269,6 @@ const styles = StyleSheet.create({
   },
   touchable:{
     position: 'absolute',
-
+    top: '5.5%',
   },
 });
