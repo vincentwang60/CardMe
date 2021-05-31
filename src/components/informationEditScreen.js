@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
@@ -239,12 +239,19 @@ export default function informationEditScreen( {route, navigation }) {
           label="force complete loading"
           onPress={()=>{setLoading(false)}}
         />
+        <StatusBar
+          barStyle = "dark-content"
+          backgroundColor = '#fff'/>
       </LinearGradient>
     )
   }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-     <Text style = {[styles.text, {top: '10%'}]}>Information edit{'\n'}screen placeholder</Text>
+     <Text style = {[styles.text, {top: '5%'}]}>Edit info</Text>
+     <TouchableOpacity style = {styles.touchable} onPress={toHome}>
+       <Text style = {[styles.text, {top: '5%'}, {fontSize: 15}]}>Cancel</Text>
+     </TouchableOpacity>
+     <Text style = {[styles.text, {top: '5%'}, {fontSize: 15}]}>Done</Text>
       {inputArr}
       <Button
         containerStyle={[styles.input, { top: '83.0%'}]}
@@ -257,8 +264,8 @@ export default function informationEditScreen( {route, navigation }) {
         onPress={toHome}
       />
       <StatusBar
-        barStyle = "light-content"
-        backgroundColor = '#000'/>
+        barStyle = "dark-content"
+        backgroundColor = '#fff'/>
     </LinearGradient>
   );
 }
@@ -271,9 +278,9 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: 20,
     color: '#000',
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Nunito_700Bold',
   },
   input:{
     position: 'absolute',
@@ -284,7 +291,8 @@ const styles = StyleSheet.create({
     left: "5.2%",
     flexDirection: 'row',
   },
+  touchable:{
+    position: 'absolute',
 
-  fieldInputPart:{
   },
 });

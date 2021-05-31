@@ -60,7 +60,13 @@ export default function libraryScreen( {route, navigation }) {
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const savedCards = fetchedUserData.data.listUsers.items[0].savedCards
       console.log('lib screens fetched saved cards:', savedCards);
-      createCardData(savedCards)
+      if(savedCards === null){
+        console.log('no saved cards')
+        setLoading(false)
+      }
+      else{
+        createCardData(savedCards)
+      }
     }
     catch (error) {
       console.log('lib screen error on fetchUserData', error);
@@ -75,10 +81,10 @@ export default function libraryScreen( {route, navigation }) {
    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '5%'}]}>Library screen{'\n'}placeholder</Text>
       <Text style = {[styles.text, {top: '8%'}]}>Saved cards:</Text>
-      <Card1
+      {/*<Card1
         containerStyle={[styles.items, { top: '22.0%'}, {left: "10%"}]}
         data={cardData[0]}
-      />
+      />*/}
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>

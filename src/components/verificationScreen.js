@@ -65,10 +65,7 @@ export default function verificationScreen( {route, navigation }) {
     const user = Auth.signIn(passedEmail, passedPassword)
     .then(()=>{
       console.log('successful login!');
-      navigation.navigate('editScreen', {
-        screen: 'informationEditScreen',
-        params: {email: passedEmail, card: null},
-      })
+      navigation.navigate('homeTabs')
     })
     .catch(err=>console.log('error on login!',err))
   }
