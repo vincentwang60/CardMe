@@ -71,7 +71,7 @@ export default function homeScreen( {route, navigation }) {
   function onSubmit(data){
     console.log('home screen submitting with data:', data)
     console.log('hs sharing card:', userData.cardsCreated[0]) //TODO CHANGE THIS, CURRENTLY SENDS FIRST CARD IN cardsCreated
-    share(data, userData.cardsCreated[0])
+    share(data, userData.id, userData.cardsCreated[0].id)
   }
 
   async function getUser(){

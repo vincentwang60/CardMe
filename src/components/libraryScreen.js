@@ -16,6 +16,7 @@ export default function libraryScreen( {route, navigation }) {
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
   const [cardData, setCardData] = useState()
   const [loading, setLoading] = useState(true)
+  const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
 
   useEffect(()=>{//runs once every time this screen is loaded
     if(isFocused){
@@ -61,11 +62,14 @@ export default function libraryScreen( {route, navigation }) {
       const savedCards = fetchedUserData.data.listUsers.items[0].savedCards
       console.log('lib screens fetched saved cards:', savedCards);
       if(savedCards === null){
-        console.log('no saved cards')
+        console.log('lib screen no saved cards')
         setLoading(false)
+        setNoCards(true)
       }
       else{
+        console.log('lib screen found savedCards:', savedCards)
         createCardData(savedCards)
+        setNoCards(false)
       }
     }
     catch (error) {
@@ -77,14 +81,19 @@ export default function libraryScreen( {route, navigation }) {
       <Text>loading</Text>
     )
   }
+  if (noCards){
+    return(
+      <Text>no cards</Text>
+    )
+  }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '5%'}]}>Library screen{'\n'}placeholder</Text>
       <Text style = {[styles.text, {top: '8%'}]}>Saved cards:</Text>
-      {/*<Card1
+      <Card1
         containerStyle={[styles.items, { top: '22.0%'}, {left: "10%"}]}
         data={cardData[0]}
-      />*/}
+      />
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
