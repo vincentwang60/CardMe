@@ -15,11 +15,11 @@ import { listUsers, getUser } from '../graphql/queries.js';
 import { updateUser, createUser } from '../graphql/mutations.js';
 
 export default function homeScreen( {route, navigation }) {
+  const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
+  const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
-  const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
   const [email, setEmail] = useState();
-  const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
 
   useEffect(()=>{//runs once every time this screen is loaded
@@ -45,9 +45,33 @@ export default function homeScreen( {route, navigation }) {
     }
   }, [email])
 
-
+  async function share(data, creatorID, cardId){//called when share button is pressed, puts card in target users 'savedCards'
+    const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: data.email}}}))
+    const user = fetchedUserData.data.listUsers.items[0]
+    const newSavedCards = []
+    console.log('hs share found user:', user)
+    if (user.savedCards === null){//if target user has no saved cards
+      console.log('no saved cards')
+      newSavedCards.push({id: uuidv4(), creatorID: creatorID, cardId: cardId})
+    }
+    else{
+      console.log('saved cards:', user.savedCards)
+      user.savedCards.push({id: uuidv4(), creatorID: creatorID, cardId: cardId})
+    }
+    console.log('created newSavedCards:', newSavedCards)
+    const newUpdateUser = {
+      id: user.id,
+      email: user.email,
+      cardsCreated: user.cardsCreated,
+      savedCards: newSavedCards
+    }
+    const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+    console.log('updated target user:', newUpdateUser)
+  }
   function onSubmit(data){
     console.log('home screen submitting with data:', data)
+    console.log('hs sharing card:', userData.cardsCreated[0]) //TODO CHANGE THIS, CURRENTLY SENDS FIRST CARD IN cardsCreated
+    share(data, userData.cardsCreated[0])
   }
 
   async function getUser(){
@@ -114,9 +138,9 @@ export default function homeScreen( {route, navigation }) {
   }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-      <Text style = {[styles.text, {top: '10%'}]}>Home screen{'\n'}placeholder</Text>
+      <Text style = {[styles.text, {top: '5%'}]}>Home screen{'\n'}placeholder</Text>
       <Card1
-        containerStyle={[styles.items, { top: '29.0%'}, {left: "10%"}]}
+        containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
         data={userData.cardsCreated[0]}
       />
       <Button
@@ -134,7 +158,7 @@ export default function homeScreen( {route, navigation }) {
         render={({field: {onChange, value }})=>(
           <Input
             error={errors.email}
-            containerStyle={[styles.input, { top: '54.8%'}]}
+            containerStyle={[styles.input, { top: '43.8%'}]}
             label="Share via email"
             onChangeText={(text) => onChange(text)}
             value={value}
@@ -142,7 +166,7 @@ export default function homeScreen( {route, navigation }) {
         )}
       />
       <Button
-        containerStyle={[styles.input, { top: '65.0%'}]}
+        containerStyle={[styles.input, { top: '53.0%'}]}
         label="Share"
         onPress={handleSubmit(onSubmit)}
       />
