@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 
@@ -7,6 +7,7 @@ import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
 import { listUsers } from '../graphql/queries.js';
 import * as mutations from '../graphql/mutations.js';
+import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
@@ -25,7 +26,10 @@ export default function layoutEditScreen( {route, navigation }) {
     const { attributes } = await Auth.currentAuthenticatedUser();
     setEmail(attributes.email)
   }
-
+  function cancel(){ //called by cancel button
+    console.log('cancel button doesnt actually cancel (yet)')
+    navigation.navigate('homeTabs')
+  }
   //Called when submit button is pressed, calls setInformation
   function onSubmit(data){
     data.id = email;
@@ -49,36 +53,34 @@ export default function layoutEditScreen( {route, navigation }) {
 
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style = {[styles.text, {top: '10%'}]}>Layout edit{'\n'}screen placeholder</Text>
+      <Text style = {[styles.text, {top: '5%'}]}>Add card</Text>
+      <TouchableOpacity style = {[styles.touchable, {left: '5%'}]} onPress={cancel}>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style = {[styles.touchable, {left: '85%'}]} onPress={handleSubmit(onSubmit)}>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Done</Text>
+      </TouchableOpacity>
+
       <Controller
-        name='name'
+        name='cardNickname'
         control={control}
         rules={{
-          required: {value: true, message: 'Please enter your name'},
+          required: {value: true, message: 'Temp error message'},
         }}
         render={({field: {onChange, value}})=>(
-          <Input
-            error={errors.name}
-            containerStyle={[styles.input, { top: '29.0%'}]}
-            label="Name"
-            onChangeText={(text) => onChange(text)}
-            value={value}
-          />
+        <FieldInput
+          error={errors.displayName}
+          containerStyle={[styles.fieldInputPart, {top: '10%'}]}
+          label='Card Nickname'
+          onChangeText={(text) => onChange(text)}
+          value={value}
+          placeholder='e.g. Orientation Week 2021'
+        />
         )}
       />
-      <Button
-        containerStyle={[styles.input, { top: '69.0%'}]}
-        label="Set information"
-        onPress={handleSubmit(onSubmit)}
-      />
-      <Button
-        containerStyle={[styles.input, { top: '83.0%'}]}
-        label="To home"
-        onPress={toHome}
-      />
       <StatusBar
-        barStyle = "light-content"
-        backgroundColor = '#000'/>
+        barStyle = "dark-content"
+        backgroundColor = '#fff'/>
     </LinearGradient>
   );
 }
@@ -88,15 +90,25 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF',
     flex: 1,
+    alignItems: 'center',
+  },
+  profile:{
+    top: '8%',
+    alignItems: 'center',
   },
   text: {
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: 20,
     color: '#000',
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Nunito_700Bold',
   },
-  input:{
+  fieldInput:{
     position: 'absolute',
-    left: "6.2%",
+    left: "5.2%",
+    flexDirection: 'row',
+  },
+  touchable:{
+    position: 'absolute',
+    top: '5.5%',
   },
 });
