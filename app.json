@@ -23,8 +23,15 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.NFC"
+      ],
+      "package": "io.expo.client"
     },
+    "plugins": [
+      "expo-sensors"
+    ],
     "web": {},
     "description": ""
   }

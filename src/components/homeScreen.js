@@ -5,6 +5,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { Entypo  } from '@expo/vector-icons';
+import { Accelerometer } from 'expo-sensors';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -21,6 +22,50 @@ export default function homeScreen( {route, navigation }) {
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
+
+  //TEST for accelerometer
+  const MINUTE_MS = 100;
+
+  /*useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('Logs every minute');
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])*/
+  const [data, setData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+  const [subscription, setSubscription] = useState(null);
+  const _slow = () => {
+    Accelerometer.setUpdateInterval(1000);
+  };
+
+  const _fast = () => {
+    Accelerometer.setUpdateInterval(16);
+  };
+
+  const _subscribe = () => {
+    setSubscription(
+      Accelerometer.addListener(accelerometerData => {
+        setData(accelerometerData);
+      })
+    );
+  };
+
+  const _unsubscribe = () => {
+    subscription && subscription.remove();
+    setSubscription(null);
+  };
+
+  useEffect(() => {
+    _subscribe();
+    return () => _unsubscribe();
+  }, []);
+  const { x, y, z } = data;
+  //TEST
 
   useEffect(()=>{//runs once every time this screen is loaded
     setLoading(true)
@@ -93,6 +138,9 @@ export default function homeScreen( {route, navigation }) {
     setUserData(newUser)
     return newUser
   }
+  function breakEverything() {//debug method, empty for now
+    console.log('home screen breaking everything')
+  }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     console.log('home screen fetching user')
     try{
@@ -138,45 +186,55 @@ export default function homeScreen( {route, navigation }) {
   }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-      <Text style = {[styles.text, {top: '5%'}]}>Home screen{'\n'}placeholder</Text>
-      <Card1
-        containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
-        data={userData.cardsCreated[0]}
-      />
-      <Button
-        containerStyle={[styles.items, { top: '86.0%'}]}
-        label='Go to edit screen'
-        onPress = {toEdit}
-      />
-      <Controller
-        name='email'
-        control={control}
-        rules={{
-          required: {value: true, message: 'Please enter an email'},
-          pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
-        }}
-        render={({field: {onChange, value }})=>(
-          <Input
-            error={errors.email}
-            containerStyle={[styles.input, { top: '43.8%'}]}
-            label="Share via email"
-            onChangeText={(text) => onChange(text)}
-            value={value}
-          />
-        )}
-      />
-      <Button
-        containerStyle={[styles.input, { top: '53.0%'}]}
-        label="Share"
-        onPress={handleSubmit(onSubmit)}
-      />
+   <Text>Accelerometer: (in Gs where 1 G = 9.81 m s^-2)</Text>
+    <Text>
+      x: {x}{'\n'}y: {y}{'\n'}z: {z}
+    </Text>
+    <Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
+    <Card1
+      containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
+      data={userData.cardsCreated[0]}
+    />
+    <Button
+      containerStyle={[styles.items, { top: '86.0%'}]}
+      label='Go to edit screen'
+      onPress = {toEdit}
+    />
+    <Button
+      containerStyle={[styles.items, { top: '80.0%'}]}
+      label='Break everything'
+      onPress = {breakEverything}
+    />
+    <Controller
+      name='email'
+      control={control}
+      rules={{
+        required: {value: true, message: 'Please enter an email'},
+        pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
+      }}
+      render={({field: {onChange, value }})=>(
+        <Input
+          error={errors.email}
+          containerStyle={[styles.input, { top: '43.8%'}]}
+          label="Share via email"
+          onChangeText={(text) => onChange(text)}
+          value={value}
+        />
+      )}
+    />
+    <Button
+      containerStyle={[styles.input, { top: '53.0%'}]}
+      label="Share"
+      onPress={handleSubmit(onSubmit)}
+    />
       <StatusBar
         barStyle = "dark-content"
         backgroundColor = '#fff'/>
     </LinearGradient>
   );
 }
-
+/*
+*/
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   container: {
