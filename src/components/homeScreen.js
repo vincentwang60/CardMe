@@ -5,7 +5,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { Entypo  } from '@expo/vector-icons';
-import { Accelerometer } from 'expo-sensors';
+import { AntDesign } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -17,11 +18,36 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 
 export default function homeScreen( {route, navigation }) {
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
+  const [showQR, setShowQR] = useState(true)
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
+
+  const createQRCodeComponent = () => {
+    const stringExp = String(userData.id)+String(userData.cardsCreated[0].id)
+    if(showQR){
+      QRCodeComponent =
+      <View style = {[styles.QRCodeComponent]}>
+      <QRCode
+        value={stringExp}
+      />
+        <TouchableOpacity
+          onPress={()=>{
+            setShowQR(false)
+          }}
+          style={styles.touchable}>
+          <AntDesign name="closecircle" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    }
+  }
+
+  let QRCodeComponent;
+  if (userData != null){
+    createQRCodeComponent()
+  }
 
   useEffect(()=>{//runs once every time this screen is loaded
     setLoading(true)
@@ -35,8 +61,9 @@ export default function homeScreen( {route, navigation }) {
 
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData')
+      console.log('successfully fetched userData',userData)
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
+      createQRCodeComponent()
     }
   }, [userData])
 
@@ -47,9 +74,10 @@ export default function homeScreen( {route, navigation }) {
   }, [email])
 
   async function share(data, creatorID, cardId){//called when share button is pressed, puts card in target users 'savedCards'
+    console.log('hs sharing with', data,creatorID, 'card id:',cardId)
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: data.email}}}))
     const user = fetchedUserData.data.listUsers.items[0]
-    const newSavedCards = []
+    var newSavedCards = []
     console.log('hs share found user:', user)
     if (user.savedCards === null){//if target user has no saved cards
       console.log('no saved cards')
@@ -58,6 +86,7 @@ export default function homeScreen( {route, navigation }) {
     else{
       console.log('saved cards:', user.savedCards)
       user.savedCards.push({id: uuidv4(), creatorID: creatorID, cardId: cardId})
+      newSavedCards = user.savedCards
     }
     console.log('created newSavedCards:', newSavedCards)
     const newUpdateUser = {
@@ -84,6 +113,13 @@ export default function homeScreen( {route, navigation }) {
       screen: 'informationEditScreen',
       params: {email: email, card: null},
     })
+  }
+  const qrScan = () => {
+    console.log('starting qr scan')
+    navigation.navigate('qrScanScreen',{email: email})
+  }
+  const createQR = () => {
+    setShowQR(true)
   }
   const createNewUser = async() => {
     console.log('info screen creating new user')
@@ -148,6 +184,16 @@ export default function homeScreen( {route, navigation }) {
       data={userData.cardsCreated[0]}
     />
     <Button
+      containerStyle={[styles.items, { top: '60.0%'}]}
+      label='Share via QR code'
+      onPress = {createQR}
+    />
+    <Button
+      containerStyle={[styles.items, { top: '76.0%'}]}
+      label='QR code test'
+      onPress = {qrScan}
+    />
+    <Button
       containerStyle={[styles.items, { top: '86.0%'}]}
       label='Go to edit screen'
       onPress = {toEdit}
@@ -169,6 +215,8 @@ export default function homeScreen( {route, navigation }) {
         />
       )}
     />
+
+    {QRCodeComponent}
     <Button
       containerStyle={[styles.input, { top: '53.0%'}]}
       label="Share"
@@ -184,6 +232,14 @@ export default function homeScreen( {route, navigation }) {
 */
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  touchable:{
+    top:'-100%',
+    left: '15%',
+  },
+  QRCodeComponent:{
+    alignItems: 'center',
+    top:'15%',
+  },
   container: {
     backgroundColor: '#FFF',
     flex: 1,
