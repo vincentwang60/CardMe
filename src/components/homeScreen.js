@@ -23,50 +23,6 @@ export default function homeScreen( {route, navigation }) {
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
 
-  //TEST for accelerometer
-  const MINUTE_MS = 100;
-
-  /*useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('Logs every minute');
-    }, MINUTE_MS);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])*/
-  const [data, setData] = useState({
-    x: 0,
-    y: 0,
-    z: 0,
-  });
-  const [subscription, setSubscription] = useState(null);
-  const _slow = () => {
-    Accelerometer.setUpdateInterval(1000);
-  };
-
-  const _fast = () => {
-    Accelerometer.setUpdateInterval(16);
-  };
-
-  const _subscribe = () => {
-    setSubscription(
-      Accelerometer.addListener(accelerometerData => {
-        setData(accelerometerData);
-      })
-    );
-  };
-
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
-  };
-
-  useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
-  const { x, y, z } = data;
-  //TEST
-
   useEffect(()=>{//runs once every time this screen is loaded
     setLoading(true)
     if(isFocused){
@@ -186,10 +142,6 @@ export default function homeScreen( {route, navigation }) {
   }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-   <Text>Accelerometer: (in Gs where 1 G = 9.81 m s^-2)</Text>
-    <Text>
-      x: {x}{'\n'}y: {y}{'\n'}z: {z}
-    </Text>
     <Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
     <Card1
       containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
@@ -199,11 +151,6 @@ export default function homeScreen( {route, navigation }) {
       containerStyle={[styles.items, { top: '86.0%'}]}
       label='Go to edit screen'
       onPress = {toEdit}
-    />
-    <Button
-      containerStyle={[styles.items, { top: '80.0%'}]}
-      label='Break everything'
-      onPress = {breakEverything}
     />
     <Controller
       name='email'
