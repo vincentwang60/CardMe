@@ -98,5 +98,6 @@ const styles = StyleSheet.create({
   input:{
     position: 'absolute',
     left: "6.2%",
+    borderRadius: 5,
   },
 });

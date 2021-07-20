@@ -122,6 +122,18 @@ export default function homeScreen( {route, navigation }) {
   const createQR = () => {
     setShowQR(true)
   }
+  const deleteCard = async() => {
+    const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+    const user = fetchedUserData.data.listUsers.items[0]
+    const newUpdateUser = {
+      id: user.id,
+      email: user.email,
+      cardsCreated: null,
+      savedCards: user.savedCards
+    }
+    const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+    console.log('successfully wiped cards created')
+  }
   const createNewUser = async() => {
     console.log('info screen creating new user')
     const newUser = {id: uuidv4(), email: email }
@@ -170,13 +182,14 @@ export default function homeScreen( {route, navigation }) {
         <TouchableOpacity style = {styles.icon} onPress={toEdit}>
           <Entypo name="plus" size={24} color="black" />
         </TouchableOpacity>
+        <Text style = {[styles.grayText, {paddingVertical: 10}]}>Let's get started by {'\n'}adding your first card!</Text>
         <View style = {{alignItems: 'center'}}>
           <Button
             buttonStyle = {styles.button}
             label='Add card +'
             onPress = {toEdit}
+            colors = {['#00ADE9','#E6014E']}
           />
-          <Text style = {styles.grayText}>Let's get started by {'\n'}adding your first card!</Text>
         </View>
         <StatusBar
           barStyle = "dark-content"
@@ -200,6 +213,11 @@ export default function homeScreen( {route, navigation }) {
       containerStyle={[styles.items, { top: '76.0%'}]}
       label='QR code test'
       onPress = {qrScan}
+    />
+    <Button
+      containerStyle={[styles.items, { top: '70.0%'}]}
+      label='Delete cards created for debug'
+      onPress = {deleteCard}
     />
     <Button
       containerStyle={[styles.items, { top: '86.0%'}]}
@@ -259,7 +277,8 @@ const styles = StyleSheet.create({
     top: '4.5%',
   },
   button: {
-    width: Dimensions.get('window').width*.42,
+    width: Dimensions.get('window').width*.52,
+    borderRadius: 5,
   },
   myCardsText: {
     position: 'absolute',
@@ -284,9 +303,11 @@ const styles = StyleSheet.create({
   items:{
     position: 'absolute',
     left: "6.2%",
+    borderRadius: 5,
   },
   input:{
     position: 'absolute',
     left: "6.2%",
+    borderRadius: 5,
   },
 });

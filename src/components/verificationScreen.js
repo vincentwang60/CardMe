@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     width: "100%",
     top: "90.5%",
     flexDirection: 'row',
+    borderRadius: 5,
   },
   container: {
     backgroundColor: '#FFF',
