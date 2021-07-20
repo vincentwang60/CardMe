@@ -22,6 +22,7 @@ export default function informationEditScreen( {route, navigation }) {
   const { handleSubmit, reset, control, formState: {errors} } = useForm();
   const [defaultValue, setDefaultValue] = useState()
   const [cardId, setCardId] = useState() //id of card currently being edited
+  const [updated, setUpdated] = useState(false)
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('--------LOADING INFO EDIT SCREEN--------')
@@ -31,6 +32,12 @@ export default function informationEditScreen( {route, navigation }) {
   useEffect(()=>{//sets the defaults when defaultValue is changed
     reset(defaultValue)
   }, [defaultValue])
+
+  useEffect(()=>{//sets the defaults when defaultValue is changed
+    if(updated){
+      navigation.navigate('homeTabs')
+    }
+  }, [updated])
 
   //called when screen is first loaded, creates card/user if dont exist
   const fetchUserData = async () => {
@@ -112,20 +119,21 @@ export default function informationEditScreen( {route, navigation }) {
 
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
-    console.log('info screen setting default values')
+    console.log('info screen setting default values',card)
     var defaultValueObj = {}
-
-    if (card.content.filter(e => e.name === 'displayName').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'displayName')
-      defaultValueObj['displayName'] = card.content[index].data
-    }
-    if (card.content.filter(e => e.name === 'heading').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'heading')
-      defaultValueObj['heading'] = card.content[index].data
-    }
-    if (card.content.filter(e => e.name === 'subHeading').length > 0) {
-      const index = card.content.findIndex(content => content.name === 'subHeading')
-      defaultValueObj['subHeading'] = card.content[index].data
+    if (card.content != undefined){
+      if (card.content.filter(e => e.name === 'displayName').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'displayName')
+        defaultValueObj['displayName'] = card.content[index].data
+      }
+      if (card.content.filter(e => e.name === 'heading').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'heading')
+        defaultValueObj['heading'] = card.content[index].data
+      }
+      if (card.content.filter(e => e.name === 'subHeading').length > 0) {
+        const index = card.content.findIndex(content => content.name === 'subHeading')
+        defaultValueObj['subHeading'] = card.content[index].data
+      }
     }
     console.log('created default values:', defaultValueObj)
     setDefaultValue(defaultValueObj)
@@ -154,6 +162,7 @@ export default function informationEditScreen( {route, navigation }) {
         savedCards: user.savedCards
       }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+      setUpdated(true)
       console.log('successfully updated data')
     }
     catch (error) {
@@ -163,8 +172,8 @@ export default function informationEditScreen( {route, navigation }) {
   //Called when submit button is pressed, calls setInformation
 
   function onSubmit(data){
+    console.log('info scr submitting with', data)
     setInformation(data)
-    navigation.navigate('homeTabs')
   }
   const toHome = () => {
     navigation.navigate('homeTabs')
@@ -187,7 +196,7 @@ export default function informationEditScreen( {route, navigation }) {
         name='displayName'
         control={control}
         rules={{
-          required: {value: true, message: 'Temp error message'},
+          required: {value: true, message: 'Please enter a display name'},
         }}
         render={({field: {onChange, value}})=>(
           <FieldInput
@@ -203,13 +212,10 @@ export default function informationEditScreen( {route, navigation }) {
       <Controller
         name='heading'
         control={control}
-        rules={{
-          required: {value: true, message: 'Temp error message'},
-        }}
         render={({field: {onChange, value}})=>(
           <FieldInput
             error={errors.heading}
-            containerStyle={[styles.fieldInputPart, {top: '8%'}]}
+            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
             label='Heading'
             onChangeText={(text) => onChange(text)}
             value={value}
@@ -220,13 +226,10 @@ export default function informationEditScreen( {route, navigation }) {
       <Controller
         name='subHeading'
         control={control}
-        rules={{
-          required: {value: true, message: 'Temp error message'},
-        }}
         render={({field: {onChange, value}})=>(
           <FieldInput
             error={errors.subHeading}
-            containerStyle={[styles.fieldInputPart, {top: '7%'}]}
+            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
             label='Sub-heading'
             onChangeText={(text) => onChange(text)}
             value={value}
