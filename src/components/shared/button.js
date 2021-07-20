@@ -7,10 +7,11 @@ export default function Button({
   containerStyle = styles.container,
   onPress,
   img,
+  buttonStyle = styles.button,
 }){
   return (
     <View style={containerStyle}>
-      <TouchableOpacity onPress={onPress} style={styles.button}>
+      <TouchableOpacity onPress={onPress} style={buttonStyle}>
          <Text style = {labelStyle}>
              {label}
          </Text>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -18,7 +18,7 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 
 export default function homeScreen( {route, navigation }) {
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
-  const [showQR, setShowQR] = useState(true)
+  const [showQR, setShowQR] = useState(false)
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
@@ -45,11 +45,9 @@ export default function homeScreen( {route, navigation }) {
   }
 
   let QRCodeComponent;
-  if (userData != null){
-    createQRCodeComponent()
-  }
 
   useEffect(()=>{//runs once every time this screen is loaded
+    console.log('home screen is focused')
     setLoading(true)
     if(isFocused){
       getUser()
@@ -61,9 +59,12 @@ export default function homeScreen( {route, navigation }) {
 
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData',userData)
+      console.log('successfully fetched userData')
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
-      createQRCodeComponent()
+      if (userData.cardsCreated != null){
+        console.log('hs userdata eff creating qr code', userData)
+        createQRCodeComponent()
+      }
     }
   }, [userData])
 
@@ -153,7 +154,7 @@ export default function homeScreen( {route, navigation }) {
           }
         }
         else{
-          console.log('home screen no cards found')
+          console.log('home screen no cards found',noCards)
         }
         setUserData(user);
       }
@@ -175,7 +176,14 @@ export default function homeScreen( {route, navigation }) {
         <TouchableOpacity style = {styles.icon} onPress={toEdit}>
           <Entypo name="plus" size={24} color="black" />
         </TouchableOpacity>
-        <Text style = {styles.grayText}>Let's get started by {'\n'}adding your first card!</Text>
+        <View style = {{alignItems: 'center'}}>
+          <Button
+            buttonStyle = {styles.button}
+            label='Add card +'
+            onPress = {toEdit}
+          />
+          <Text style = {styles.grayText}>Let's get started by {'\n'}adding your first card!</Text>
+        </View>
         <StatusBar
           barStyle = "dark-content"
           backgroundColor = '#fff'/>
@@ -255,6 +263,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: '90%',
     top: '4.5%',
+  },
+  button: {
+    width: Dimensions.get('window').width*.42,
   },
   myCardsText: {
     position: 'absolute',
