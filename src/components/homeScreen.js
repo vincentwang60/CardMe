@@ -5,7 +5,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { Entypo  } from '@expo/vector-icons';
-import { Accelerometer } from 'expo-sensors';
+import { AntDesign } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -17,55 +18,36 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 
 export default function homeScreen( {route, navigation }) {
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
+  const [showQR, setShowQR] = useState(true)
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
 
-  //TEST for accelerometer
-  const MINUTE_MS = 100;
+  const createQRCodeComponent = () => {
+    const stringExp = String(userData.id)+String(userData.cardsCreated[0].id)
+    if(showQR){
+      QRCodeComponent =
+      <View style = {[styles.QRCodeComponent]}>
+      <QRCode
+        value={stringExp}
+      />
+        <TouchableOpacity
+          onPress={()=>{
+            setShowQR(false)
+          }}
+          style={styles.touchable}>
+          <AntDesign name="closecircle" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    }
+  }
 
-  /*useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('Logs every minute');
-    }, MINUTE_MS);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])*/
-  const [data, setData] = useState({
-    x: 0,
-    y: 0,
-    z: 0,
-  });
-  const [subscription, setSubscription] = useState(null);
-  const _slow = () => {
-    Accelerometer.setUpdateInterval(1000);
-  };
-
-  const _fast = () => {
-    Accelerometer.setUpdateInterval(16);
-  };
-
-  const _subscribe = () => {
-    setSubscription(
-      Accelerometer.addListener(accelerometerData => {
-        setData(accelerometerData);
-      })
-    );
-  };
-
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
-  };
-
-  useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
-  const { x, y, z } = data;
-  //TEST
+  let QRCodeComponent;
+  if (userData != null){
+    createQRCodeComponent()
+  }
 
   useEffect(()=>{//runs once every time this screen is loaded
     setLoading(true)
@@ -79,8 +61,9 @@ export default function homeScreen( {route, navigation }) {
 
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData')
+      console.log('successfully fetched userData',userData)
       setLoading(false) //once inputarr is changed to something other than null, gives green light to render screen
+      createQRCodeComponent()
     }
   }, [userData])
 
@@ -91,9 +74,10 @@ export default function homeScreen( {route, navigation }) {
   }, [email])
 
   async function share(data, creatorID, cardId){//called when share button is pressed, puts card in target users 'savedCards'
+    console.log('hs sharing with', data,creatorID, 'card id:',cardId)
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: data.email}}}))
     const user = fetchedUserData.data.listUsers.items[0]
-    const newSavedCards = []
+    var newSavedCards = []
     console.log('hs share found user:', user)
     if (user.savedCards === null){//if target user has no saved cards
       console.log('no saved cards')
@@ -102,6 +86,7 @@ export default function homeScreen( {route, navigation }) {
     else{
       console.log('saved cards:', user.savedCards)
       user.savedCards.push({id: uuidv4(), creatorID: creatorID, cardId: cardId})
+      newSavedCards = user.savedCards
     }
     console.log('created newSavedCards:', newSavedCards)
     const newUpdateUser = {
@@ -128,6 +113,13 @@ export default function homeScreen( {route, navigation }) {
       screen: 'informationEditScreen',
       params: {email: email, card: null},
     })
+  }
+  const qrScan = () => {
+    console.log('starting qr scan')
+    navigation.navigate('qrScanScreen',{email: email})
+  }
+  const createQR = () => {
+    setShowQR(true)
   }
   const createNewUser = async() => {
     console.log('info screen creating new user')
@@ -192,24 +184,25 @@ export default function homeScreen( {route, navigation }) {
   }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-   <Text>Accelerometer: (in Gs where 1 G = 9.81 m s^-2)</Text>
-    <Text>
-      x: {x}{'\n'}y: {y}{'\n'}z: {z}
-    </Text>
     <Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
     <Card1
       containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
       data={userData.cardsCreated[0]}
     />
     <Button
+      containerStyle={[styles.items, { top: '60.0%'}]}
+      label='Share via QR code'
+      onPress = {createQR}
+    />
+    <Button
+      containerStyle={[styles.items, { top: '76.0%'}]}
+      label='QR code test'
+      onPress = {qrScan}
+    />
+    <Button
       containerStyle={[styles.items, { top: '86.0%'}]}
       label='Go to edit screen'
       onPress = {toEdit}
-    />
-    <Button
-      containerStyle={[styles.items, { top: '80.0%'}]}
-      label='Break everything'
-      onPress = {breakEverything}
     />
     <Controller
       name='email'
@@ -228,6 +221,8 @@ export default function homeScreen( {route, navigation }) {
         />
       )}
     />
+
+    {QRCodeComponent}
     <Button
       containerStyle={[styles.input, { top: '53.0%'}]}
       label="Share"
@@ -243,6 +238,14 @@ export default function homeScreen( {route, navigation }) {
 */
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  touchable:{
+    top:'-100%',
+    left: '15%',
+  },
+  QRCodeComponent:{
+    alignItems: 'center',
+    top:'15%',
+  },
   container: {
     backgroundColor: '#FFF',
     flex: 1,

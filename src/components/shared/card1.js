@@ -19,9 +19,6 @@ export default function Card1({
   return (
     <View style={containerStyle}>
       <View style={styles.container}>
-         <Text style = {labelStyle}>
-           {data.title}
-         </Text>
          {dataComponents}
       </View>
     </View>
@@ -43,5 +40,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontFamily: 'Nunito_400Regular',
+    top: '20%',
   },
 });
