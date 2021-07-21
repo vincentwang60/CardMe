@@ -43,7 +43,6 @@ export default function homeScreen( {route, navigation }) {
         </TouchableOpacity>
       </View>
     )
-    setLoading(false)
   }
 
   useEffect(()=>{//runs once every time this screen is loaded
@@ -66,6 +65,7 @@ export default function homeScreen( {route, navigation }) {
           createQRCodeComponent()
         }
       }
+      setLoading(false)
     }
   }, [userData])
 

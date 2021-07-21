@@ -68,7 +68,7 @@ export default function informationEditScreen( {route, navigation }) {
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
     console.log('info screen creating card')
-    const newOwnedCard = { id: uuidv4(), title: 'title'}
+    const newOwnedCard = { id: uuidv4(), title: ''}
     const newUpdateUser = {
       id: user.id,
       email: user.email,
@@ -88,7 +88,7 @@ export default function informationEditScreen( {route, navigation }) {
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       var user = fetchedUserData.data.listUsers.items[0]
       const tempCardId = user.cardsCreated[0].id //TODO REPLACE THIS WHEN CARDID IS PASSED IN
-      console.log('fetched user in addField', user)
+      console.log('fetched user in addField')
       const currentCardIndex = user.cardsCreated.findIndex(x => x.id === tempCardId)//get the index of current card from the cardsCreated array
       const newUpdateUser = {
         id: user.id,
@@ -140,11 +140,9 @@ export default function informationEditScreen( {route, navigation }) {
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       //console.log('fetch info fetchedUserData', fetchedUserData)
       const user = fetchedUserData.data.listUsers.items[0]
-      console.log('fetch info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
-      console.log('current card', currentCard)
       const newContents = []
       newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
       newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
@@ -168,7 +166,7 @@ export default function informationEditScreen( {route, navigation }) {
   //Called when submit button is pressed, calls setInformation
 
   function onSubmit(data){
-    console.log('info scr submitting with', data)
+    console.log('info scr submitting')
     setInformation(data)
   }
   const toHome = () => {

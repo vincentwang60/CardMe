@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
+import Svg, { Rect, Path } from "react-native-svg"
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -10,6 +11,9 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
+import Style1 from '../assets/style1.js';
+import Style2 from '../assets/style2.js';
+import Style3 from '../assets/style3.js';
 
 export default function layoutEditScreen( {route, navigation }) {
   const { handleSubmit, reset, control, formState: {errors} } = useForm();
@@ -17,6 +21,8 @@ export default function layoutEditScreen( {route, navigation }) {
   const [email, setEmail] = useState();
   const [updated, setUpdated] = useState(false)
   const [defaultValue, setDefaultValue] = useState()
+  const [selectedStyle, setSelectedStyle] = useState(1)
+  const [borderX, setBorderX] = useState(6.8)
 
   useEffect(()=>{
     console.log('loading layout screen')
@@ -56,6 +62,8 @@ export default function layoutEditScreen( {route, navigation }) {
   }
 
   function onSubmit(data){
+    data.style = selectedStyle
+    console.log('submitting with data:', data)
     setInformation(data)
   }
   const toHome = () => {
@@ -117,6 +125,18 @@ export default function layoutEditScreen( {route, navigation }) {
         )}
       />
       <Text style = {[styles.smallText,{top:'20%'}]}>Select a style</Text>
+      <View style={[styles.styleContainer,{top:'32%'}]}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(1)}}>
+          <Style1/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(2)}}>
+          <Style2/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(3)}}>
+          <Style3/>
+        </TouchableOpacity>
+        <View style = {[styles.border, {left: borderX}]}/>
+      </View>
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
@@ -126,6 +146,15 @@ export default function layoutEditScreen( {route, navigation }) {
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  border:{//6.8, 37.8,68.9
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    width: 80,
+    height: 80,
+    borderRadius:3,
+    borderWidth: 3,
+    borderColor: '#000',
+  },
   container: {
     backgroundColor: '#FFF',
     flex: 1,
@@ -136,6 +165,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#000',
     fontFamily: 'Nunito_700Bold',
+  },
+  styleContainer:{
+    width: '80%',
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
   },
   smallText:{
     position: 'absolute',
