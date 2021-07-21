@@ -30,7 +30,7 @@
     "react-native-gesture-handler": "^1.10.3",
     "react-native-qrcode-svg": "^6.1.1",
     "react-native-screens": "~3.0.0",
-    "react-native-svg": "^12.1.1",
+    "react-native-svg": "12.1.0",
     "react-native-web": "~0.13.12",
     "unimodules-permissions-interface": "^6.1.0",
     "uuid": "^3.4.0"

@@ -17,7 +17,7 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
   const [containerIsFocused, setContainerIsFocused] = useState(false);
   const codeDigitsArray = new Array(6).fill(0)
   const ref = useRef();
-  const [spamTimeout, setSpamTimeout] = useState(false); 
+  const [spamTimeout, setSpamTimeout] = useState(false);
   const { handleSubmit, watch, control, formState:{errors} } = useForm();
 
   function handleOnPress() {
@@ -71,7 +71,7 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
     Auth.forgotPassword(email)
         .then(data => console.log(data))
         .catch(err => console.log(err));
-        
+
   }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
@@ -111,10 +111,10 @@ export default function verificationCodeForgotPassword( {route, navigation }) {
       <Button containerStyle={[styles.textContainer, { top: '81.5%'}]} label="Authenticate account" onPress={handleSubmit(onSubmit)} />
       <View style={styles.textContainer}>
         <Text style={[styles.signInText]}>Haven't received it? </Text>
-        <TouchableOpacity 
+        <TouchableOpacity
         disabled = {spamTimeout}
           onPress={() => { //Resend Code Btton
-            setSpamTimeout(true); 
+            setSpamTimeout(true);
             forgotPassword(email);
             setTimeout(() => { setSpamTimeout(false);}, 3000); //Prevent Spamming Button
           }
@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     width: "100%",
     top: "90.5%",
     flexDirection: 'row',
+    borderRadius: 5,
   },
   container: {
     backgroundColor: '#FFF',

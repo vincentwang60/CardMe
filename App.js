@@ -29,19 +29,6 @@ import qrScanScreen from './src/components/qrScanScreen';
 const Stack = createStackNavigator(); //Stack object that contains all the screens
 const Tab = createBottomTabNavigator();
 
-function editScreen() { //create tab navigation object that contains the two edit screens
-  return (
-    <Tab.Navigator
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}
-    >
-      <Tab.Screen name = 'informationEditScreen' component = {informationEditScreen}/>
-      <Tab.Screen name = 'layoutEditScreen' component = {layoutEditScreen}/>
-    </Tab.Navigator>
-  )
-}
 function homeTabs() { //create tab navigation object that contains the two edit screens
   return (
     <Tab.Navigator
@@ -69,7 +56,8 @@ function MyStack() {//creates and configures stack object
       <Stack.Screen name="signUpScreen" component={signUpScreen} />
       <Stack.Screen name="logInScreen" component={logInScreen} />
       <Stack.Screen name="verificationScreen" component={verificationScreen} />
-      <Stack.Screen name="editScreen" component={editScreen} />
+      <Stack.Screen name="layoutEditScreen" component={layoutEditScreen} />
+      <Stack.Screen name="informationEditScreen" component={informationEditScreen} />
       <Stack.Screen name="homeTabs" component={homeTabs} />
       <Stack.Screen name="forgotPasswordScreen" component={forgotPasswordScreen} />
       <Stack.Screen name="verificationCodeForgotPassword" component={verificationCodeForgotPassword} />
