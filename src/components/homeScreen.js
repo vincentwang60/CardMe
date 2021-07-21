@@ -18,18 +18,19 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 
 export default function homeScreen( {route, navigation }) {
   const isFocused = useIsFocused(); //used to make sure useEffect is called even when component already loaded
-  const [showQR, setShowQR] = useState(true)
+  const [showQR, setShowQR] = useState(false)
   const { handleSubmit, watch, control, formState: {errors} } = useForm();
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
+  const [QRCodeComponent,setQRCodeComponent] = useState()
 
   const createQRCodeComponent = () => {
-    console.log('home screen creating qr code component')
     const stringExp = String(userData.id)+String(userData.cardsCreated[0].id)
-    QRCodeComponent =
-      <View style = {[styles.QRCodeComponent]}>
+    console.log('home screen creating qr code component',stringExp)
+    setQRCodeComponent(
+      <View style = {[styles.QRCodeComponentStyle]}>
       <QRCode
         value={stringExp}
       />
@@ -41,11 +42,10 @@ export default function homeScreen( {route, navigation }) {
           <AntDesign name="closecircle" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      console.log('create qr with showqr')
-      setLoading(false)
+    )
+    setLoading(false)
   }
 
-  let QRCodeComponent;
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('home screen is focused')
     setLoading(true)
@@ -205,72 +205,68 @@ export default function homeScreen( {route, navigation }) {
   }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-
-    {QRCodeComponent}
-
+   <Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
+   <Text style = {[styles.text,{top:'7%'}]}>{userData.cardsCreated[0].title}</Text>
+   <Card1
+     containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
+     data={userData.cardsCreated[0]}
+   />
+   <Button
+     containerStyle={[styles.items, { top: '60.0%'}]}
+     label='Share via QR code'
+     onPress = {createQR}
+   />
+   <Button
+     containerStyle={[styles.items, { top: '76.0%'}]}
+     label='QR code test'
+     onPress = {qrScan}
+   />
+   <Button
+     containerStyle={[styles.items, { top: '70.0%'}]}
+     label='Delete cards created for debug'
+     onPress = {deleteCard}
+   />
+   <Button
+     containerStyle={[styles.items, { top: '86.0%'}]}
+     label='Go to edit screen'
+     onPress = {toEdit}
+   />
+   <Controller
+     name='email'
+     control={control}
+     rules={{
+       required: {value: true, message: 'Please enter an email'},
+       pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
+     }}
+     render={({field: {onChange, value }})=>(
+       <Input
+         error={errors.email}
+         containerStyle={[styles.input, { top: '43.8%'}]}
+         label="Share via email"
+         onChangeText={(text) => onChange(text)}
+         value={value}
+       />
+     )}
+   />
+   <Button
+     containerStyle={[styles.input, { top: '53.0%'}]}
+     label="Share"
+     onPress={handleSubmit(onSubmit)}
+   />
+    {showQR && QRCodeComponent}
       <StatusBar
         barStyle = "dark-content"
         backgroundColor = '#fff'/>
     </LinearGradient>
   );
 }
-/*
-<Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
-<Text style = {[styles.text,{top:'7%'}]}>{userData.cardsCreated[0].title}</Text>
-<Card1
-  containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
-  data={userData.cardsCreated[0]}
-/>
-<Button
-  containerStyle={[styles.items, { top: '60.0%'}]}
-  label='Share via QR code'
-  onPress = {createQR}
-/>
-<Button
-  containerStyle={[styles.items, { top: '76.0%'}]}
-  label='QR code test'
-  onPress = {qrScan}
-/>
-<Button
-  containerStyle={[styles.items, { top: '70.0%'}]}
-  label='Delete cards created for debug'
-  onPress = {deleteCard}
-/>
-<Button
-  containerStyle={[styles.items, { top: '86.0%'}]}
-  label='Go to edit screen'
-  onPress = {toEdit}
-/>
-<Controller
-  name='email'
-  control={control}
-  rules={{
-    required: {value: true, message: 'Please enter an email'},
-    pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
-  }}
-  render={({field: {onChange, value }})=>(
-    <Input
-      error={errors.email}
-      containerStyle={[styles.input, { top: '43.8%'}]}
-      label="Share via email"
-      onChangeText={(text) => onChange(text)}
-      value={value}
-    />
-  )}
-/>
-<Button
-  containerStyle={[styles.input, { top: '53.0%'}]}
-  label="Share"
-  onPress={handleSubmit(onSubmit)}
-/>
-*/
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   touchable:{
     top:'-100%',
     left: '15%',
   },
-  QRCodeComponent:{
+  QRCodeComponentStyle:{
     alignItems: 'center',
     top:'15%',
   },
