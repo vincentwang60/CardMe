@@ -22,7 +22,7 @@ export default function layoutEditScreen( {route, navigation }) {
   const [updated, setUpdated] = useState(false)
   const [defaultValue, setDefaultValue] = useState()
   const [selectedStyle, setSelectedStyle] = useState(1)
-  const [borderX, setBorderX] = useState(6.8)
+  const [borderX, setBorderX] = useState('6.8%')
 
   useEffect(()=>{
     console.log('loading layout screen')
@@ -126,13 +126,13 @@ export default function layoutEditScreen( {route, navigation }) {
       />
       <Text style = {[styles.smallText,{top:'20%'}]}>Select a style</Text>
       <View style={[styles.styleContainer,{top:'32%'}]}>
-        <TouchableOpacity onPress={()=>{setSelectedStyle(1)}}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(1); setBorderX('6.8%')}}>
           <Style1/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{setSelectedStyle(2)}}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(2); setBorderX('37.8%')}}>
           <Style2/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{setSelectedStyle(3)}}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(3); setBorderX('68.9%')}}>
           <Style3/>
         </TouchableOpacity>
         <View style = {[styles.border, {left: borderX}]}/>
