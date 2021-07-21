@@ -13,19 +13,17 @@ import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 
-//Form for user to add or edit information about themselves (ie Name, nickname, email, university, socials)
-//TODO allow mutations of User in graphQl database rather than just creating
-
 export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
   const {card} = route.params; //card being edited can be passed to set cardId. if not passed will be set to new card
   const { handleSubmit, reset, control, formState: {errors} } = useForm();
   const [defaultValue, setDefaultValue] = useState()
-  const [cardId, setCardId] = useState() //id of card currently being edited
   const [updated, setUpdated] = useState(false)
+  const [cardId, setCardId] = useState()
 
   useEffect(()=>{//runs once every time this screen is loaded
-    console.log('--------LOADING INFO EDIT SCREEN--------')
+    console.log('----info edit screen received params',email,cardId)
+    setCardId(card)
     fetchUserData();
   },[]);
 
@@ -33,9 +31,9 @@ export default function informationEditScreen( {route, navigation }) {
     reset(defaultValue)
   }, [defaultValue])
 
-  useEffect(()=>{//sets the defaults when defaultValue is changed
+  useEffect(()=>{
     if(updated){
-      navigation.navigate('homeTabs')
+      navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
 
@@ -54,9 +52,8 @@ export default function informationEditScreen( {route, navigation }) {
           createCard(user)
         }
         else{
-          console.log('setting up using existing card')
+          console.log('setting up using existing card', cardsCreated[0])
           setDefaultValues(cardsCreated[0])
-          setCardId(cardsCreated[0].id)
         }
       }
     }
@@ -66,7 +63,7 @@ export default function informationEditScreen( {route, navigation }) {
   }
   function cancel(){ //called by cancel button
     console.log('cancel button doesnt actually cancel (yet)')
-    navigation.navigate('homeTabs')
+    navigation.navigate('layoutEditScreen')
   }
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
@@ -80,8 +77,8 @@ export default function informationEditScreen( {route, navigation }) {
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
     setDefaultValues(newOwnedCard)
     console.log('setting card id createCard', newOwnedCard.id)
-    setCardId(newOwnedCard.id)
     console.log('finished creating new card', newOwnedCard, '\nfor user:', user)
+    setCardId(newOwnedCard.id)
   }
 
   //creates a new field, called by add field Button
@@ -119,7 +116,7 @@ export default function informationEditScreen( {route, navigation }) {
 
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
-    console.log('info screen setting default values',card)
+    console.log('info screen setting default values')
     var defaultValueObj = {}
     if (card.content != undefined){
       if (card.content.filter(e => e.name === 'displayName').length > 0) {
@@ -135,14 +132,13 @@ export default function informationEditScreen( {route, navigation }) {
         defaultValueObj['subHeading'] = card.content[index].data
       }
     }
-    console.log('created default values:', defaultValueObj)
+    console.log('created default values')
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
     try{
-      console.log('setting information with data:\n', data,'\nediting card:', cardId)
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
-      console.log('fetch info fetchedUserData', fetchedUserData)
+      //console.log('fetch info fetchedUserData', fetchedUserData)
       const user = fetchedUserData.data.listUsers.items[0]
       console.log('fetch info user', user)
       const cardsCreated = user.cardsCreated
