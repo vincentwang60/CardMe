@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, StyleSheet, Dimensions } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Rect, Path } from "react-native-svg"
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
@@ -12,7 +12,9 @@ export default function Card1({
   data,
   labelStyle = styles.label,
   containerStyle,
+  focused = false,
 }){
+  const [showFront, setShowFront] = useState(true)
   var dataComponents = [] //array of the text components to display, created based on data
   let newText;
   if(data != null){
@@ -44,14 +46,39 @@ export default function Card1({
   else{
     cardBg = <Style3Bg style={styles.bg}/>
   }
-  return (
-    <View style={[containerStyle]}>
-      {cardBg}
-      <View style={styles.container}>
-         {dataComponents}
+  if(!focused){
+    return (
+      <View style={[containerStyle]}>
+        {cardBg}
+        <View style={styles.container}>
+           {dataComponents}
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
+  else if (showFront){
+    return (
+      <TouchableOpacity style = {styles.touchable} onPress = {()=>{setShowFront(false)}}>
+        <View style={[containerStyle]}>
+          {cardBg}
+          <View style={styles.container}>
+             {dataComponents}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  else{
+    return (
+      <TouchableOpacity style = {styles.touchable} onPress = {()=>{setShowFront(true)}}>
+        <View style={[containerStyle]}>
+          {cardBg}
+          <View style={styles.container}>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 }
 const styles = StyleSheet.create({
   bg:{
@@ -62,6 +89,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width*.8,
     height: Dimensions.get('window').width*.4,
     backgroundColor: 'transparent',
+  },
+  touchable:{
   },
   label: {
     left: '15%',

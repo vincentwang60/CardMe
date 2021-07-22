@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { Entypo  } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
@@ -26,16 +27,17 @@ export default function homeScreen( {route, navigation }) {
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
   const [QRCodeComponent,setQRCodeComponent] = useState()
   const [cardArray, setCardArray] = useState([])
-  const [cardFocused, setCardFosued] = useState()
+  const [cardFocused, setCardFocused] = useState()
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('home screen is focused')
     setLoading(true)
+    setCardFocused(null)
     if(isFocused){
       getUser()
-    }
-    if(email != null){//refresh userdata even if email isn't changed
-      fetchUserData()
+      if(email != null){//refresh userdata even if email isn't changed
+        fetchUserData()
+      }
     }
   },[isFocused]);
   useEffect(()=>{//called when userData is changed
@@ -48,18 +50,16 @@ export default function homeScreen( {route, navigation }) {
           console.log('hs userdata eff creating card array')
           var tempCardArray = []
           for (let i = 0; i < userData.cardsCreated.length; i++){
-            console.log('card number', i, userData.cardsCreated[i].title)
             const newCard =
-              <TouchableOpacity style = {styles.cards} onPress={()=>{
-                console.log('navigating to edit screen with params:',email,userData.cardsCreated[i].id)
-                navigation.navigate('informationEditScreen', {email: email, card: userData.cardsCreated[i].id})
+              <TouchableOpacity style = {styles.cards,{padding: 2}} onPress={()=>{
+                setCardFocused(i)
               }} key={i}>
                 <Card1
                   containerStyle = {styles.cards}
                   data={userData.cardsCreated[i]}
                 />
               </TouchableOpacity>
-            console.log('created new card:')
+            console.log('created new card:',userData.cardsCreated[i].title)
             tempCardArray.push(newCard)
           }
           setCardArray(tempCardArray)
@@ -140,7 +140,30 @@ export default function homeScreen( {route, navigation }) {
   const createQR = () => {
     setShowQR(true)
   }
-  const deleteCard = async() => {
+  const deleteCard = async(focusedCard) => {
+    const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
+    const user = fetchedUserData.data.listUsers.items[0]
+    if(user.cardsCreated.length == 1){
+      user.cardsCreated = null
+      setNoCards(true)
+    }
+    else{
+      const currentCardIndex = user.cardsCreated.findIndex(x => x.id === focusedCard.id)
+      user.cardsCreated.splice(currentCardIndex,1)
+    }
+    const newUpdateUser = {
+      id: user.id,
+      email: user.email,
+      cardsCreated: user.cardsCreated,
+      savedCards: user.savedCards
+    }
+    const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+    console.log('successfully wiped single card')
+    setLoading(true)
+    setCardFocused(null)
+    fetchUserData()
+  }
+  const deleteAllCards = async() => {
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
     const user = fetchedUserData.data.listUsers.items[0]
     const newUpdateUser = {
@@ -171,7 +194,7 @@ export default function homeScreen( {route, navigation }) {
         createNewUser()
       }
       else{//if user already created, set userdata
-        if (user.cardsCreated != null){
+        if (user.cardsCreated != null && user.cardsCreated != []){
           if (user.cardsCreated[0].content != null){
             setNoCards(false)
           }
@@ -197,7 +220,7 @@ export default function homeScreen( {route, navigation }) {
   }
   if (noCards){
     return(
-      <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+      <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'center'}]}>
         <Text style = {styles.myCardsText}>My cards</Text>
         <TouchableOpacity style = {styles.icon} onPress={toEdit}>
           <Entypo name="plus" size={24} color="black" />
@@ -217,37 +240,66 @@ export default function homeScreen( {route, navigation }) {
        </LinearGradient>
     )
   }
-  //<Text style = {[styles.text,{top:'7%'}]}>{userData.cardsCreated[0].title}</Text>
+  if (cardFocused != null){
+    let focusedCard = cardArray[cardFocused].props.children.props.data
+    let newCard =
+        <Card1
+          containerStyle = {styles.cards}
+          data={cardArray[cardFocused].props.children.props.data}
+          focused = {true}
+        />
+    console.log('card?',newCard)
+    console.log('card title', focusedCard.title)
+    return(
+      <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
+        <Text style = {styles.myCardsText}>My cards</Text>
+        <TouchableOpacity style = {styles.icon} onPress={toEdit}>
+          <Entypo name="plus" size={24} color="black" />
+        </TouchableOpacity>
+        <View style = {{position:'relative',top:'15%'}}>
+          <Text style = {[styles.myCardsText,{fontSize:15,position:'relative',top:'-5%',left:'8%'}]}>{focusedCard.title} </Text>
+          {newCard}
+          <View style = {{flexDirection: 'row',left: '120%'}}>
+            <TouchableOpacity onPress={()=>{
+              console.log('navigating to edit screen with params:',email,focusedCard.id)
+              navigation.navigate('informationEditScreen', {email: email, card: focusedCard.id})
+            }}>
+              <Feather name="edit"size={24} style = {{marginHorizontal: 10, marginVertical: 10}} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+              deleteCard(focusedCard)
+            }}>
+              <AntDesign name="delete" size={24} style = {{marginVertical: 10}} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Button
+          containerStyle={[styles.items, {top:'90%'}]}
+          label = 'back'
+          onPress = {()=>{setCardFocused(null)}}
+        />
+        <StatusBar
+          barStyle = "dark-content"
+          backgroundColor = '#fff'/>
+       </LinearGradient>
+    );
+  }
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
      <Text style = {styles.myCardsText}>My cards</Text>
      <TouchableOpacity style = {styles.icon} onPress={toEdit}>
        <Entypo name="plus" size={24} color="black" />
      </TouchableOpacity>
-     <View style = {{top:'10%',height: '50%'}}>
-       <ScrollView style = {styles.cardArray}>
-          {cardArray}
-       </ScrollView>
-     </View>
+       <View style = {{top:'10%',height: '60%'}}>
+         <ScrollView style = {styles.cardArray}>
+            {cardArray}
+         </ScrollView>
+       </View>
+     <Text style = {[styles.myCardsText,{top:'83%',fontSize:10}]}>Debug shit, ignore</Text>
      <Button
-       containerStyle={[styles.items, { top: '80.0%'}]}
-       label='Share via QR code'
-       onPress = {createQR}
-     />
-     <Button
-       containerStyle={[styles.items, { top: '76.0%'}]}
-       label='QR code test'
-       onPress = {qrScan}
-     />
-     <Button
-       containerStyle={[styles.items, { top: '90.0%'}]}
-       label='Delete cards created for debug'
-       onPress = {deleteCard}
-     />
-     <Button
-       containerStyle={[styles.items, { top: '86.0%'}]}
-       label='Go to edit screen'
-       onPress = {toEdit}
+       containerStyle={[styles.items, { top: '95.0%'}]}
+       label="Share"
+       onPress={handleSubmit(onSubmit)}
      />
      <Controller
        name='email'
@@ -267,9 +319,19 @@ export default function homeScreen( {route, navigation }) {
        )}
      />
      <Button
-       containerStyle={[styles.input, { top: '95.0%'}]}
-       label="Share"
-       onPress={handleSubmit(onSubmit)}
+       containerStyle={[styles.items, { top: '90.0%'}]}
+       label='Share via QR code'
+       onPress = {createQR}
+     />
+     <Button
+       containerStyle={[styles.items, { top: '95.0%'}]}
+       label='QR code test'
+       onPress = {qrScan}
+     />
+     <Button
+       containerStyle={[styles.items, { top: '85.0%'}]}
+       label='Delete cards created'
+       onPress = {deleteAllCards}
      />
     {showQR && QRCodeComponent}
       <StatusBar
@@ -297,7 +359,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF',
     flex: 1,
-    justifyContent: 'center',
   },
   icon: {
     position: 'absolute',
