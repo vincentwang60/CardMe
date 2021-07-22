@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
-import Svg, { Rect, Path } from "react-native-svg"
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -48,10 +47,20 @@ export default function layoutEditScreen( {route, navigation }) {
     const user = fetchedUserData.data.listUsers.items[0]
     const currentCardIndex = user.cardsCreated.findIndex(x => x.id === cardId)
     const card = user.cardsCreated[currentCardIndex]
-    console.log('layout setting default card:', card)
+    console.log('layout setting default card:')
     var defaultValueObj = {}
     if (card.title.length > 0) {
       defaultValueObj['nickname'] = card.title
+    }
+    console.log('setting border x', card.style)
+    if(card.style == 1){
+      setBorderX('6.8%')
+    }
+    else if(card.style == 2){
+      setBorderX('37.8%')
+    }
+    else{
+      setBorderX('68.9%')
     }
     console.log('created default values', defaultValueObj)
     setDefaultValue(defaultValueObj)
@@ -77,6 +86,7 @@ export default function layoutEditScreen( {route, navigation }) {
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
       currentCard.title = data.nickname
+      currentCard.style = data.style
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
       const newUpdateUser = {
         id: user.id,
@@ -151,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: 80,
     height: 80,
-    borderRadius:3,
+    borderRadius:10,
     borderWidth: 3,
     borderColor: '#000',
   },

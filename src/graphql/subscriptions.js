@@ -13,7 +13,10 @@ export const onCreateUser = /* GraphQL */ `
           id
           name
           data
+          font
         }
+        style
+        layout
       }
       savedCards {
         id
@@ -37,7 +40,10 @@ export const onUpdateUser = /* GraphQL */ `
           id
           name
           data
+          font
         }
+        style
+        layout
       }
       savedCards {
         id
@@ -61,7 +67,10 @@ export const onDeleteUser = /* GraphQL */ `
           id
           name
           data
+          font
         }
+        style
+        layout
       }
       savedCards {
         id

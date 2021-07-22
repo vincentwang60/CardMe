@@ -13,7 +13,10 @@ export const getUser = /* GraphQL */ `
           id
           name
           data
+          font
         }
+        style
+        layout
       }
       savedCards {
         id
@@ -42,7 +45,10 @@ export const listUsers = /* GraphQL */ `
             id
             name
             data
+            font
           }
+          style
+          layout
         }
         savedCards {
           id

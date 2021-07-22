@@ -52,7 +52,7 @@ export default function informationEditScreen( {route, navigation }) {
           createCard(user)
         }
         else{
-          console.log('setting up using existing card', cardsCreated[0])
+          console.log('setting up using existing card')
           setDefaultValues(cardsCreated[0])
         }
       }
@@ -138,16 +138,18 @@ export default function informationEditScreen( {route, navigation }) {
   const setInformation = async (data) => {
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
-      //console.log('fetch info fetchedUserData', fetchedUserData)
       const user = fetchedUserData.data.listUsers.items[0]
+      //console.log('set info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
+      //console.log('set info current card', currentCard)
       const newContents = []
       newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
       newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
       currentCard.content = newContents
+      //console.log('set info updated card', currentCard)
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
       const newUpdateUser = {
         id: user.id,

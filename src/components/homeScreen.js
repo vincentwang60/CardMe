@@ -163,7 +163,6 @@ export default function homeScreen( {route, navigation }) {
       }
       else{//if user already created, set userdata
         if (user.cardsCreated != null){
-          console.log('cards created:', user.cardsCreated)
           if (user.cardsCreated[0].content != null){
             setNoCards(false)
           }
@@ -218,7 +217,7 @@ export default function homeScreen( {route, navigation }) {
      data={userData.cardsCreated[0]}
    />
    <Button
-     containerStyle={[styles.items, { top: '60.0%'}]}
+     containerStyle={[styles.items, { top: '80.0%'}]}
      label='Share via QR code'
      onPress = {createQR}
    />
@@ -247,7 +246,7 @@ export default function homeScreen( {route, navigation }) {
      render={({field: {onChange, value }})=>(
        <Input
          error={errors.email}
-         containerStyle={[styles.input, { top: '43.8%'}]}
+         containerStyle={[styles.input, { top: '95%'}]}
          label="Share via email"
          onChangeText={(text) => onChange(text)}
          value={value}
@@ -255,7 +254,7 @@ export default function homeScreen( {route, navigation }) {
      )}
    />
    <Button
-     containerStyle={[styles.input, { top: '53.0%'}]}
+     containerStyle={[styles.input, { top: '95.0%'}]}
      label="Share"
      onPress={handleSubmit(onSubmit)}
    />

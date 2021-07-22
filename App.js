@@ -9,6 +9,10 @@ import {
   Nunito_400Regular,
   Nunito_700Bold,
 } from '@expo-google-fonts/nunito';
+import{
+  Montserrat_500Medium,
+  Montserrat_300Light
+} from '@expo-google-fonts/montserrat'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -72,6 +76,8 @@ export default function App() {
     Inter_600SemiBold,
     Nunito_700Bold,
     Nunito_400Regular,
+    Montserrat_500Medium,
+    Montserrat_300Light,
   });
   if (!fontsLoaded){
     return <AppLoading />;

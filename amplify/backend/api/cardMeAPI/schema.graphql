@@ -10,12 +10,15 @@ type ownedCard
   id: String!
   title: String!
   content: [content]
+  style: Int
+  layout: Int
 }
 type content
 {
   id: String!
   name: String!
   data: String!
+  font: String
 }
 type savedCard
 {

@@ -16,5 +16,23 @@
         "cardme2ae03ed7": {}
       }
     }
+  },
+  "click": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cardme-click-155341-authRole",
+      "UnauthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-click-155341-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-click-155341-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-cardme-click-155341-deployment",
+      "UnauthRoleName": "amplify-cardme-click-155341-unauthRole",
+      "StackName": "amplify-cardme-click-155341",
+      "StackId": "arn:aws:cloudformation:us-east-2:478142532996:stack/amplify-cardme-click-155341/5a84e8d0-ea5d-11eb-9c68-06ab463d1800",
+      "AmplifyAppId": "d2ar99ufdmgu4e"
+    },
+    "categories": {
+      "auth": {
+        "cardme2ae03ed7": {}
+      }
+    }
   }
 }

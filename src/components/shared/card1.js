@@ -1,7 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet, Dimensions } from 'react-native';
+import Svg, { Rect, Path } from "react-native-svg"
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
+
+import Style1Bg from '../../assets/style1bg.js'
+import Style2Bg from '../../assets/style2bg.js'
+import Style3Bg from '../../assets/style3bg.js'
 
 export default function Card1({
   data,
@@ -9,15 +14,36 @@ export default function Card1({
   containerStyle,
 }){
   var dataComponents = [] //array of the text components to display, created based on data
-  for(var i = 0; i < data.content.length; i++){
-    const newText =
-      <Text style = {labelStyle} key = {i}>
-        {data.content[i].data}
-      </Text>
-    dataComponents.push(newText)
+  let newText;
+  newText =
+    <Text style = {[labelStyle,{fontFamily:'Montserrat_500Medium',fontSize:20,top:'40%',}]} key = {0}>
+      {data.content[0].data}
+    </Text>
+  dataComponents.push(newText)
+  newText =
+    <Text style = {[labelStyle,{fontSize:12,top:'65%'}]} key = {1}>
+      {data.content[1].data}
+    </Text>
+  dataComponents.push(newText)
+  newText =
+    <Text style = {[labelStyle,{top:'75%'}]} key = {2}>
+      {data.content[2].data}
+    </Text>
+  dataComponents.push(newText)
+  let cardBg
+  console.log('card data:', data.style)
+  if(data.style == 1){
+    cardBg = <Style1Bg style={styles.bg}/>
+  }
+  else if(data.style == 2){
+    cardBg = <Style2Bg style={styles.bg}/>
+  }
+  else{
+    cardBg = <Style3Bg style={styles.bg}/>
   }
   return (
     <View style={containerStyle}>
+      {cardBg}
       <View style={styles.container}>
          {dataComponents}
       </View>
@@ -25,21 +51,21 @@ export default function Card1({
   );
 }
 const styles = StyleSheet.create({
+  bg:{
+    position: 'absolute',
+  },
   container: {
-    marginVertical: 5,
+    marginVertical: 15,
     width: Dimensions.get('window').width*.8,
     height: Dimensions.get('window').width*.4,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 2,
+    backgroundColor: 'transparent',
   },
   label: {
-    textAlign: 'center',
+    position: 'absolute',
+    left: '10%',
     paddingVertical: 1,
-    fontSize: 16,
-    color: 'black',
-    fontFamily: 'Nunito_400Regular',
-    top: '20%',
+    fontSize: 10,
+    color: 'white',
+    fontFamily: 'Montserrat_300Light',
   },
 });
