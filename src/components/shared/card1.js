@@ -23,12 +23,12 @@ export default function Card1({
         </Text>
       dataComponents.push(newText)
       newText =
-        <Text style = {[labelStyle,{fontSize:12,top:'65%'}]} key = {1}>
+        <Text style = {[labelStyle,{fontSize:12,top:'50%'}]} key = {1}>
           {data.content[1].data}
         </Text>
       dataComponents.push(newText)
       newText =
-        <Text style = {[labelStyle,{top:'75%'}]} key = {2}>
+        <Text style = {[labelStyle,{top:'50%'}]} key = {2}>
           {data.content[2].data}
         </Text>
       dataComponents.push(newText)
@@ -64,9 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   label: {
-    position: 'absolute',
     left: '15%',
-    paddingVertical: 1,
     fontSize: 10,
     color: 'white',
     fontFamily: 'Montserrat_300Light',

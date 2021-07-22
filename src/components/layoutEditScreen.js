@@ -10,6 +10,7 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
+import Card1 from './shared/card1.js'
 import Style1 from '../assets/style1.js';
 import Style2 from '../assets/style2.js';
 import Style3 from '../assets/style3.js';
@@ -18,10 +19,13 @@ export default function layoutEditScreen( {route, navigation }) {
   const { handleSubmit, reset, control, formState: {errors} } = useForm();
   const {cardId} = route.params;
   const [email, setEmail] = useState();
+  const [cardData, setCardData] = useState();
   const [updated, setUpdated] = useState(false)
   const [defaultValue, setDefaultValue] = useState()
-  const [selectedStyle, setSelectedStyle] = useState(1)
+  const [selectedStyle, setSelectedStyle] = useState()
   const [borderX, setBorderX] = useState('6.8%')
+  const [loading, setLoading] = useState(true)
+  const [card, setCard] = useState()
 
   useEffect(()=>{
     console.log('loading layout screen')
@@ -42,17 +46,38 @@ export default function layoutEditScreen( {route, navigation }) {
       setDefaultValues()
     }
   },[email])
+  useEffect(()=>{
+    if(card != null){
+      setLoading(false)
+    }
+  },[card])
+  useEffect(()=>{
+    if(cardData != null){
+      console.log('updating card style from', cardData.style, 'to', selectedStyle)
+      cardData.style = selectedStyle
+      let c =
+        <View style = {[styles.cards]}>
+          <Card1
+            containerStyle = {styles.card}
+            data = {cardData}
+          />
+        </View>
+      setCard(c)
+      console.log('new card style', cardData)
+    }
+  },[selectedStyle])
   async function setDefaultValues(){
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
     const user = fetchedUserData.data.listUsers.items[0]
     const currentCardIndex = user.cardsCreated.findIndex(x => x.id === cardId)
     const card = user.cardsCreated[currentCardIndex]
+    setCardData(card)
+    setSelectedStyle(card.style)
     console.log('layout setting default card:')
     var defaultValueObj = {}
     if (card.title.length > 0) {
       defaultValueObj['nickname'] = card.title
     }
-    console.log('setting border x', card.style)
     if(card.style == 1){
       setBorderX('6.8%')
     }
@@ -106,7 +131,11 @@ export default function layoutEditScreen( {route, navigation }) {
     console.log('cancel button doesnt actually cancel (yet)')
     navigation.navigate('layoutEditScreen')
   }
-
+  if (loading){
+    return (
+      <Text>loading</Text>
+    )
+  }
   return (
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '5%'}]}>Edit Layout</Text>
@@ -136,7 +165,7 @@ export default function layoutEditScreen( {route, navigation }) {
       />
       <Text style = {[styles.smallText,{top:'20%'}]}>Select a style</Text>
       <View style={[styles.styleContainer,{top:'32%'}]}>
-        <TouchableOpacity onPress={()=>{setSelectedStyle(1); setBorderX('6.8%')}}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(1); setBorderX('6.8%');}}>
           <Style1/>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>{setSelectedStyle(2); setBorderX('37.8%')}}>
@@ -147,6 +176,9 @@ export default function layoutEditScreen( {route, navigation }) {
         </TouchableOpacity>
         <View style = {[styles.border, {left: borderX}]}/>
       </View>
+      <View style = {styles.cardWrapper}>
+        {card}
+      </View>
       <StatusBar
         barStyle = "light-content"
         backgroundColor = '#000'/>
@@ -156,6 +188,13 @@ export default function layoutEditScreen( {route, navigation }) {
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  cardWrapper:{
+    position: 'absolute',
+    top:'40%',
+    width: '100%',
+  },
+  cards:{
+  },
   border:{//6.8, 37.8,68.9
     position: 'absolute',
     backgroundColor: 'transparent',
@@ -166,7 +205,6 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   container: {
-    backgroundColor: '#FFF',
     flex: 1,
     alignItems: 'center',
   },
