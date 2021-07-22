@@ -15,21 +15,25 @@ export default function Card1({
 }){
   var dataComponents = [] //array of the text components to display, created based on data
   let newText;
-  newText =
-    <Text style = {[labelStyle,{fontFamily:'Montserrat_500Medium',fontSize:20,top:'40%',}]} key = {0}>
-      {data.content[0].data}
-    </Text>
-  dataComponents.push(newText)
-  newText =
-    <Text style = {[labelStyle,{fontSize:12,top:'65%'}]} key = {1}>
-      {data.content[1].data}
-    </Text>
-  dataComponents.push(newText)
-  newText =
-    <Text style = {[labelStyle,{top:'75%'}]} key = {2}>
-      {data.content[2].data}
-    </Text>
-  dataComponents.push(newText)
+  if(data != null){
+    if(data.content != null){
+      newText =
+        <Text style = {[labelStyle,{fontFamily:'Montserrat_500Medium',fontSize:20,top:'40%',}]} key = {0}>
+          {data.content[0].data}
+        </Text>
+      dataComponents.push(newText)
+      newText =
+        <Text style = {[labelStyle,{fontSize:12,top:'65%'}]} key = {1}>
+          {data.content[1].data}
+        </Text>
+      dataComponents.push(newText)
+      newText =
+        <Text style = {[labelStyle,{top:'75%'}]} key = {2}>
+          {data.content[2].data}
+        </Text>
+      dataComponents.push(newText)
+    }
+  }
   let cardBg
   if(data.style == 1){
     cardBg = <Style1Bg style={styles.bg}/>

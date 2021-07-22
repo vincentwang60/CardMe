@@ -53,7 +53,7 @@ export default function informationEditScreen( {route, navigation }) {
         }
         else{
           console.log('setting up using existing card')
-          setDefaultValues(cardsCreated[0])
+          setDefaultValues(cardsCreated.filter(e=>e.id === card)[0])
         }
       }
     }
@@ -178,10 +178,10 @@ export default function informationEditScreen( {route, navigation }) {
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '5%'}]}>Edit info</Text>
       <TouchableOpacity style = {[styles.touchable, {left: '5%'}]} onPress={cancel}>
-        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Cancel</Text>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Back</Text>
       </TouchableOpacity>
       <TouchableOpacity style = {[styles.touchable, {left: '85%'}]} onPress={handleSubmit(onSubmit)}>
-        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Done</Text>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Next</Text>
       </TouchableOpacity>
       <TouchableOpacity style = {[styles.profile]} onPress={()=>{console.log('TODO')}}>
         <FontAwesome name="user-circle-o" size={80} color="black" />

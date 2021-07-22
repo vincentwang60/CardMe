@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -26,6 +26,7 @@ export default function homeScreen( {route, navigation }) {
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
   const [QRCodeComponent,setQRCodeComponent] = useState()
   const [cardArray, setCardArray] = useState([])
+  const [cardFocused, setCardFosued] = useState()
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('home screen is focused')
@@ -39,7 +40,7 @@ export default function homeScreen( {route, navigation }) {
   },[isFocused]);
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData', userData)
+      console.log('successfully fetched userData')
       if (userData.cardsCreated != null){
         if (userData.cardsCreated[0].content != null){
           console.log('hs userdata eff creating qr code')
@@ -49,12 +50,16 @@ export default function homeScreen( {route, navigation }) {
           for (let i = 0; i < userData.cardsCreated.length; i++){
             console.log('card number', i, userData.cardsCreated[i].title)
             const newCard =
-              <Card1
-                containerStyle = {styles.cards}
-                data={userData.cardsCreated[i]}
-                key = {i}
-              />
-            console.log('created new card:', newCard)
+              <TouchableOpacity style = {styles.cards} onPress={()=>{
+                console.log('navigating to edit screen with params:',email,userData.cardsCreated[i].id)
+                navigation.navigate('informationEditScreen', {email: email, card: userData.cardsCreated[i].id})
+              }} key={i}>
+                <Card1
+                  containerStyle = {styles.cards}
+                  data={userData.cardsCreated[i]}
+                />
+              </TouchableOpacity>
+            console.log('created new card:')
             tempCardArray.push(newCard)
           }
           setCardArray(tempCardArray)
@@ -219,7 +224,11 @@ export default function homeScreen( {route, navigation }) {
      <TouchableOpacity style = {styles.icon} onPress={toEdit}>
        <Entypo name="plus" size={24} color="black" />
      </TouchableOpacity>
-     {cardArray}
+     <View style = {{top:'10%',height: '50%'}}>
+       <ScrollView style = {styles.cardArray}>
+          {cardArray}
+       </ScrollView>
+     </View>
      <Button
        containerStyle={[styles.items, { top: '80.0%'}]}
        label='Share via QR code'
@@ -271,7 +280,11 @@ export default function homeScreen( {route, navigation }) {
 }
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  cardArray:{
+    top: '10%',
+  },
   cards:{
+
   },
   touchable:{
     top:'-100%',

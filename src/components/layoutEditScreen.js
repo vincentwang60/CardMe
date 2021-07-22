@@ -111,7 +111,7 @@ export default function layoutEditScreen( {route, navigation }) {
     <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
       <Text style = {[styles.text, {top: '5%'}]}>Edit Layout</Text>
       <TouchableOpacity style = {[styles.touchable, {left: '5%'}]} onPress={cancel}>
-        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Cancel</Text>
+        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Back</Text>
       </TouchableOpacity>
       <TouchableOpacity style = {[styles.touchable, {left: '85%'}]} onPress={handleSubmit(onSubmit)}>
         <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Done</Text>
