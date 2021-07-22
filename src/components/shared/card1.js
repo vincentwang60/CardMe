@@ -31,7 +31,6 @@ export default function Card1({
     </Text>
   dataComponents.push(newText)
   let cardBg
-  console.log('card data:', data.style)
   if(data.style == 1){
     cardBg = <Style1Bg style={styles.bg}/>
   }
@@ -42,7 +41,7 @@ export default function Card1({
     cardBg = <Style3Bg style={styles.bg}/>
   }
   return (
-    <View style={containerStyle}>
+    <View style={[containerStyle]}>
       {cardBg}
       <View style={styles.container}>
          {dataComponents}
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    left: '10%',
+    left: '15%',
     paddingVertical: 1,
     fontSize: 10,
     color: 'white',

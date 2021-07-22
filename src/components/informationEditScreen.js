@@ -48,7 +48,7 @@ export default function informationEditScreen( {route, navigation }) {
       }
       else{//if user already created, check for cards
         const cardsCreated = user.cardsCreated
-        if(cardsCreated == null) {
+        if(card == null) {
           createCard(user)
         }
         else{

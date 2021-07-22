@@ -25,6 +25,49 @@ export default function homeScreen( {route, navigation }) {
   const [email, setEmail] = useState();
   const [noCards, setNoCards] = useState(true) //tracks whether the user already has a card to show
   const [QRCodeComponent,setQRCodeComponent] = useState()
+  const [cardArray, setCardArray] = useState([])
+
+  useEffect(()=>{//runs once every time this screen is loaded
+    console.log('home screen is focused')
+    setLoading(true)
+    if(isFocused){
+      getUser()
+    }
+    if(email != null){//refresh userdata even if email isn't changed
+      fetchUserData()
+    }
+  },[isFocused]);
+  useEffect(()=>{//called when userData is changed
+    if(userData != null){
+      console.log('successfully fetched userData', userData)
+      if (userData.cardsCreated != null){
+        if (userData.cardsCreated[0].content != null){
+          console.log('hs userdata eff creating qr code')
+          createQRCodeComponent()
+          console.log('hs userdata eff creating card array')
+          var tempCardArray = []
+          for (let i = 0; i < userData.cardsCreated.length; i++){
+            console.log('card number', i, userData.cardsCreated[i].title)
+            const newCard =
+              <Card1
+                containerStyle = {styles.cards}
+                data={userData.cardsCreated[i]}
+                key = {i}
+              />
+            console.log('created new card:', newCard)
+            tempCardArray.push(newCard)
+          }
+          setCardArray(tempCardArray)
+        }
+      }
+      setLoading(false)
+    }
+  }, [userData])
+  useEffect(()=>{//called when email is changed
+    if(email != null){
+      fetchUserData()
+    }
+  }, [email])
 
   const createQRCodeComponent = () => {
     const stringExp = String(userData.id)+String(userData.cardsCreated[0].id)
@@ -44,36 +87,6 @@ export default function homeScreen( {route, navigation }) {
       </View>
     )
   }
-
-  useEffect(()=>{//runs once every time this screen is loaded
-    console.log('home screen is focused')
-    setLoading(true)
-    if(isFocused){
-      getUser()
-    }
-    if(email != null){//refresh userdata even if email isn't changed
-      fetchUserData()
-    }
-  },[isFocused]);
-
-  useEffect(()=>{//called when userData is changed
-    if(userData != null){
-      console.log('successfully fetched userData')
-      if (userData.cardsCreated != null){
-        if (userData.cardsCreated[0].content != null){
-          console.log('hs userdata eff creating qr code')
-          createQRCodeComponent()
-        }
-      }
-      setLoading(false)
-    }
-  }, [userData])
-
-  useEffect(()=>{//called when email is changed
-    if(email != null){
-      fetchUserData()
-    }
-  }, [email])
 
   async function share(data, creatorID, cardId){//called when share button is pressed, puts card in target users 'savedCards'
     console.log('hs sharing with', data,creatorID, 'card id:',cardId)
@@ -110,15 +123,9 @@ export default function homeScreen( {route, navigation }) {
     const { attributes } = await Auth.currentAuthenticatedUser();
     setEmail(attributes.email)
   }
-  const toEdit = () => {
-    var cardId = null
-    if(userData != null){
-      if(userData.cardsCreated != null){
-        cardId = userData.cardsCreated[0].id
-      }
-    }
-    console.log('navigating to edit screen with params:',email,cardId)
-    navigation.navigate('informationEditScreen', {email: email, card: cardId})
+  function toEdit(){
+    console.log('navigating to edit screen with params:',email,null)
+    navigation.navigate('informationEditScreen', {email: email, card: null})
     //TODO FIX CARDID
   }
   const qrScan = () => {
@@ -148,9 +155,6 @@ export default function homeScreen( {route, navigation }) {
     setNoCards(true)
     setUserData(newUser)
     return newUser
-  }
-  function breakEverything() {//debug method, empty for now
-    console.log('home screen breaking everything')
   }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
     console.log('home screen fetching user')
@@ -208,56 +212,56 @@ export default function homeScreen( {route, navigation }) {
        </LinearGradient>
     )
   }
+  //<Text style = {[styles.text,{top:'7%'}]}>{userData.cardsCreated[0].title}</Text>
   return (
    <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
-   <Text style = {[styles.text, {top: '1%'}]}>Home screen{'\n'}placeholder</Text>
-   <Text style = {[styles.text,{top:'7%'}]}>{userData.cardsCreated[0].title}</Text>
-   <Card1
-     containerStyle={[styles.items, { top: '20.0%'}, {left: "10%"}]}
-     data={userData.cardsCreated[0]}
-   />
-   <Button
-     containerStyle={[styles.items, { top: '80.0%'}]}
-     label='Share via QR code'
-     onPress = {createQR}
-   />
-   <Button
-     containerStyle={[styles.items, { top: '76.0%'}]}
-     label='QR code test'
-     onPress = {qrScan}
-   />
-   <Button
-     containerStyle={[styles.items, { top: '70.0%'}]}
-     label='Delete cards created for debug'
-     onPress = {deleteCard}
-   />
-   <Button
-     containerStyle={[styles.items, { top: '86.0%'}]}
-     label='Go to edit screen'
-     onPress = {toEdit}
-   />
-   <Controller
-     name='email'
-     control={control}
-     rules={{
-       required: {value: true, message: 'Please enter an email'},
-       pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
-     }}
-     render={({field: {onChange, value }})=>(
-       <Input
-         error={errors.email}
-         containerStyle={[styles.input, { top: '95%'}]}
-         label="Share via email"
-         onChangeText={(text) => onChange(text)}
-         value={value}
-       />
-     )}
-   />
-   <Button
-     containerStyle={[styles.input, { top: '95.0%'}]}
-     label="Share"
-     onPress={handleSubmit(onSubmit)}
-   />
+     <Text style = {styles.myCardsText}>My cards</Text>
+     <TouchableOpacity style = {styles.icon} onPress={toEdit}>
+       <Entypo name="plus" size={24} color="black" />
+     </TouchableOpacity>
+     {cardArray}
+     <Button
+       containerStyle={[styles.items, { top: '80.0%'}]}
+       label='Share via QR code'
+       onPress = {createQR}
+     />
+     <Button
+       containerStyle={[styles.items, { top: '76.0%'}]}
+       label='QR code test'
+       onPress = {qrScan}
+     />
+     <Button
+       containerStyle={[styles.items, { top: '90.0%'}]}
+       label='Delete cards created for debug'
+       onPress = {deleteCard}
+     />
+     <Button
+       containerStyle={[styles.items, { top: '86.0%'}]}
+       label='Go to edit screen'
+       onPress = {toEdit}
+     />
+     <Controller
+       name='email'
+       control={control}
+       rules={{
+         required: {value: true, message: 'Please enter an email'},
+         pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
+       }}
+       render={({field: {onChange, value }})=>(
+         <Input
+           error={errors.email}
+           containerStyle={[styles.input, { top: '95%'}]}
+           label="Share via email"
+           onChangeText={(text) => onChange(text)}
+           value={value}
+         />
+       )}
+     />
+     <Button
+       containerStyle={[styles.input, { top: '95.0%'}]}
+       label="Share"
+       onPress={handleSubmit(onSubmit)}
+     />
     {showQR && QRCodeComponent}
       <StatusBar
         barStyle = "dark-content"
@@ -267,6 +271,8 @@ export default function homeScreen( {route, navigation }) {
 }
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  cards:{
+  },
   touchable:{
     top:'-100%',
     left: '15%',
@@ -298,8 +304,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
   },
   text: {
-    textAlign: 'center',
-    fontSize: 24,
+    left: '10%',
+    fontSize: 20,
     color: '#000',
     fontFamily: 'Nunito_700Bold',
   },
