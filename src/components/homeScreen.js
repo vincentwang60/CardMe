@@ -62,7 +62,7 @@ export default function homeScreen( {route, navigation }) {
             const newCard =
               <TouchableOpacity style = {styles.cards,{padding: 2}} onPress={()=>{
                 setCardFocused(i)
-              }} key={i}>
+              }} key={i} activeOpacity = {1}>
                 <Card1
                   containerStyle = {styles.cards}
                   data={userData.cardsCreated[i]}
@@ -333,17 +333,24 @@ export default function homeScreen( {route, navigation }) {
     <SafeAreaView style={{flex:1,margin:16}}>
       <View style={{flex:1,top:'10%'}}>
         <Animated.ScrollView
-          scrollEventThrottle={1}
-          showsVerticalScrollIndicator = {false}
-          contentContainerStyle={{height: Dimensions.get('window').height*.9+200}}
+          scrollEventThrottle={50}
+          showsVerticalScrollIndicator = {true}
+          contentContainerStyle={{height: Dimensions.get('window').height*.9+400}}
           onScroll={
             Animated.event([{nativeEvent:{contentOffset:{y:scrollY}}}],{useNativeDriver:true})
           }
         >
         {cardArray.map((card,cardIndex)=>{
           const cardHeight = Dimensions.get('window').width*.4
-          const inputRange = [0, 200]
-          const outputRange = [0-20*cardIndex,200-150*cardIndex]
+          let inputRange,outputRange
+          if(cardIndex == 0){
+            inputRange = [0,400]
+            outputRange = [0,400]
+          }
+          else{
+            inputRange = [0,400*(cardIndex/cardArray.length),400]
+            outputRange = [0,0.5*cardHeight*-cardIndex+400*(cardIndex/cardArray.length),400-(cardHeight-20)*cardIndex]
+          }
           const translateY = scrollY.interpolate({
             inputRange,
             outputRange,
