@@ -37,6 +37,7 @@ export default function homeScreen( {route, navigation }) {
   const [cardFocused, setCardFocused] = useState()
   const scrollY = useRef(new Animated.Value(0)).current
   const {height} = Dimensions.get('window').height
+  const scrollViewRef = useRef();
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('home screen is focused')
@@ -334,8 +335,10 @@ export default function homeScreen( {route, navigation }) {
       <View style={{flex:1,top:'10%'}}>
         <Animated.ScrollView
           scrollEventThrottle={50}
-          showsVerticalScrollIndicator = {true}
+          showsVerticalScrollIndicator = {false}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
           contentContainerStyle={{height: Dimensions.get('window').height*.9+400}}
+          ref = {scrollViewRef}
           onScroll={
             Animated.event([{nativeEvent:{contentOffset:{y:scrollY}}}],{useNativeDriver:true})
           }
@@ -349,7 +352,7 @@ export default function homeScreen( {route, navigation }) {
           }
           else{
             inputRange = [0,400*(cardIndex/cardArray.length),400]
-            outputRange = [0,0.5*cardHeight*-cardIndex+400*(cardIndex/cardArray.length),400-(cardHeight-20)*cardIndex]
+            outputRange = [0,0.5*cardHeight*-cardIndex+400*(cardIndex/cardArray.length),400-(cardHeight-1e0)*cardIndex]
           }
           const translateY = scrollY.interpolate({
             inputRange,
