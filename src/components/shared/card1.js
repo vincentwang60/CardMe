@@ -16,6 +16,8 @@ export default function Card1({
 }){
   const [showFront, setShowFront] = useState(true)
   var dataComponents = [] //array of the text components to display, created based on data
+  var layoutStyle = styles.layout1
+  var style = data.style
   let newText;
   if(data != null){
     if(data.content != null){

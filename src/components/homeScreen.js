@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, SafeAreaView, Animated, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -28,6 +28,8 @@ export default function homeScreen( {route, navigation }) {
   const [QRCodeComponent,setQRCodeComponent] = useState()
   const [cardArray, setCardArray] = useState([])
   const [cardFocused, setCardFocused] = useState()
+  const scrollY = useRef(new Animated.Value(0)).current
+  const {height} = Dimensions.get('window').height
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('home screen is focused')
@@ -74,6 +76,7 @@ export default function homeScreen( {route, navigation }) {
     }
   }, [email])
 
+
   const createQRCodeComponent = () => {
     const stringExp = String(userData.id)+String(userData.cardsCreated[0].id)
     console.log('home screen creating qr code component',stringExp)
@@ -92,7 +95,6 @@ export default function homeScreen( {route, navigation }) {
       </View>
     )
   }
-
   async function share(data, creatorID, cardId){//called when share button is pressed, puts card in target users 'savedCards'
     console.log('hs sharing with', data,creatorID, 'card id:',cardId)
     const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: data.email}}}))
@@ -123,7 +125,6 @@ export default function homeScreen( {route, navigation }) {
     console.log('hs sharing card:', userData.cardsCreated[0]) //TODO CHANGE THIS, CURRENTLY SENDS FIRST CARD IN cardsCreated
     share(data, userData.id, userData.cardsCreated[0].id)
   }
-
   async function getUser(){
     const { attributes } = await Auth.currentAuthenticatedUser();
     setEmail(attributes.email)
@@ -248,13 +249,15 @@ export default function homeScreen( {route, navigation }) {
           data={cardArray[cardFocused].props.children.props.data}
           focused = {true}
         />
-    console.log('card?',newCard)
     console.log('card title', focusedCard.title)
     return(
       <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
         <Text style = {styles.myCardsText}>My cards</Text>
         <TouchableOpacity style = {styles.icon} onPress={toEdit}>
           <Entypo name="plus" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style = {{position: 'absolute', width:'100%',height:'100%'}} onPress={()=>{setCardFocused(null)}}>
+          <View style={{}}/>
         </TouchableOpacity>
         <View style = {{position:'relative',top:'15%'}}>
           <Text style = {[styles.myCardsText,{fontSize:15,position:'relative',top:'-5%',left:'8%'}]}>{focusedCard.title} </Text>
@@ -273,10 +276,40 @@ export default function homeScreen( {route, navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+
+        <Text style = {[styles.myCardsText,{top:'70%',fontSize:10}]}>Debug shit, ignore</Text>
+
         <Button
-          containerStyle={[styles.items, {top:'90%'}]}
-          label = 'back'
-          onPress = {()=>{setCardFocused(null)}}
+          containerStyle={[styles.items, { top: '82.0%'}]}
+          label="Share"
+          onPress={handleSubmit(onSubmit)}
+        />
+        <Controller
+          name='email'
+          control={control}
+          rules={{
+            required: {value: true, message: 'Please enter an email'},
+            pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
+          }}
+          render={({field: {onChange, value }})=>(
+            <Input
+              error={errors.email}
+              containerStyle={[styles.input, { top: '73%'}]}
+              label="Share via email"
+              onChangeText={(text) => onChange(text)}
+              value={value}
+            />
+          )}
+        />
+        <Button
+          containerStyle={[styles.items, { top: '87.0%'}]}
+          label='Share via QR code'
+          onPress = {createQR}
+        />
+        <Button
+          containerStyle={[styles.items, { top: '92.0%'}]}
+          label='QR code test'
+          onPress = {qrScan}
         />
         <StatusBar
           barStyle = "dark-content"
@@ -290,44 +323,51 @@ export default function homeScreen( {route, navigation }) {
      <TouchableOpacity style = {styles.icon} onPress={toEdit}>
        <Entypo name="plus" size={24} color="black" />
      </TouchableOpacity>
-       <View style = {{top:'10%',height: '60%'}}>
-         <ScrollView style = {styles.cardArray}>
-            {cardArray}
-         </ScrollView>
-       </View>
+    <SafeAreaView style={{flex:1,margin:16}}>
+      <View style={{flex:1,top:'10%'}}>
+        <View style={StyleSheet.absoluteFill}>
+          {cardArray.map((card,cardIndex)=>{
+            const cardHeight = Dimensions.get('window').width*.4
+            const inputRange = [0, cardHeight*cardIndex]
+            const outputRange = [(cardHeight-150)*-cardIndex,(cardHeight-10)*-cardIndex]
+            const translateY = scrollY.interpolate({
+              inputRange,
+              outputRange,
+              extrapolateRight: "clamp"
+            });
+            return(
+              <Animated.View key={cardIndex} style={{transform: [{translateY}]}}>
+                {card}
+              </Animated.View>
+            )
+          })}
+        </View>
+        <Animated.ScrollView
+          scrollEventThrottle={1}
+          showsVerticalScrollIndicator = {false}
+          contentContainerStyle={{height: '200%'}}
+          onScroll={
+            Animated.event([{nativeEvent:{contentOffset:{y:scrollY}}}],{useNativeDriver:true})
+          }
+        >
+        </Animated.ScrollView>
+      </View>
+    </SafeAreaView>
+    </LinearGradient>
+  )
+}/*
+  return (
+   <LinearGradient colors={['#fff','#F4F4F4']} style={[styles.container, {justifyContent: 'flex-start'}]}>
+     <Text style = {styles.myCardsText}>My cards</Text>
+     <TouchableOpacity style = {styles.icon} onPress={toEdit}>
+       <Entypo name="plus" size={24} color="black" />
+     </TouchableOpacity>
+     <View style = {{top:'10%',height: '60%'}}>
+       <ScrollView style = {styles.cardArray}>
+          {cardArray}
+       </ScrollView>
+     </View>
      <Text style = {[styles.myCardsText,{top:'83%',fontSize:10}]}>Debug shit, ignore</Text>
-     <Button
-       containerStyle={[styles.items, { top: '95.0%'}]}
-       label="Share"
-       onPress={handleSubmit(onSubmit)}
-     />
-     <Controller
-       name='email'
-       control={control}
-       rules={{
-         required: {value: true, message: 'Please enter an email'},
-         pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Enter a valid e-mail address",}
-       }}
-       render={({field: {onChange, value }})=>(
-         <Input
-           error={errors.email}
-           containerStyle={[styles.input, { top: '95%'}]}
-           label="Share via email"
-           onChangeText={(text) => onChange(text)}
-           value={value}
-         />
-       )}
-     />
-     <Button
-       containerStyle={[styles.items, { top: '90.0%'}]}
-       label='Share via QR code'
-       onPress = {createQR}
-     />
-     <Button
-       containerStyle={[styles.items, { top: '95.0%'}]}
-       label='QR code test'
-       onPress = {qrScan}
-     />
      <Button
        containerStyle={[styles.items, { top: '85.0%'}]}
        label='Delete cards created'
@@ -339,7 +379,7 @@ export default function homeScreen( {route, navigation }) {
         backgroundColor = '#fff'/>
     </LinearGradient>
   );
-}
+}*/
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
   cardArray:{

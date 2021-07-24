@@ -129,7 +129,7 @@ export default function layoutEditScreen( {route, navigation }) {
   }
   function cancel(){ //called by cancel button
     console.log('cancel button doesnt actually cancel (yet)')
-    navigation.navigate('layoutEditScreen')
+    navigation.navigate('informationEditScreen',{email:email,card:cardId})
   }
   if (loading){
     return (

@@ -63,7 +63,7 @@ export default function informationEditScreen( {route, navigation }) {
   }
   function cancel(){ //called by cancel button
     console.log('cancel button doesnt actually cancel (yet)')
-    navigation.navigate('layoutEditScreen')
+    navigation.navigate('homeScreen')
   }
   //creates a new empty card under the user and sets it as 'card' state, called if card doesnt exist
   const createCard = async(user)=>{
@@ -136,6 +136,7 @@ export default function informationEditScreen( {route, navigation }) {
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
+    setUpdated(false)
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const user = fetchedUserData.data.listUsers.items[0]

@@ -16,7 +16,11 @@ import{
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-//Docs for react navigation: https://reactnavigation.org/docs/stack-navigator/
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
+import {LinearGradient} from 'expo-linear-gradient';
 
 //Screens for app
 import signUpScreen from './src/components/signUpScreen';
@@ -29,6 +33,8 @@ import libraryScreen from './src/components/libraryScreen';
 import forgotPasswordScreen from './src/components/forgotPasswordScreen';
 import verificationCodeForgotPassword from './src/components/verificationCodeForgotPassword';
 import qrScanScreen from './src/components/qrScanScreen';
+import settingsScreen from './src/components/settingsScreen';
+import groupScreen from './src/components/groupScreen'
 
 const Stack = createStackNavigator(); //Stack object that contains all the screens
 const Tab = createBottomTabNavigator();
@@ -36,13 +42,30 @@ const Tab = createBottomTabNavigator();
 function homeTabs() { //create tab navigation object that contains the two edit screens
   return (
     <Tab.Navigator
+      screenOptions={({ route }) => ({
+          tabBarIcon: ({color}) => {
+            if (route.name === 'homeScreen') {
+              return <Ionicons name='home' size={24} color={color} />;
+            } else if (route.name === 'libraryScreen') {
+              return <MaterialIcons name="menu-book" size={24} color={color} />
+            } else if(route.name === 'settingsScreen'){
+              return <Octicons name="settings" size={24} color={color} />
+            }
+            else if(route.name === 'groupScreen'){
+              return <MaterialCommunityIcons name="account-group-outline" size={24} color={color} />
+            }
+          },
+      })}
       tabBarOptions={{
-        activeTintColor: 'black',
+        showLabel: false,
+        activeTintColor: '#00ADE9',
         inactiveTintColor: 'gray',
       }}
     >
       <Tab.Screen name = 'homeScreen' component = {homeScreen}/>
       <Tab.Screen name = 'libraryScreen' component = {libraryScreen}/>
+      <Tab.Screen name = 'settingsScreen' component = {settingsScreen} />
+      <Tab.Screen name = 'groupScreen' component = {groupScreen} />
     </Tab.Navigator>
   )
 }
