@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, SafeAreaView, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, SafeAreaView, Animated, TouchableOpacity, FlatList } from 'react-native';
+import {
+  diffClamp,
+  onScrollEvent,
+  usePanGestureHandler,
+  withDecay,
+} from "react-native-redash";
+import { PanGestureHandler } from "react-native-gesture-handler";
 import {LinearGradient} from 'expo-linear-gradient';
 import { useIsFocused } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -325,31 +332,29 @@ export default function homeScreen( {route, navigation }) {
      </TouchableOpacity>
     <SafeAreaView style={{flex:1,margin:16}}>
       <View style={{flex:1,top:'10%'}}>
-        <View style={StyleSheet.absoluteFill}>
-          {cardArray.map((card,cardIndex)=>{
-            const cardHeight = Dimensions.get('window').width*.4
-            const inputRange = [0, cardHeight*cardIndex]
-            const outputRange = [(cardHeight-150)*-cardIndex,(cardHeight-10)*-cardIndex]
-            const translateY = scrollY.interpolate({
-              inputRange,
-              outputRange,
-              extrapolateRight: "clamp"
-            });
-            return(
-              <Animated.View key={cardIndex} style={{transform: [{translateY}]}}>
-                {card}
-              </Animated.View>
-            )
-          })}
-        </View>
         <Animated.ScrollView
           scrollEventThrottle={1}
           showsVerticalScrollIndicator = {false}
-          contentContainerStyle={{height: '200%'}}
+          contentContainerStyle={{height: Dimensions.get('window').height*.9+200}}
           onScroll={
             Animated.event([{nativeEvent:{contentOffset:{y:scrollY}}}],{useNativeDriver:true})
           }
         >
+        {cardArray.map((card,cardIndex)=>{
+          const cardHeight = Dimensions.get('window').width*.4
+          const inputRange = [0, 200]
+          const outputRange = [0-20*cardIndex,200-150*cardIndex]
+          const translateY = scrollY.interpolate({
+            inputRange,
+            outputRange,
+            extrapolateRight: "clamp"
+          });
+          return(
+            <Animated.View key={cardIndex} style={{transform: [{translateY}]}}>
+              {card}
+            </Animated.View>
+          )
+        })}
         </Animated.ScrollView>
       </View>
     </SafeAreaView>
