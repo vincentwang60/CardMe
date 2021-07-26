@@ -35,8 +35,8 @@ export default function homeScreen( {route, navigation }) {
   const [QRCodeComponent,setQRCodeComponent] = useState()
   const [cardArray, setCardArray] = useState([])
   const [cardFocused, setCardFocused] = useState()
+  const [scrollAmount, setScrollAmount] = useState()
   const scrollY = useRef(new Animated.Value(0)).current
-  const {height} = Dimensions.get('window').height
   const scrollViewRef = useRef();
 
   useEffect(()=>{//runs once every time this screen is loaded
@@ -267,6 +267,16 @@ export default function homeScreen( {route, navigation }) {
         <TouchableOpacity style = {{position: 'absolute', width:'100%',height:'100%'}} onPress={()=>{setCardFocused(null)}}>
           <View style={{}}/>
         </TouchableOpacity>
+        <TouchableOpacity activeOpacity = {1} onPress = {()=>setCardFocused(null)}style={{position: 'absolute',width:'100%',justifyContent: 'center'}}>
+          {cardArray.map((card,cardIndex)=>{
+            const top = Dimensions.get('window').height*(0.88-cardIndex*0.23)
+            return(
+              <View key={cardIndex} style={{top:top}}>
+                {card.props.children}
+              </View>
+            )},
+          )}
+        </TouchableOpacity>
         <View style = {{position:'relative',top:'15%'}}>
           <Text style = {[styles.myCardsText,{fontSize:15,position:'relative',top:'-5%',left:'8%'}]}>{focusedCard.title} </Text>
           {newCard}
@@ -284,9 +294,8 @@ export default function homeScreen( {route, navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-
+        {/*
         <Text style = {[styles.myCardsText,{top:'70%',fontSize:10}]}>Debug shit, ignore</Text>
-
         <Button
           containerStyle={[styles.items, { top: '82.0%'}]}
           label="Share"
@@ -318,7 +327,7 @@ export default function homeScreen( {route, navigation }) {
           containerStyle={[styles.items, { top: '92.0%'}]}
           label='QR code test'
           onPress = {qrScan}
-        />
+        /> */}
         <StatusBar
           barStyle = "dark-content"
           backgroundColor = '#fff'/>
@@ -336,7 +345,7 @@ export default function homeScreen( {route, navigation }) {
         <Animated.ScrollView
           scrollEventThrottle={50}
           showsVerticalScrollIndicator = {false}
-          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+          onContentSizeChange={() => scrollViewRef.current.scrollTo({ y: 200,animated: true })}
           contentContainerStyle={{height: Dimensions.get('window').height*.9+400}}
           ref = {scrollViewRef}
           onScroll={

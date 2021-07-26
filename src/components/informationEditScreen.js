@@ -12,6 +12,7 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
+import Dropdown from './shared/dropdownInput.js'
 
 export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
@@ -231,6 +232,23 @@ export default function informationEditScreen( {route, navigation }) {
             onChangeText={(text) => onChange(text)}
             value={value}
             placeholder='Class of 2022'
+          />
+        )}
+      />
+      <Controller
+        name='displayName'
+        control={control}
+        rules={{
+          required: {value: true, message: 'Please enter a display name'},
+        }}
+        render={({field: {onChange, value}})=>(
+          <Dropdown
+            error={errors.displayName}
+            containerStyle={[styles.fieldInputPart, {top: '10%',alignItems: 'flex-start'}]}
+            label='Display name'
+            onChangeText={(text) => onChange(text)}
+            value={value}
+            placeholder='John Smith'
           />
         )}
       />
