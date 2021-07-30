@@ -21,13 +21,15 @@ export default function informationEditScreen( {route, navigation }) {
   const [defaultValue, setDefaultValue] = useState()
   const [updated, setUpdated] = useState(false)
   const [cardId, setCardId] = useState()
+  const [dropdownArray, setDropdownArray] = useState([])
+  const [optionStrings, setOptionStrings] = useState(['email', 'phone','website','linkedin','facebook','instagram','twitter','wechat','snapchat'])
+  const [update, setUpdate] = useState(true)
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
     setCardId(card)
     fetchUserData();
   },[]);
-
   useEffect(()=>{//sets the defaults when defaultValue is changed
     reset(defaultValue)
   }, [defaultValue])
@@ -37,7 +39,36 @@ export default function informationEditScreen( {route, navigation }) {
       navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
-
+  const createDropdown = (key, selected = null, value = null) => {
+    console.log('creating dropdown with', key, selected, value)
+    let tempDropdownArray = dropdownArray
+    let setName
+    if (selected == null){
+      setName = key.toString()
+    }
+    else{
+      setName = selected
+    }
+    const newDropdown =
+      <Controller
+        key = {key}
+        name={setName}
+        control={control}
+        render={({field: {onChange, value}})=>(
+          <Dropdown
+            optionStrings={optionStrings}
+            error={errors.displayName}
+            containerStyle={[styles.fieldInputPart, {alignItems: 'flex-start'}]}
+            returnChange={(asdf) => onChange(asdf)}
+            value={value}
+            selected = {selected}
+          />
+        )}
+      />
+    tempDropdownArray.push(newDropdown)
+    setDropdownArray(tempDropdownArray)
+    setUpdate(!update)
+  }
   //called when screen is first loaded, creates card/user if dont exist
   const fetchUserData = async () => {
     console.log('fetching user data')
@@ -53,8 +84,14 @@ export default function informationEditScreen( {route, navigation }) {
           createCard(user)
         }
         else{
-          console.log('setting up using existing card')
-          setDefaultValues(cardsCreated.filter(e=>e.id === card)[0])
+          let cardFound = cardsCreated.filter(e=>e.id === card)[0]
+          for (let i = 0; i < cardFound.content.length; i++){
+            let content = cardFound.content[i]
+            if (content.name != 'displayName' && content.name != 'heading' && content.name != 'subHeading'){
+              createDropdown(i, content.name, content.data)
+            }
+          }
+          setDefaultValues(cardFound)
         }
       }
     }
@@ -114,26 +151,27 @@ export default function informationEditScreen( {route, navigation }) {
     createCard(newUser)
     return newUser
   }
-
+  const defaultHelper = (string,card,defaultValueObj) => {
+    //console.log('doing it for', string)
+    if (card.content.filter(e => e.name === string).length > 0) {
+      const index = card.content.findIndex(content => content.name === string)
+      defaultValueObj[string] = card.content[index].data
+    }
+  }
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
     console.log('info screen setting default values')
     var defaultValueObj = {}
-    if (card.content != undefined){
-      if (card.content.filter(e => e.name === 'displayName').length > 0) {
-        const index = card.content.findIndex(content => content.name === 'displayName')
-        defaultValueObj['displayName'] = card.content[index].data
-      }
-      if (card.content.filter(e => e.name === 'heading').length > 0) {
-        const index = card.content.findIndex(content => content.name === 'heading')
-        defaultValueObj['heading'] = card.content[index].data
-      }
-      if (card.content.filter(e => e.name === 'subHeading').length > 0) {
-        const index = card.content.findIndex(content => content.name === 'subHeading')
-        defaultValueObj['subHeading'] = card.content[index].data
-      }
+    var checklist = []
+    for (let i = 0; i < card.content.length; i++){
+      checklist.push(card.content[i].name)
     }
-    console.log('created default values')
+    //console.log('checklist:', checklist)
+    for (let i = 0; i < checklist.length; i++){
+      defaultHelper(checklist[i],card,defaultValueObj)
+    }
+    //defaultValueObj[1] = 'test'
+    console.log('created default values', defaultValueObj)
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
@@ -150,6 +188,11 @@ export default function informationEditScreen( {route, navigation }) {
       newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
       newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
+      for (let i = 0; i < optionStrings.length; i++){
+        if (data[optionStrings[i]] != null){
+          newContents.push({id: uuidv4(), name: optionStrings[i], data: data[optionStrings[i]]})
+        }
+      }
       currentCard.content = newContents
       //console.log('set info updated card', currentCard)
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
@@ -170,7 +213,7 @@ export default function informationEditScreen( {route, navigation }) {
   //Called when submit button is pressed, calls setInformation
 
   function onSubmit(data){
-    console.log('info scr submitting')
+    console.log('info scr submitting',data)
     setInformation(data)
   }
   const toHome = () => {
@@ -235,22 +278,13 @@ export default function informationEditScreen( {route, navigation }) {
           />
         )}
       />
-      <Controller
-        name='displayName'
-        control={control}
-        rules={{
-          required: {value: true, message: 'Please enter a display name'},
-        }}
-        render={({field: {onChange, value}})=>(
-          <Dropdown
-            error={errors.displayName}
-            containerStyle={[styles.fieldInputPart, {top: '10%',alignItems: 'flex-start'}]}
-            label='Display name'
-            onChangeText={(text) => onChange(text)}
-            value={value}
-            placeholder='John Smith'
-          />
-        )}
+      <View key={update} style={styles.dropdownWrapper}>
+        {dropdownArray}
+      </View>
+      <Button
+        containerStyle={[styles.items, { top: '17.0%'}]}
+        label='debug add extra'
+        onPress = {()=>{createDropdown(dropdownArray.length)}}
       />
       <StatusBar
         barStyle = "dark-content"
@@ -261,6 +295,13 @@ export default function informationEditScreen( {route, navigation }) {
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  dropdownWrapper:{
+    top:'-10%',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    flexDirection: 'column-reverse'
+  },
   container: {
     backgroundColor: '#FFF',
     flex: 1,
@@ -288,5 +329,10 @@ const styles = StyleSheet.create({
   touchable:{
     position: 'absolute',
     top: '5.5%',
+  },
+  items:{
+    position: 'absolute',
+    left: "6.2%",
+    borderRadius: 5,
   },
 });
