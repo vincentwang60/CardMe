@@ -14,8 +14,10 @@ export default function Card1({
   containerStyle,
   focused = false,
 }){
+  console.log('card data', data)
   const [showFront, setShowFront] = useState(true)
   var dataComponents = [] //array of the text components to display, created based on data
+  var backText = []
   var layoutStyle = styles.layout1
   var style = data.style
   let newText;
@@ -36,6 +38,27 @@ export default function Card1({
           {data.content[2].data}
         </Text>
       dataComponents.push(newText)
+      let email, phone, website
+      for(let i = 3; i < data.content.length;i++){
+        if (data.content[i].name == 'email'){
+          email = <Text style = {[labelStyle,{}]} key = {1}>{data.content[i].data}</Text>
+        }
+        if (data.content[i].name == 'phone'){
+          phone = <Text style = {[labelStyle,{}]} key = {2}>{data.content[i].data}</Text>
+        }
+        if (data.content[i].name == 'website'){
+          website = <Text style = {[labelStyle,{}]} key = {3}>{data.content[i].data}</Text>
+        }
+      }
+      if(email != null){
+        backText.push(email)
+      }
+      if(website != null){
+        backText.push(website)
+      }
+      if(phone != null){
+        backText.push(phone)
+      }
     }
   }
   let cardBg
@@ -50,9 +73,9 @@ export default function Card1({
   }
   if(!focused){
     return (
-      <View style={[containerStyle]}>
+      <View style={[containerStyle,{alignItems: 'center'}]}>
         {cardBg}
-        <View style={styles.container}>
+        <View style={[styles.container,{}]}>
            {dataComponents}
         </View>
       </View>
@@ -60,10 +83,10 @@ export default function Card1({
   }
   else if (showFront){
     return (
-      <TouchableOpacity style = {styles.touchable} onPress = {()=>{setShowFront(false)}}>
-        <View style={[containerStyle]}>
+      <TouchableOpacity style = {[styles.touchable, {}]} onPress = {()=>{setShowFront(false)}}>
+        <View style={[containerStyle,{alignItems: 'center'}]}>
           {cardBg}
-          <View style={styles.container}>
+          <View style={[styles.container,{}]}>
              {dataComponents}
           </View>
         </View>
@@ -73,9 +96,15 @@ export default function Card1({
   else{
     return (
       <TouchableOpacity style = {styles.touchable} onPress = {()=>{setShowFront(true)}}>
-        <View style={[containerStyle]}>
+        <View style={[containerStyle,{alignItems: 'center'}]}>
           {cardBg}
-          <View style={styles.container}>
+          <View style={[styles.container,{position: 'relative',alignItems: 'center'}]}>
+            <Text style = {styles.titleStyle} key = {0}>
+              {data.content[0].data}
+            </Text>
+            <View style = {{top:'30%',alignItems:'center'}}>
+              {backText}
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -83,6 +112,15 @@ export default function Card1({
   }
 }
 const styles = StyleSheet.create({
+  titleStyle:{
+    color:'#F4DCD6',
+    borderBottomWidth: 1,
+    fontFamily:'Montserrat_500Medium',
+    fontSize:15,
+    top:'20%',
+    paddingBottom: '1%',
+    borderBottomColor: '#F4DCD6',
+  },
   bg:{
     position: 'absolute',
   },
@@ -95,7 +133,6 @@ const styles = StyleSheet.create({
   touchable:{
   },
   label: {
-    left: '15%',
     fontSize: 10,
     color: 'white',
     fontFamily: 'Montserrat_300Light',
