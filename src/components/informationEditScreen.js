@@ -17,7 +17,7 @@ import Dropdown from './shared/dropdownInput.js'
 export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
   const {card} = route.params; //card being edited can be passed to set cardId. if not passed will be set to new card
-  const { handleSubmit, reset, control, getValues, setValue, formState: {errors} } = useForm();
+  const { handleSubmit, reset, control, getValues, formState: {errors} } = useForm();
   const [defaultValue, setDefaultValue] = useState()
   const [updated, setUpdated] = useState(false)
   const [cardId, setCardId] = useState()
@@ -52,7 +52,7 @@ export default function informationEditScreen( {route, navigation }) {
             optionStrings={optionStrings}
             error={errors.displayName}
             containerStyle={[styles.fieldInputPart, {alignItems: 'flex-start'}]}
-            returnChange={(asdf) => onChange(asdf)}
+            returnChange={(text) => onChange(text)}
             value={value}
             selected = {selected}
           />

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {View, TextInput, Text, StyleSheet, Dimensions} from 'react-native';
-import { TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 
 export default function DropdownInput({
@@ -13,6 +13,11 @@ export default function DropdownInput({
   selected,
 })
 {
+  console.log('dropdown input with', value, selected)
+  let goodValue
+  if(typeof value != 'string'){
+    if(value != null){goodValue = value[1]}}
+  else{goodValue = value}
   let setSelected = selected
   if (setSelected == null){
     setSelected = 'email'
@@ -44,12 +49,12 @@ export default function DropdownInput({
               </TouchableOpacity>
             </View>
             <TextInput
+              defaultValue={goodValue}
               placeholder='Placeholder for a placeholder'
               autoCapitalize="none"
               secureTextEntry = {secure}
               style={styles.input}
               onChangeText= {(text)=>{setOutput([output[0],text]);}}
-              value = {value}
             />
           </View>
           <View style = {styles.dropdownWrapper}>
@@ -70,12 +75,12 @@ export default function DropdownInput({
             </TouchableOpacity>
           </View>
           <TextInput
+            defaultValue={goodValue}
             placeholder='Placeholder for a placeholder'
             autoCapitalize="none"
             secureTextEntry = {secure}
             style={styles.input}
             onChangeText= {(text)=>{setOutput([output[0],text]);}}
-            value = {value}
           />
         </View>
       </View>
