@@ -37,7 +37,7 @@ export default function informationEditScreen( {route, navigation }) {
 
   useEffect(()=>{
     if(updated){
-      //navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
+      navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
   const createDropdown = (key, selected = null, value = null) => {
@@ -187,7 +187,7 @@ export default function informationEditScreen( {route, navigation }) {
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
       for (let i = 3; i < dropdownArray.length+3; i++){
         if(typeof data[i] == 'string'){
-          newContents.push({id: uuidv4(), name: Object.keys(map).find(key => map[key] === value), data: data[i]})
+          newContents.push({id: uuidv4(), name: Object.keys(map).find(key => map[key] === i), data: data[i]})
         }
         else{
           newContents.push({id: uuidv4(), name: data[i][0], data: data[i][1]})
@@ -278,7 +278,7 @@ export default function informationEditScreen( {route, navigation }) {
           />
         )}
       />
-      <View key={update} style={styles.dropdownWrapper}>
+      <View style={styles.dropdownWrapper}>
         {dropdownArray}
       </View>
       <Button

@@ -13,7 +13,6 @@ export default function DropdownInput({
   selected,
 })
 {
-  console.log('new dropdown input with',value,selected)
   let setSelected = selected
   if (setSelected == null){
     setSelected = 'email'
@@ -50,7 +49,7 @@ export default function DropdownInput({
               secureTextEntry = {secure}
               style={styles.input}
               onChangeText= {(text)=>{setOutput([output[0],text]);}}
-              value = 'test'
+              value = {value}
             />
           </View>
           <View style = {styles.dropdownWrapper}>
@@ -76,7 +75,7 @@ export default function DropdownInput({
             secureTextEntry = {secure}
             style={styles.input}
             onChangeText= {(text)=>{setOutput([output[0],text]);}}
-            value = 'test'
+            value = {value}
           />
         </View>
       </View>
