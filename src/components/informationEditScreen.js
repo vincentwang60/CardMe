@@ -17,13 +17,14 @@ import Dropdown from './shared/dropdownInput.js'
 export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
   const {card} = route.params; //card being edited can be passed to set cardId. if not passed will be set to new card
-  const { handleSubmit, reset, control, formState: {errors} } = useForm();
+  const { handleSubmit, reset, control, getValues, setValue, formState: {errors} } = useForm();
   const [defaultValue, setDefaultValue] = useState()
   const [updated, setUpdated] = useState(false)
   const [cardId, setCardId] = useState()
   const [dropdownArray, setDropdownArray] = useState([])
   const [optionStrings, setOptionStrings] = useState(['email', 'phone','website','linkedin','facebook','instagram','twitter','wechat','snapchat'])
   const [update, setUpdate] = useState(true)
+  const [map, setMap] = useState({})
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
@@ -36,23 +37,15 @@ export default function informationEditScreen( {route, navigation }) {
 
   useEffect(()=>{
     if(updated){
-      navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
+      //navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
   const createDropdown = (key, selected = null, value = null) => {
-    console.log('creating dropdown with', key, selected, value)
-    let tempDropdownArray = dropdownArray
-    let setName
-    if (selected == null){
-      setName = key.toString()
-    }
-    else{
-      setName = selected
-    }
+    console.log('creating dropdown', key, selected, value)
     const newDropdown =
       <Controller
         key = {key}
-        name={setName}
+        name={key.toString()}
         control={control}
         render={({field: {onChange, value}})=>(
           <Dropdown
@@ -65,8 +58,10 @@ export default function informationEditScreen( {route, navigation }) {
           />
         )}
       />
-    tempDropdownArray.push(newDropdown)
-    setDropdownArray(tempDropdownArray)
+    map[selected] = key
+    setMap(map)
+    dropdownArray.push(newDropdown)
+    setDropdownArray(dropdownArray)
     setUpdate(!update)
   }
   //called when screen is first loaded, creates card/user if dont exist
@@ -152,10 +147,12 @@ export default function informationEditScreen( {route, navigation }) {
     return newUser
   }
   const defaultHelper = (string,card,defaultValueObj) => {
-    //console.log('doing it for', string)
-    if (card.content.filter(e => e.name === string).length > 0) {
-      const index = card.content.findIndex(content => content.name === string)
+    const index = card.content.findIndex(content=>content.name === string)
+    if (['heading','subHeading','displayName'].includes(string)) {
       defaultValueObj[string] = card.content[index].data
+    }
+    else{
+      defaultValueObj[map[string]] = card.content[index].data
     }
   }
   //sets default values for react hook form inputs based on data from card
@@ -170,11 +167,11 @@ export default function informationEditScreen( {route, navigation }) {
     for (let i = 0; i < checklist.length; i++){
       defaultHelper(checklist[i],card,defaultValueObj)
     }
-    //defaultValueObj[1] = 'test'
     console.log('created default values', defaultValueObj)
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
+    console.log(map)
     setUpdated(false)
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
@@ -183,18 +180,21 @@ export default function informationEditScreen( {route, navigation }) {
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
-      //console.log('set info current card', currentCard)
+      console.log('set info current card', currentCard)
       const newContents = []
       newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
       newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
-      for (let i = 0; i < optionStrings.length; i++){
-        if (data[optionStrings[i]] != null){
-          newContents.push({id: uuidv4(), name: optionStrings[i], data: data[optionStrings[i]]})
+      for (let i = 3; i < dropdownArray.length+3; i++){
+        if(typeof data[i] == 'string'){
+          newContents.push({id: uuidv4(), name: Object.keys(map).find(key => map[key] === value), data: data[i]})
+        }
+        else{
+          newContents.push({id: uuidv4(), name: data[i][0], data: data[i][1]})
         }
       }
       currentCard.content = newContents
-      //console.log('set info updated card', currentCard)
+      console.log('set info updated card', currentCard)
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
       const newUpdateUser = {
         id: user.id,
@@ -284,7 +284,7 @@ export default function informationEditScreen( {route, navigation }) {
       <Button
         containerStyle={[styles.items, { top: '17.0%'}]}
         label='debug add extra'
-        onPress = {()=>{createDropdown(dropdownArray.length)}}
+        onPress = {()=>{createDropdown(dropdownArray.length+3)}}
       />
       <StatusBar
         barStyle = "dark-content"

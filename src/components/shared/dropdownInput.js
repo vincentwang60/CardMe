@@ -3,7 +3,7 @@ import {View, TextInput, Text, StyleSheet, Dimensions} from 'react-native';
 import { TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 
-export default function FieldInput({
+export default function DropdownInput({
   optionStrings,
   containerStyle,
   returnChange = ()=>{console.log('wtf')},
@@ -13,27 +13,27 @@ export default function FieldInput({
   selected,
 })
 {
+  console.log('new dropdown input with',value,selected)
   let setSelected = selected
   if (setSelected == null){
     setSelected = 'email'
   }
   const [showOptions, setShowOptions] = useState(false)
   const [selectedString, setSelectedString] = useState(setSelected)
-  const [output,setOutput] = useState('testing dropdown')
+  const [output,setOutput] = useState([selectedString,value])
   let options = []
   for (let i = 0; i < optionStrings.length; i++){
     const newText =
       <TouchableOpacity key={i} onPress={()=>{
         setSelectedString(optionStrings[i]);
+        setOutput([optionStrings[i],output[1]]);
         setShowOptions(false);}}>
         <Text style = {[styles.label,{marginBottom: 10}]}>{optionStrings[i]}</Text>
       </TouchableOpacity>
     options.push(newText)
   }
   useEffect(()=>{
-    if(output != null){
-      returnChange(output)
-    }
+    returnChange(output)
   },[output])
   if(showOptions){
     return(
@@ -49,8 +49,8 @@ export default function FieldInput({
               autoCapitalize="none"
               secureTextEntry = {secure}
               style={styles.input}
-              onChangeText= {(text)=>{setOutput(text);}}
-              value = {value}
+              onChangeText= {(text)=>{setOutput([output[0],text]);}}
+              value = 'test'
             />
           </View>
           <View style = {styles.dropdownWrapper}>
@@ -75,8 +75,8 @@ export default function FieldInput({
             autoCapitalize="none"
             secureTextEntry = {secure}
             style={styles.input}
-            onChangeText= {(text)=>{setOutput(text);}}
-            value = {value}
+            onChangeText= {(text)=>{setOutput([output[0],text]);}}
+            value = 'test'
           />
         </View>
       </View>

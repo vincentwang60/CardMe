@@ -14,7 +14,6 @@ export default function Card1({
   containerStyle,
   focused = false,
 }){
-  console.log('card data', data)
   const [showFront, setShowFront] = useState(true)
   var dataComponents = [] //array of the text components to display, created based on data
   var backText = []
@@ -41,13 +40,13 @@ export default function Card1({
       let email, phone, website
       for(let i = 3; i < data.content.length;i++){
         if (data.content[i].name == 'email'){
-          email = <Text style = {[labelStyle,{}]} key = {1}>{data.content[i].data}</Text>
+          email = <Text style = {[labelStyle,{left:'0%'}]} key = {1}>{data.content[i].data}</Text>
         }
         if (data.content[i].name == 'phone'){
-          phone = <Text style = {[labelStyle,{}]} key = {2}>{data.content[i].data}</Text>
+          phone = <Text style = {[labelStyle,{left:'0%'}]} key = {2}>{data.content[i].data}</Text>
         }
         if (data.content[i].name == 'website'){
-          website = <Text style = {[labelStyle,{}]} key = {3}>{data.content[i].data}</Text>
+          website = <Text style = {[labelStyle,{left:'0%'}]} key = {3}>{data.content[i].data}</Text>
         }
       }
       if(email != null){
@@ -133,6 +132,7 @@ const styles = StyleSheet.create({
   touchable:{
   },
   label: {
+    left:'5%',
     fontSize: 10,
     color: 'white',
     fontFamily: 'Montserrat_300Light',
