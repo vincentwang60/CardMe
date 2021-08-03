@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler'
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
@@ -23,8 +24,9 @@ export default function informationEditScreen( {route, navigation }) {
   const [cardId, setCardId] = useState()
   const [dropdownArray, setDropdownArray] = useState([])
   const [optionStrings, setOptionStrings] = useState(['email', 'phone','website','linkedin','facebook','instagram','twitter','wechat','snapchat'])
-  const [update, setUpdate] = useState(true)
+  const [update, setUpdate] = useState(0)
   const [map, setMap] = useState({})
+  const [selectedArray, setSelectedArray] = useState({})
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
@@ -40,29 +42,36 @@ export default function informationEditScreen( {route, navigation }) {
       navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
-  const createDropdown = (key, selected = null, value = null) => {
+
+  const createDropdown = (key, selected = 'email', value = null) => {
     console.log('creating dropdown', key, selected, value)
+    selectedArray[key] = selected
     const newDropdown =
       <Controller
         key = {key}
         name={key.toString()}
         control={control}
         render={({field: {onChange, value}})=>(
-          <Dropdown
-            optionStrings={optionStrings}
-            error={errors.displayName}
-            containerStyle={[styles.fieldInputPart, {alignItems: 'flex-start'}]}
-            returnChange={(text) => onChange(text)}
-            value={value}
-            selected = {selected}
-          />
+        <Dropdown
+          optionStrings={optionStrings}
+          error={errors.displayName}
+          containerStyle={[styles.dropdownInput, {alignItems: 'flex-start'}]}
+          onChangeText={(text) => onChange(text)}
+          value={value}
+          setSelected={(newSelected)=>{selectedArray[key] = newSelected; setSelectedArray(selectedArray)}}
+          selected = {selectedArray[key]}
+          onDelete = {()=>{console.log('delete', key)}}
+        />
         )}
       />
     map[selected] = key
     setMap(map)
     dropdownArray.push(newDropdown)
     setDropdownArray(dropdownArray)
-    setUpdate(!update)
+    setUpdate(key)
+  }
+  const addExtra = () => {
+    createDropdown(dropdownArray.length+3)
   }
   //called when screen is first loaded, creates card/user if dont exist
   const fetchUserData = async () => {
@@ -160,23 +169,24 @@ export default function informationEditScreen( {route, navigation }) {
     console.log('info screen setting default values')
     var defaultValueObj = {}
     var checklist = []
-    for (let i = 0; i < card.content.length; i++){
-      checklist.push(card.content[i].name)
-    }
+    if(card.content != null){
+      for (let i = 0; i < card.content.length; i++){
+        checklist.push(card.content[i].name)
     //console.log('checklist:', checklist)
-    for (let i = 0; i < checklist.length; i++){
-      defaultHelper(checklist[i],card,defaultValueObj)
+        for (let i = 0; i < checklist.length; i++){
+          defaultHelper(checklist[i],card,defaultValueObj)
+         }
+      }
     }
-    console.log('created default values', defaultValueObj)
+    console.log('created default values')
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
-    console.log(map)
     setUpdated(false)
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const user = fetchedUserData.data.listUsers.items[0]
-      //console.log('set info user', user)
+      console.log('set info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
@@ -187,7 +197,7 @@ export default function informationEditScreen( {route, navigation }) {
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
       for (let i = 3; i < dropdownArray.length+3; i++){
         if(typeof data[i] == 'string'){
-          newContents.push({id: uuidv4(), name: Object.keys(map).find(key => map[key] === i), data: data[i]})
+          newContents.push({id: uuidv4(), name: selectedArray[i], data: data[i]})
         }
         else{
           newContents.push({id: uuidv4(), name: data[i][0], data: data[i][1]})
@@ -204,7 +214,7 @@ export default function informationEditScreen( {route, navigation }) {
       }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
       setUpdated(true)
-      console.log('successfully updated data')
+      console.log('successfully updated data', output)
     }
     catch (error) {
       console.log('Error on information edit screen setInformation', error)
@@ -232,59 +242,64 @@ export default function informationEditScreen( {route, navigation }) {
         <FontAwesome name="user-circle-o" size={80} color="black" />
         <Text style= {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Upload photo</Text>
       </TouchableOpacity>
-
-      <Controller
-        name='displayName'
-        control={control}
-        rules={{
-          required: {value: true, message: 'Please enter a display name'},
-        }}
-        render={({field: {onChange, value}})=>(
-          <FieldInput
-            error={errors.displayName}
-            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
-            label='Display name'
-            onChangeText={(text) => onChange(text)}
-            value={value}
-            placeholder='John Smith'
-          />
-        )}
-      />
-      <Controller
-        name='heading'
-        control={control}
-        render={({field: {onChange, value}})=>(
-          <FieldInput
-            error={errors.heading}
-            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
-            label='Heading'
-            onChangeText={(text) => onChange(text)}
-            value={value}
-            placeholder='Co-president of CUAPAHM'
-          />
-        )}
-      />
-      <Controller
-        name='subHeading'
-        control={control}
-        render={({field: {onChange, value}})=>(
-          <FieldInput
-            error={errors.subHeading}
-            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
-            label='Sub-heading'
-            onChangeText={(text) => onChange(text)}
-            value={value}
-            placeholder='Class of 2022'
-          />
-        )}
-      />
-      <View style={styles.dropdownWrapper}>
-        {dropdownArray}
+      <View style={{top:'10%',height:'70%'}}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}>
+        <Controller
+          name='displayName'
+          control={control}
+          rules={{
+            required: {value: true, message: 'Please enter a display name'},
+          }}
+          render={({field: {onChange, value}})=>(
+            <FieldInput
+              error={errors.displayName}
+              containerStyle={[styles.fieldInputPart]}
+              label='Display name'
+              onChangeText={(text) => onChange(text)}
+              value={value}
+              placeholder='John Smith'
+            />
+          )}
+        />
+        <Controller
+          name='heading'
+          control={control}
+          render={({field: {onChange, value}})=>(
+            <FieldInput
+              error={errors.heading}
+              containerStyle={[styles.fieldInputPart]}
+              label='Heading'
+              onChangeText={(text) => onChange(text)}
+              value={value}
+              placeholder='Co-president of CUAPAHM'
+            />
+          )}
+        />
+        <Controller
+          name='subHeading'
+          control={control}
+          render={({field: {onChange, value}})=>(
+            <FieldInput
+              error={errors.subHeading}
+              containerStyle={[styles.fieldInputPart]}
+              label='Sub-heading'
+              onChangeText={(text) => onChange(text)}
+              value={value}
+              placeholder='Class of 2022'
+            />
+          )}
+        />
+        <View key = {update} style={[styles.dropdownWrapper]}>
+          <View style={{flexDirection: 'column-reverse'}}>
+            {dropdownArray}
+          </View>
+        </View>
+        </ScrollView>
       </View>
       <Button
         containerStyle={[styles.items, { top: '17.0%'}]}
         label='debug add extra'
-        onPress = {()=>{createDropdown(dropdownArray.length+3)}}
+        onPress = {()=>{addExtra()}}
       />
       <StatusBar
         barStyle = "dark-content"
@@ -295,12 +310,19 @@ export default function informationEditScreen( {route, navigation }) {
 
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
+  fieldInputPart:{
+    position: 'relative',
+  },
+  dropdownInput:{
+    top:'0%',
+    left:'0%',
+  },
   dropdownWrapper:{
-    top:'-10%',
+    width:'100%',
     borderRadius: 5,
     borderWidth: 1,
     borderColor: 'lightgray',
-    flexDirection: 'column-reverse'
+    flexDirection: 'column'
   },
   container: {
     backgroundColor: '#FFF',

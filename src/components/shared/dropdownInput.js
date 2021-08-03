@@ -1,64 +1,66 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
-import { TextInput, TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
+import {View, Text, StyleSheet, Dimensions,TouchableOpacity} from 'react-native';
+import { TextInput, ScrollView} from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 
 export default function DropdownInput({
   optionStrings,
   containerStyle,
-  returnChange = ()=>{console.log('wtf')},
+  onChangeText = ()=>{console.log('wtf')},
   secure = false,
   inputStyle = styles.input,
   value,
+  setSelected = ()=>(console.log('bruh')),
   selected,
+  onDelete = ()=>(console.log('uh oh')),
 })
 {
-  console.log('dropdown input with', value, selected)
-  let goodValue
-  if(typeof value != 'string'){
-    if(value != null){goodValue = value[1]}}
-  else{goodValue = value}
-  let setSelected = selected
-  if (setSelected == null){
-    setSelected = 'email'
-  }
+  const [selectedString,setSelectedString] = useState(selected)
   const [showOptions, setShowOptions] = useState(false)
-  const [selectedString, setSelectedString] = useState(setSelected)
-  const [output,setOutput] = useState([selectedString,value])
+  const [showDelete, setShowDelete] = useState(false)
+  const ref = useRef()
   let options = []
   for (let i = 0; i < optionStrings.length; i++){
     const newText =
       <TouchableOpacity key={i} onPress={()=>{
+        setShowOptions(false);
+        setSelected(optionStrings[i]);
         setSelectedString(optionStrings[i]);
-        setOutput([optionStrings[i],output[1]]);
-        setShowOptions(false);}}>
+      }}>
         <Text style = {[styles.label,{marginBottom: 10}]}>{optionStrings[i]}</Text>
       </TouchableOpacity>
     options.push(newText)
   }
-  useEffect(()=>{
-    returnChange(output)
-  },[output])
+  let close
+  if(showDelete){
+  close =
+    <View style={{left:'-70%',top:'2.5%',}}>
+      <TouchableOpacity onPress={()=>onDelete()}>
+       <AntDesign name="closecircle" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  }
   if(showOptions){
     return(
         <View style={[containerStyle,{width:Dimensions.get('window').width*.85}]}>
           <View style={{flexDirection: 'row'}}>
             <View style={{width:'35%', padding: 8}}>
-              <TouchableOpacity onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
+              <TouchableOpacity onLongPress={()=>{console.log('things happening'); setShowDelete(!showDelete)}} onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
                 <Text style={styles.label}>{selectedString}</Text>
               </TouchableOpacity>
             </View>
             <TextInput
-              defaultValue={goodValue}
               placeholder='Placeholder for a placeholder'
               autoCapitalize="none"
               secureTextEntry = {secure}
               style={styles.input}
-              onChangeText= {(text)=>{setOutput([output[0],text]);}}
+              onChangeText= {onChangeText}
+              value={value}
             />
+            {close}
           </View>
           <View style = {styles.dropdownWrapper}>
-            <ScrollView style={styles.dropdownOptions}>
+            <ScrollView nestedScrollEnabled = {true} style={styles.dropdownOptions}>
               {options}
             </ScrollView>
           </View>
@@ -68,6 +70,8 @@ export default function DropdownInput({
   return (
       <View style={[containerStyle,{width:Dimensions.get('window').width*.85}]}>
         <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={{width: '100%',position: 'absolute',height: '100%',}} onLongPress={()=>{console.log('things happening'); setShowDelete(!showDelete)}}>
+          </TouchableOpacity>
           <View style={{width:'35%',padding: 8}}>
             <TouchableOpacity onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
               <Text style={styles.label}>{selectedString}</Text>
@@ -75,13 +79,14 @@ export default function DropdownInput({
             </TouchableOpacity>
           </View>
           <TextInput
-            defaultValue={goodValue}
             placeholder='Placeholder for a placeholder'
             autoCapitalize="none"
             secureTextEntry = {secure}
             style={styles.input}
-            onChangeText= {(text)=>{setOutput([output[0],text]);}}
+            onChangeText= {onChangeText}
+            value={value}
           />
+          {close}
         </View>
       </View>
   );

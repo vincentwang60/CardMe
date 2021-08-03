@@ -40,7 +40,6 @@ export default function homeScreen( {route, navigation }) {
   const scrollViewRef = useRef();
 
   useEffect(()=>{//runs once every time this screen is loaded
-    console.log('home screen is focused')
     setLoading(true)
     setCardFocused(null)
     if(isFocused){
