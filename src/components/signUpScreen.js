@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert,Dimensions } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +19,9 @@ export default function signUpScreen( {navigation }) {
   // state of password (secure or not)
   const [isSecure, setIsSecure] = useState(true);
 
+  useEffect(()=>{
+    toggleIsNewUser()
+  })
 
   function onSubmit(data) {
     signUp(data.email, data.password)

@@ -51,10 +51,10 @@ export default function homeScreen( {route, navigation }) {
   },[isFocused]);
   useEffect(()=>{//called when userData is changed
     if(userData != null){
-      console.log('successfully fetched userData')
+      console.log('home screen successfully fetched userData')
       if (userData.cardsCreated != null){
         if (userData.cardsCreated[0].content != null){
-          console.log('hs userdata eff creating qr code')
+          //console.log('hs userdata eff creating qr code')
           createQRCodeComponent()
           console.log('hs userdata eff creating card array')
           var tempCardArray = []
@@ -68,7 +68,7 @@ export default function homeScreen( {route, navigation }) {
                   data={userData.cardsCreated[i]}
                 />
               </TouchableOpacity>
-            console.log('created new card:',userData.cardsCreated[i].title)
+            console.log('created card:',userData.cardsCreated[i].title)
             tempCardArray.push(newCard)
           }
           setCardArray(tempCardArray)
@@ -193,7 +193,7 @@ export default function homeScreen( {route, navigation }) {
     return newUser
   }
   const fetchUserData = async () => {//will fetch card to display for logged in user from dynamodb
-    console.log('home screen fetching user')
+    //console.log('home screen fetching user')
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const user = fetchedUserData.data.listUsers.items[0]

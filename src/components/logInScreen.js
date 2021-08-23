@@ -1,4 +1,4 @@
-import React, { useState, useRef} from 'react';
+import React, { useState, useEffect} from 'react';
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Platform, Image } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
@@ -14,6 +14,11 @@ export default function logInScreen( {navigation }) {
   const [methodChosen, setMethodChosen] = useState(false);
   const { handleSubmit, watch, control } = useForm();
   // state of password (secure or not)
+
+  useEffect(()=>{
+    quickLogin()
+  })
+
   const [isSecure, setIsSecure] = useState(true);
   let appleIdButton;
   if(Platform.OS === "android"){
@@ -58,7 +63,7 @@ export default function logInScreen( {navigation }) {
     console.log('signing in with:', email, password)
     const user = Auth.signIn(email, password)
     .then(()=>{
-      console.log('successfully logged in as!', email);
+      console.log('successfully logged in as', email);
       navigation.navigate('homeTabs')
     })
     .catch(err=>console.log('error on login!',err))

@@ -5,6 +5,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -27,6 +28,10 @@ export default function informationEditScreen( {route, navigation }) {
   const [update, setUpdate] = useState(0)
   const [map, setMap] = useState({})
   const [selectedArray, setSelectedArray] = useState({})
+  const [showDelete, setShowDelete] = useState(false)
+  const [deleteArray, setDeleteArray] = useState([])
+  const [deleteInput, setDeleteInput] = useState(false)
+  const [deletedDropdowns, setDeletedDropdowns] = useState([])
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
@@ -42,13 +47,27 @@ export default function informationEditScreen( {route, navigation }) {
       navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
     }
   }, [updated])
+  useEffect(()=>{
+    if(deleteInput != false && deleteInput != null){
+      for(let i = 0; i < dropdownArray.length; i++){
+        if(dropdownArray[i].key == deleteInput){
+          console.log('deleting dropdown', deleteInput)
+          deletedDropdowns.push(deleteInput)
+          setDeletedDropdowns(deletedDropdowns)
+          dropdownArray.splice(i,1)
+          setDropdownArray(dropdownArray)
+          setUpdate(uuidv4())
+        }
+      }
+    }
+  },[deleteInput])
 
   const createDropdown = (key, selected = 'email', value = null) => {
-    console.log('creating dropdown', key, selected, value)
+    //console.log('creating dropdown', key, selected, value)
     selectedArray[key] = selected
     const newDropdown =
       <Controller
-        key = {key}
+        key={key}
         name={key.toString()}
         control={control}
         render={({field: {onChange, value}})=>(
@@ -60,7 +79,9 @@ export default function informationEditScreen( {route, navigation }) {
           value={value}
           setSelected={(newSelected)=>{selectedArray[key] = newSelected; setSelectedArray(selectedArray)}}
           selected = {selectedArray[key]}
-          onDelete = {()=>{console.log('delete', key)}}
+          onDelete = {(newKey)=>{setDeleteInput(newKey);}}
+          showDelete = {showDelete}
+          dropdownKey={key}
         />
         )}
       />
@@ -71,7 +92,7 @@ export default function informationEditScreen( {route, navigation }) {
     setUpdate(key)
   }
   const addExtra = () => {
-    createDropdown(dropdownArray.length+3)
+    createDropdown(uuidv4())
   }
   //called when screen is first loaded, creates card/user if dont exist
   const fetchUserData = async () => {
@@ -92,7 +113,7 @@ export default function informationEditScreen( {route, navigation }) {
           for (let i = 0; i < cardFound.content.length; i++){
             let content = cardFound.content[i]
             if (content.name != 'displayName' && content.name != 'heading' && content.name != 'subHeading'){
-              createDropdown(i, content.name, content.data)
+              createDropdown(uuidv4(), content.name, content.data)
             }
           }
           setDefaultValues(cardFound)
@@ -166,7 +187,7 @@ export default function informationEditScreen( {route, navigation }) {
   }
   //sets default values for react hook form inputs based on data from card
   const setDefaultValues = async(card) => {
-    console.log('info screen setting default values')
+    //console.log('info screen setting default values')
     var defaultValueObj = {}
     var checklist = []
     if(card.content != null){
@@ -182,29 +203,34 @@ export default function informationEditScreen( {route, navigation }) {
     setDefaultValue(defaultValueObj)
   }
   const setInformation = async (data) => {
+    for(let i = 0; i < deletedDropdowns.length; i++){
+      delete data[deletedDropdowns[i]]
+    }
+    console.log('submitting with:', data)
     setUpdated(false)
     try{
       const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
       const user = fetchedUserData.data.listUsers.items[0]
-      console.log('set info user', user)
+      //console.log('set info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
-      console.log('set info current card', currentCard)
+      //console.log('set info current card', currentCard)
       const newContents = []
       newContents.push({id: uuidv4(), name: 'displayName', data: data.displayName})
       newContents.push({id: uuidv4(), name: 'heading', data: data.heading})
       newContents.push({id: uuidv4(), name: 'subHeading', data: data.subHeading})
-      for (let i = 3; i < dropdownArray.length+3; i++){
-        if(typeof data[i] == 'string'){
-          newContents.push({id: uuidv4(), name: selectedArray[i], data: data[i]})
+      let keys = Object.keys(data)
+      for (let i = 3; i < keys.length; i++){
+        if(typeof data[keys[i]] == 'string'){
+          newContents.push({id: uuidv4(), name: selectedArray[keys[i]], data: data[keys[i]]})
         }
         else{
-          newContents.push({id: uuidv4(), name: data[i][0], data: data[i][1]})
+          newContents.push({id: uuidv4(), name: data[keys[i]][0], data: data[keys[i]][1]})
         }
       }
       currentCard.content = newContents
-      console.log('set info updated card', currentCard)
+      console.log('set info updated card')//, currentCard)
       cardsCreated[currentCardIndex] = currentCard //update the card from cards created
       const newUpdateUser = {
         id: user.id,
@@ -214,7 +240,7 @@ export default function informationEditScreen( {route, navigation }) {
       }
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
       setUpdated(true)
-      console.log('successfully updated data', output)
+      console.log('successfully updated data')//, output)
     }
     catch (error) {
       console.log('Error on information edit screen setInformation', error)
@@ -223,7 +249,6 @@ export default function informationEditScreen( {route, navigation }) {
   //Called when submit button is pressed, calls setInformation
 
   function onSubmit(data){
-    console.log('info scr submitting',data)
     setInformation(data)
   }
   const toHome = () => {
@@ -289,18 +314,22 @@ export default function informationEditScreen( {route, navigation }) {
             />
           )}
         />
-        <View key = {update} style={[styles.dropdownWrapper]}>
+        <View style={{flexDirection: 'row',width:'85%',marginBottom: '2%',justifyContent: 'space-between'}}>
+          <TouchableOpacity onPress={()=>{setShowDelete(!showDelete)}}>
+            <AntDesign style={[styles.text,{color:'#00ADE9',alignSelf: 'flex-start'}]} name="delete" size={35} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>{addExtra()}}>
+            <AntDesign style={[styles.text,{color:'#00ADE9',alignSelf: 'flex-start'}]} name="plus" size={35} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View key = {update} style={[styles.dropdownWrapper,{width:'85%',}]}>
           <View style={{flexDirection: 'column-reverse'}}>
             {dropdownArray}
+            {deleteArray}
           </View>
         </View>
         </ScrollView>
       </View>
-      <Button
-        containerStyle={[styles.items, { top: '17.0%'}]}
-        label='debug add extra'
-        onPress = {()=>{addExtra()}}
-      />
       <StatusBar
         barStyle = "dark-content"
         backgroundColor = '#fff'/>

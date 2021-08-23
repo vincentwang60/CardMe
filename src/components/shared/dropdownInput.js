@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Dimensions,TouchableOpacity} from 'react-native';
-import { TextInput, ScrollView} from 'react-native-gesture-handler'
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import { TextInput, ScrollView,TouchableOpacity} from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 
 export default function DropdownInput({
@@ -10,15 +10,15 @@ export default function DropdownInput({
   secure = false,
   inputStyle = styles.input,
   value,
+  dropdownKey,
   setSelected = ()=>(console.log('bruh')),
   selected,
   onDelete = ()=>(console.log('uh oh')),
 })
 {
+  //console.log('dropdown',value,selected)
   const [selectedString,setSelectedString] = useState(selected)
   const [showOptions, setShowOptions] = useState(false)
-  const [showDelete, setShowDelete] = useState(false)
-  const ref = useRef()
   let options = []
   for (let i = 0; i < optionStrings.length; i++){
     const newText =
@@ -31,23 +31,14 @@ export default function DropdownInput({
       </TouchableOpacity>
     options.push(newText)
   }
-  let close
-  if(showDelete){
-  close =
-    <View style={{left:'-70%',top:'2.5%',}}>
-      <TouchableOpacity onPress={()=>onDelete()}>
-       <AntDesign name="closecircle" size={24} color="red" />
-      </TouchableOpacity>
-    </View>
-  }
   if(showOptions){
     return(
         <View style={[containerStyle,{width:Dimensions.get('window').width*.85}]}>
           <View style={{flexDirection: 'row'}}>
-            <View style={{width:'35%', padding: 8}}>
-              <TouchableOpacity onLongPress={()=>{console.log('things happening'); setShowDelete(!showDelete)}} onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
+            <View style={{width:'35%', padding: '2%'}}>
+              <View style={styles.dropdown}>
                 <Text style={styles.label}>{selectedString}</Text>
-              </TouchableOpacity>
+              </View>
             </View>
             <TextInput
               placeholder='Placeholder for a placeholder'
@@ -57,7 +48,6 @@ export default function DropdownInput({
               onChangeText= {onChangeText}
               value={value}
             />
-            {close}
           </View>
           <View style = {styles.dropdownWrapper}>
             <ScrollView nestedScrollEnabled = {true} style={styles.dropdownOptions}>
@@ -68,26 +58,26 @@ export default function DropdownInput({
     )
   }
   return (
-      <View style={[containerStyle,{width:Dimensions.get('window').width*.85}]}>
+      <View style={[containerStyle,{flexDirection: 'row',width:Dimensions.get('window').width*.85}]}>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={{width: '100%',position: 'absolute',height: '100%',}} onLongPress={()=>{console.log('things happening'); setShowDelete(!showDelete)}}>
-          </TouchableOpacity>
-          <View style={{width:'35%',padding: 8}}>
+          <View style={{width:'35%',padding: '2%'}}>
             <TouchableOpacity onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
               <Text style={styles.label}>{selectedString}</Text>
-              <AntDesign style= {{top:'3%'}}name="down" size={18} color="lightgray" />
+              <AntDesign style={{position: 'absolute',left:'83%',top:'18%',}}name="down" size={24} color="black" />
             </TouchableOpacity>
           </View>
           <TextInput
             placeholder='Placeholder for a placeholder'
             autoCapitalize="none"
             secureTextEntry = {secure}
-            style={styles.input}
+            style={[styles.input,{}]}
             onChangeText= {onChangeText}
             value={value}
           />
-          {close}
         </View>
+        <TouchableOpacity onPress={()=>{onDelete(dropdownKey)}} style={{padding:10,left:'-50%',top:'0%',}}>
+          <AntDesign style={{}}name="minuscircle" size={24} color="red" />
+        </TouchableOpacity>
       </View>
   );
 }
