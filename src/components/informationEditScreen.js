@@ -32,6 +32,8 @@ export default function informationEditScreen( {route, navigation }) {
   const [deleteArray, setDeleteArray] = useState([])
   const [deleteInput, setDeleteInput] = useState(false)
   const [deletedDropdowns, setDeletedDropdowns] = useState([])
+  const [deleteEffect, setDeleteEffect] = useState(false)
+  const [tempCardFound, setTempCardFound] = useState()
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
@@ -61,6 +63,32 @@ export default function informationEditScreen( {route, navigation }) {
       }
     }
   },[deleteInput])
+  useEffect(()=>{
+    async function createNewDropdowns(){
+      if(deleteEffect){
+        let cardFound = tempCardFound
+        let values = getValues()
+        let keys = Object.keys(values)
+        let mapKeys = Object.keys(map)
+        setDeleteEffect(false)
+        for(let i = 3; i < keys.length; i++){
+          let option
+          for(let j = 0; j < mapKeys.length; j++){
+            if(keys[i] == map[mapKeys[j]]){
+              option = mapKeys[j]
+            }
+          }
+          let x = cardFound.content.filter(i => option == i.name)[0]
+          let copyX = x
+          copyX.data = values[keys[i]]
+          cardFound.content[cardFound.content.indexOf(x)] = copyX
+          createDropdown(uuidv4(),option,values[keys[i]])
+        }
+        setDefaultValues(cardFound)
+      }
+    }
+    createNewDropdowns()
+  },[dropdownArray])
 
   const createDropdown = (key, selected = 'email', value = null) => {
     //console.log('creating dropdown', key, selected, value)
@@ -110,6 +138,7 @@ export default function informationEditScreen( {route, navigation }) {
         }
         else{
           let cardFound = cardsCreated.filter(e=>e.id === card)[0]
+          setTempCardFound(cardFound)
           for (let i = 0; i < cardFound.content.length; i++){
             let content = cardFound.content[i]
             if (content.name != 'displayName' && content.name != 'heading' && content.name != 'subHeading'){
@@ -247,7 +276,11 @@ export default function informationEditScreen( {route, navigation }) {
     }
   }
   //Called when submit button is pressed, calls setInformation
-
+  const deleteButton = () => {
+    setShowDelete(!showDelete)
+    setDeleteEffect(true)
+    setDropdownArray([])
+  }
   function onSubmit(data){
     setInformation(data)
   }
@@ -315,7 +348,7 @@ export default function informationEditScreen( {route, navigation }) {
           )}
         />
         <View style={{flexDirection: 'row',width:'85%',marginBottom: '2%',justifyContent: 'space-between'}}>
-          <TouchableOpacity onPress={()=>{setShowDelete(!showDelete)}}>
+          <TouchableOpacity onPress={()=>{deleteButton()}}>
             <AntDesign style={[styles.text,{color:'#00ADE9',alignSelf: 'flex-start'}]} name="delete" size={35} color="black" />
           </TouchableOpacity>
           <TouchableOpacity onPress={()=>{addExtra()}}>

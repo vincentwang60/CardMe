@@ -14,11 +14,19 @@ export default function DropdownInput({
   setSelected = ()=>(console.log('bruh')),
   selected,
   onDelete = ()=>(console.log('uh oh')),
+  showDelete,
 })
 {
   //console.log('dropdown',value,selected)
   const [selectedString,setSelectedString] = useState(selected)
   const [showOptions, setShowOptions] = useState(false)
+  let deleteButton
+  if(showDelete){
+    deleteButton =
+    <TouchableOpacity onPress={()=>{onDelete(dropdownKey)}} style={{padding:10,left:'-50%',top:'0%',}}>
+      <AntDesign style={{}}name="minuscircle" size={24} color="red" />
+    </TouchableOpacity>
+  }
   let options = []
   for (let i = 0; i < optionStrings.length; i++){
     const newText =
@@ -75,9 +83,7 @@ export default function DropdownInput({
             value={value}
           />
         </View>
-        <TouchableOpacity onPress={()=>{onDelete(dropdownKey)}} style={{padding:10,left:'-50%',top:'0%',}}>
-          <AntDesign style={{}}name="minuscircle" size={24} color="red" />
-        </TouchableOpacity>
+        {deleteButton}
       </View>
   );
 }
