@@ -23,7 +23,6 @@ export default function Card1({
   const blacklist = ['displayName','heading','subHeading','phone','email','website']
   for(let i = 0; i < data.content.length; i++){
     if(!blacklist.includes(data.content[i].name)){
-      console.log('creating icon:',data.content[i].name)
       let icon
       switch(data.content[i].name){
         case 'linkedin':

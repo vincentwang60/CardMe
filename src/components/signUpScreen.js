@@ -20,7 +20,7 @@ export default function signUpScreen( {navigation }) {
   const [isSecure, setIsSecure] = useState(true);
 
   useEffect(()=>{
-    toggleIsNewUser()
+    //toggleIsNewUser()
   })
 
   function onSubmit(data) {

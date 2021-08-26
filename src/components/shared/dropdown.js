@@ -14,8 +14,8 @@ export default function Dropdown(props)
     const newText =
       <TouchableOpacity key={i} onPress={()=>{
         setShowOptions(false);
-        props.setSelected(props.optionStrings[i]);
         setSelectedString(props.optionStrings[i]);
+        props.setSelected(props.optionStrings[i]);
       }}>
         <Text style = {[styles.label,{marginBottom: 10}]}>{props.optionStrings[i]}</Text>
       </TouchableOpacity>

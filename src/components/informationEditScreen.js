@@ -76,7 +76,12 @@ export default function informationEditScreen( {route, navigation }) {
           containerStyle={[styles.dropdownInput, {alignItems: 'flex-start'}]}
           onChangeText={(text) => onChange(text)}
           value={value}
-          setSelected={(newSelected)=>{selectedArray[key] = newSelected; setSelectedArray(selectedArray)}}
+          setSelected={(newSelected)=>{
+            selectedArray[key] = newSelected;
+            console.log('test',optionStrings,'||',selectedArray)
+            console.log('subtract',optionStrings.filter(o=>!Object.values(selectedArray).includes(o)))
+            setSelectedArray(selectedArray)
+          }}
           selected = {selectedArray[key]}
           dropdownKey={key}
         />

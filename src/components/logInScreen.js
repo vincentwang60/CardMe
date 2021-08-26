@@ -16,7 +16,7 @@ export default function logInScreen( {navigation }) {
   // state of password (secure or not)
 
   useEffect(()=>{
-    quickLogin()
+    //quickLogin()
   })
 
   const [isSecure, setIsSecure] = useState(true);
