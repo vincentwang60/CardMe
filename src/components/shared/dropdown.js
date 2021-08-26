@@ -3,45 +3,27 @@ import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import { TextInput, ScrollView,TouchableOpacity} from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 
-export default function DropdownInput({
-  optionStrings,
-  containerStyle,
-  onChangeText = ()=>{console.log('wtf')},
-  secure = false,
-  inputStyle = styles.input,
-  value,
-  dropdownKey,
-  setSelected = ()=>(console.log('bruh')),
-  selected,
-  onDelete = ()=>(console.log('uh oh')),
-  showDelete,
-})
+export default function Dropdown(props)
 {
   //console.log('dropdown',value,selected)
-  const [selectedString,setSelectedString] = useState(selected)
+  const [selectedString,setSelectedString] = useState(props.selected)
   const [showOptions, setShowOptions] = useState(false)
-  let deleteButton
-  if(showDelete){
-    deleteButton =
-    <TouchableOpacity onPress={()=>{onDelete(dropdownKey)}} style={{padding:10,left:'-50%',top:'0%',}}>
-      <AntDesign style={{}}name="minuscircle" size={24} color="red" />
-    </TouchableOpacity>
-  }
+
   let options = []
-  for (let i = 0; i < optionStrings.length; i++){
+  for (let i = 0; i < props.optionStrings.length; i++){
     const newText =
       <TouchableOpacity key={i} onPress={()=>{
         setShowOptions(false);
-        setSelected(optionStrings[i]);
-        setSelectedString(optionStrings[i]);
+        props.setSelected(props.optionStrings[i]);
+        setSelectedString(props.optionStrings[i]);
       }}>
-        <Text style = {[styles.label,{marginBottom: 10}]}>{optionStrings[i]}</Text>
+        <Text style = {[styles.label,{marginBottom: 10}]}>{props.optionStrings[i]}</Text>
       </TouchableOpacity>
     options.push(newText)
   }
   if(showOptions){
     return(
-        <View style={[containerStyle,{width:Dimensions.get('window').width*.85}]}>
+        <View style={[props.containerStyle,{width:Dimensions.get('window').width*.85}]}>
           <View style={{flexDirection: 'row'}}>
             <View style={{width:'35%', padding: '2%'}}>
               <View style={styles.dropdown}>
@@ -51,10 +33,9 @@ export default function DropdownInput({
             <TextInput
               placeholder='Placeholder for a placeholder'
               autoCapitalize="none"
-              secureTextEntry = {secure}
               style={styles.input}
-              onChangeText= {onChangeText}
-              value={value}
+              onChangeText= {props.onChangeText}
+              value={props.value}
             />
           </View>
           <View style = {styles.dropdownWrapper}>
@@ -66,7 +47,7 @@ export default function DropdownInput({
     )
   }
   return (
-      <View style={[containerStyle,{flexDirection: 'row',width:Dimensions.get('window').width*.85}]}>
+      <View style={[props.containerStyle,{flexDirection: 'row',width:Dimensions.get('window').width*.85}]}>
         <View style={{flexDirection: 'row'}}>
           <View style={{width:'35%',padding: '2%'}}>
             <TouchableOpacity onPress={()=>{setShowOptions(!showOptions)}} style={styles.dropdown}>
@@ -77,13 +58,11 @@ export default function DropdownInput({
           <TextInput
             placeholder='Placeholder for a placeholder'
             autoCapitalize="none"
-            secureTextEntry = {secure}
             style={[styles.input,{}]}
-            onChangeText= {onChangeText}
-            value={value}
+            onChangeText= {props.onChangeText}
+            value={props.value}
           />
         </View>
-        {deleteButton}
       </View>
   );
 }

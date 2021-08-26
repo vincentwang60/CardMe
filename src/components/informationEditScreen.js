@@ -14,7 +14,7 @@ import { updateUser, createUser } from '../graphql/mutations.js';
 import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
-import Dropdown from './shared/dropdownInput.js'
+import Dropdown from './shared/dropdown.js'
 
 export default function informationEditScreen( {route, navigation }) {
   const {email} = route.params;
@@ -29,11 +29,8 @@ export default function informationEditScreen( {route, navigation }) {
   const [map, setMap] = useState({})
   const [selectedArray, setSelectedArray] = useState({})
   const [showDelete, setShowDelete] = useState(false)
-  const [deleteArray, setDeleteArray] = useState([])
   const [deleteInput, setDeleteInput] = useState(false)
   const [deletedDropdowns, setDeletedDropdowns] = useState([])
-  const [deleteEffect, setDeleteEffect] = useState(false)
-  const [tempCardFound, setTempCardFound] = useState()
 
   useEffect(()=>{//runs once every time this screen is loaded
     console.log('----info edit screen received params',email,cardId)
@@ -63,37 +60,11 @@ export default function informationEditScreen( {route, navigation }) {
       }
     }
   },[deleteInput])
-  useEffect(()=>{
-    async function createNewDropdowns(){
-      if(deleteEffect){
-        let cardFound = tempCardFound
-        let values = getValues()
-        let keys = Object.keys(values)
-        let mapKeys = Object.keys(map)
-        setDeleteEffect(false)
-        for(let i = 3; i < keys.length; i++){
-          let option
-          for(let j = 0; j < mapKeys.length; j++){
-            if(keys[i] == map[mapKeys[j]]){
-              option = mapKeys[j]
-            }
-          }
-          let x = cardFound.content.filter(i => option == i.name)[0]
-          let copyX = x
-          copyX.data = values[keys[i]]
-          cardFound.content[cardFound.content.indexOf(x)] = copyX
-          createDropdown(uuidv4(),option,values[keys[i]])
-        }
-        setDefaultValues(cardFound)
-      }
-    }
-    createNewDropdowns()
-  },[dropdownArray])
 
   const createDropdown = (key, selected = 'email', value = null) => {
     //console.log('creating dropdown', key, selected, value)
     selectedArray[key] = selected
-    const newDropdown =
+    let newDropdown =
       <Controller
         key={key}
         name={key.toString()}
@@ -107,8 +78,6 @@ export default function informationEditScreen( {route, navigation }) {
           value={value}
           setSelected={(newSelected)=>{selectedArray[key] = newSelected; setSelectedArray(selectedArray)}}
           selected = {selectedArray[key]}
-          onDelete = {(newKey)=>{setDeleteInput(newKey);}}
-          showDelete = {showDelete}
           dropdownKey={key}
         />
         )}
@@ -138,7 +107,6 @@ export default function informationEditScreen( {route, navigation }) {
         }
         else{
           let cardFound = cardsCreated.filter(e=>e.id === card)[0]
-          setTempCardFound(cardFound)
           for (let i = 0; i < cardFound.content.length; i++){
             let content = cardFound.content[i]
             if (content.name != 'displayName' && content.name != 'heading' && content.name != 'subHeading'){
@@ -278,8 +246,8 @@ export default function informationEditScreen( {route, navigation }) {
   //Called when submit button is pressed, calls setInformation
   const deleteButton = () => {
     setShowDelete(!showDelete)
-    setDeleteEffect(true)
-    setDropdownArray([])
+    setUpdate(uuidv4())
+    console.log('delete button pressed',showDelete)
   }
   function onSubmit(data){
     setInformation(data)
@@ -357,8 +325,21 @@ export default function informationEditScreen( {route, navigation }) {
         </View>
         <View key = {update} style={[styles.dropdownWrapper,{width:'85%',}]}>
           <View style={{flexDirection: 'column-reverse'}}>
-            {dropdownArray}
-            {deleteArray}
+            {dropdownArray.map((dropdown,dropdownIndex)=>{
+              let deleteComponent
+              if(showDelete){
+                deleteComponent =
+                  <TouchableOpacity onPress={()=>{setDeleteInput(dropdown.key)}} style={{position:'absolute',padding:10,left:'94%',top:'0%',}}>
+                    <AntDesign style={{}} name="minuscircle" size={24} color="red" />
+                  </TouchableOpacity>
+              }
+              return(
+                <View key={dropdownIndex}>
+                  {dropdown}
+                  {deleteComponent}
+                </View>
+              )
+            })}
           </View>
         </View>
         </ScrollView>
