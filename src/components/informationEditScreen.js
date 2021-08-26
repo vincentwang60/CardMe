@@ -24,7 +24,7 @@ export default function informationEditScreen( {route, navigation }) {
   const [updated, setUpdated] = useState(false)
   const [cardId, setCardId] = useState()
   const [dropdownArray, setDropdownArray] = useState([])
-  const [optionStrings, setOptionStrings] = useState(['email', 'phone','website','linkedin','facebook','instagram','twitter','wechat','snapchat'])
+  const [optionStrings, setOptionStrings] = useState(['email', 'phone','website','linkedin','facebook','instagram','twitter','wechat','snapchat','whatsapp'])
   const [update, setUpdate] = useState(0)
   const [map, setMap] = useState({})
   const [selectedArray, setSelectedArray] = useState({})
@@ -247,7 +247,6 @@ export default function informationEditScreen( {route, navigation }) {
   const deleteButton = () => {
     setShowDelete(!showDelete)
     setUpdate(uuidv4())
-    console.log('delete button pressed',showDelete)
   }
   function onSubmit(data){
     setInformation(data)

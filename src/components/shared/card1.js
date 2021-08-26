@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Rect, Path } from "react-native-svg"
+import { AntDesign } from '@expo/vector-icons';
+import { EvilIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
 
@@ -16,6 +19,40 @@ export default function Card1({
 }){
   const [showFront, setShowFront] = useState(true)
   var dataComponents = [] //array of the text components to display, created based on data
+  var iconComponents = []
+  const blacklist = ['displayName','heading','subHeading','phone','email','website']
+  for(let i = 0; i < data.content.length; i++){
+    if(!blacklist.includes(data.content[i].name)){
+      console.log('creating icon:',data.content[i].name)
+      let icon
+      switch(data.content[i].name){
+        case 'linkedin':
+          icon = <AntDesign style={{width:'10%'}} key = {i} name="linkedin-square" size={24} color="white" />
+          break;
+        case 'instagram':
+          icon = <AntDesign style={{width:'10%'}} key = {i} name="instagram" size={24} color="white" />
+          break;
+        case 'twitter':
+          icon = <AntDesign style={{width:'10%'}} key = {i} name="twitter" size={24} color="white" />
+          break;
+        case 'facebook':
+          icon = <EvilIcons style={{width:'10%',left:'-15%'}} key = {i}  name="sc-facebook" size={30} color="white" />
+          break;
+        case 'whatsapp':
+          icon = <FontAwesome style={{width:'10%'}} key = {i} name="whatsapp" size={24} color="white" />
+          break;
+        case 'snapchat':
+          icon = <FontAwesome style={{width:'10%'}} key = {i} name="snapchat-square" size={24} color="white" />
+          break;
+        case 'wechat':
+          icon = <AntDesign style={{width:'10%'}} key = {i} name="wechat" size={24} color="white" />
+          break;
+
+      }
+      iconComponents.push(icon)
+    }
+  }
+  console.log('finished icon components length:', iconComponents.length)
   var backText = []
   var layoutStyle = styles.layout1
   var style = data.style
@@ -103,6 +140,9 @@ export default function Card1({
             </Text>
             <View style = {{top:'30%',alignItems:'center'}}>
               {backText}
+            </View>
+            <View style = {{top:'20%',flexDirection:'row'}}>
+              {iconComponents}
             </View>
           </View>
         </View>
