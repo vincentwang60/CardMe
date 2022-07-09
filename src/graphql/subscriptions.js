@@ -9,12 +9,6 @@ export const onCreateUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content {
-          id
-          name
-          data
-          font
-        }
         style
         layout
       }
@@ -36,12 +30,6 @@ export const onUpdateUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content {
-          id
-          name
-          data
-          font
-        }
         style
         layout
       }
@@ -63,12 +51,6 @@ export const onDeleteUser = /* GraphQL */ `
       cardsCreated {
         id
         title
-        content {
-          id
-          name
-          data
-          font
-        }
         style
         layout
       }

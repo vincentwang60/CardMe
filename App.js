@@ -21,6 +21,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import {LinearGradient} from 'expo-linear-gradient';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 //Screens for app
 import signUpScreen from './src/components/signUpScreen';
@@ -49,7 +52,7 @@ function homeTabs() { //create tab navigation object that contains the two edit 
             } else if (route.name === 'libraryScreen') {
               return <MaterialIcons name="menu-book" size={24} color={color} />
             } else if(route.name === 'settingsScreen'){
-              return <Octicons name="settings" size={24} color={color} />
+              return <Octicons name="tools" size={24} color={color} />
             }
             else if(route.name === 'groupScreen'){
               return <MaterialCommunityIcons name="account-group-outline" size={24} color={color} />

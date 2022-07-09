@@ -30,6 +30,7 @@ export default function informationEditScreen( {route, navigation }) {
   const [selectedArray, setSelectedArray] = useState({})
   const [showDelete, setShowDelete] = useState(false)
   const [deleteInput, setDeleteInput] = useState(false)
+  const [userId, setUserId] = useState();
   const [deletedDropdowns, setDeletedDropdowns] = useState([])
 
   useEffect(()=>{//runs once every time this screen is loaded
@@ -43,7 +44,8 @@ export default function informationEditScreen( {route, navigation }) {
 
   useEffect(()=>{
     if(updated){
-      navigation.navigate('layoutEditScreen',{email:email,cardId:cardId})
+      console.log('navigating with:',userId, cardId)
+      navigation.navigate('layoutEditScreen',{userId:userId,cardId:cardId})
     }
   }, [updated])
   useEffect(()=>{
@@ -106,6 +108,7 @@ export default function informationEditScreen( {route, navigation }) {
         createNewUser()
       }
       else{//if user already created, check for cards
+        setUserId(user.id)
         const cardsCreated = user.cardsCreated
         if(card == null) {
           createCard(user)
@@ -140,6 +143,7 @@ export default function informationEditScreen( {route, navigation }) {
       cardsCreated: user.cardsCreated ? [...user.cardsCreated, newOwnedCard]: [newOwnedCard]
     }
     const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+    console.log("OUTPUT",output)
     setDefaultValues(newOwnedCard)
     console.log('setting card id createCard', newOwnedCard.id)
     console.log('finished creating new card', newOwnedCard, '\nfor user:', user)
@@ -211,9 +215,10 @@ export default function informationEditScreen( {route, navigation }) {
     console.log('submitting with:', data)
     setUpdated(false)
     try{
-      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
-      const user = fetchedUserData.data.listUsers.items[0]
-      //console.log('set info user', user)
+      console.log('fetching with',userId)
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, {id: userId}))
+      const user = fetchedUserData.data.getUser
+      console.log('got info user', user)
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
@@ -240,6 +245,7 @@ export default function informationEditScreen( {route, navigation }) {
         cardsCreated: cardsCreated,
         savedCards: user.savedCards
       }
+      console.log('newupdate:',newUpdateUser)
       const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
       setUpdated(true)
       console.log('successfully updated data')//, output)

@@ -1,14 +1,16 @@
 {
+  "version": "1",
+  "cognitoConfig": {
     "identityPoolName": "cardme2ae03ed7_identitypool_2ae03ed7",
     "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "cardme2ae03ed7",
     "userPoolName": "cardme2ae03ed7_userpool_2ae03ed7",
     "autoVerifiedAttributes": [
-        "email"
+      "email"
     ],
-    "mfaConfiguration": "OFF",
+    "mfaConfiguration": "OPTIONAL",
     "mfaTypes": [
-        "SMS Text Message"
+      "SMS Text Message"
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
@@ -18,45 +20,59 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email"
+      "email"
     ],
+    "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
-        "email"
+      "email"
     ],
     "userpoolClientReadAttributes": [
-        "email"
+      "email"
     ],
     "userpoolClientLambdaRole": "cardme2ae03ed7_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "2ae03ed7",
-    "resourceName": "cardme2ae03ed7",
     "authSelections": "identityPoolAndUserPool",
+    "resourceName": "cardme2ae03ed7",
+    "serviceName": "Cognito",
+    "useDefault": "manual",
+    "sharedId": "2ae03ed7",
+    "userPoolGroupList": [],
+    "usernameAttributes": [
+      "email"
+    ],
+    "usernameCaseSensitive": false,
+    "hostedUI": false,
+    "authProviders": [
+      "graph.facebook.com",
+      "accounts.google.com",
+      "www.amazon.com",
+      "appleid.apple.com"
+    ],
     "authRoleArn": {
-        "Fn::GetAtt": [
-            "AuthRole",
-            "Arn"
-        ]
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
     },
     "unauthRoleArn": {
-        "Fn::GetAtt": [
-            "UnauthRole",
-            "Arn"
-        ]
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
     },
-    "useDefault": "defaultSocial",
-    "usernameAttributes": [
-        "email"
-    ],
-    "userPoolGroupList": [],
-    "serviceName": "Cognito",
-    "usernameCaseSensitive": false,
+    "breakCircularDependency": false,
+    "useEnabledMfas": false,
     "dependsOn": [],
-    "hostedUI": true,
-    "hostedUIDomainName": "cardme6473f1ae-6473f1ae",
-    "authProvidersUserPool": [],
-    "hostedUIProviderMeta": "[]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"exp://127.0.0.1:19000/--/\"],\"LogoutURLs\":[\"exp://127.0.0.1:19000/--/\"]}",
-    "authProviders": []
+    "thirdPartyAuth": true,
+    "userPoolGroups": true,
+    "adminQueries": true,
+    "triggers": {},
+    "adminQueryGroup": "clickusers",
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
+  }
 }

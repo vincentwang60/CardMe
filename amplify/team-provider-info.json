@@ -31,7 +31,47 @@
     },
     "categories": {
       "auth": {
-        "cardme2ae03ed7": {}
+        "cardme2ae03ed7": {
+          "facebookAppId": " ",
+          "googleClientId": "asfd",
+          "amazonAppId": "asdf",
+          "appleAppId": "adsf"
+        }
+      },
+      "function": {
+        "AdminQueriesace806bb": {
+          "deploymentBucketName": "amplify-cardme-click-155341-deployment",
+          "s3Key": "amplify-builds/AdminQueriesace806bb-446b683959486e494a7a-build.zip"
+        }
+      }
+    }
+  },
+  "amplifyenv": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cardme-amplifyenv-121909-authRole",
+      "UnauthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-amplifyenv-121909-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::478142532996:role/amplify-cardme-amplifyenv-121909-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-cardme-amplifyenv-121909-deployment",
+      "UnauthRoleName": "amplify-cardme-amplifyenv-121909-unauthRole",
+      "StackName": "amplify-cardme-amplifyenv-121909",
+      "StackId": "arn:aws:cloudformation:us-east-2:478142532996:stack/amplify-cardme-amplifyenv-121909/dd8b9520-ffa2-11ec-920a-06c24ddcb832",
+      "AmplifyAppId": "d2wqq8uyatrtgt"
+    },
+    "categories": {
+      "auth": {
+        "cardme2ae03ed7": {
+          "facebookAppId": "none",
+          "googleClientId": "none",
+          "amazonAppId": "none",
+          "appleAppId": "none"
+        }
+      },
+      "function": {
+        "AdminQueriesace806bb": {
+          "deploymentBucketName": "amplify-cardme-amplifyenv-121909-deployment",
+          "s3Key": "amplify-builds/AdminQueriesace806bb-446b683959486e494a7a-build.zip"
+        }
       }
     }
   }

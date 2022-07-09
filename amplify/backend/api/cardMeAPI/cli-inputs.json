@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authcardme2ae03ed7"
+    },
+    "conflictResolution": {},
+    "apiName": "cardMeAPI",
+    "gqlSchemaPath": "C:\\Users\\Vincent\\Documents\\CardMe\\amplify\\backend\\api\\cardMeAPI\\schema.graphql",
+    "additionalAuthTypes": []
+  }
+}

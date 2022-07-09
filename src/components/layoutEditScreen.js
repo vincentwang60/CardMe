@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useForm, Controller } from "react-hook-form";
 
-import Amplify, {Auth, API, graphqlOperation} from "aws-amplify";
+import Amplify, { Auth, API, graphqlOperation } from "aws-amplify";
 
 import { listUsers, getUser } from '../graphql/queries.js';
 import { updateUser, createUser } from '../graphql/mutations.js';
@@ -11,13 +11,14 @@ import FieldInput from './shared/fieldInput.js';
 import Input from './shared/input.js';
 import Button from './shared/button.js';
 import Card1 from './shared/card1.js'
-import Style1 from '../assets/style1.js';
-import Style2 from '../assets/style2.js';
-import Style3 from '../assets/style3.js';
+import Style1 from '../assets/style1.png';
+import Style2 from '../assets/style2.png';
+import Style3 from '../assets/style3.png';
 
-export default function layoutEditScreen( {route, navigation }) {
-  const { handleSubmit, reset, control, formState: {errors} } = useForm();
-  const {cardId} = route.params;
+export default function layoutEditScreen({ route, navigation }) {
+  const { handleSubmit, reset, control, formState: { errors } } = useForm();
+  const { userId } = route.params
+  const { cardId } = route.params;
   const [email, setEmail] = useState();
   const [cardData, setCardData] = useState();
   const [updated, setUpdated] = useState(false)
@@ -27,48 +28,49 @@ export default function layoutEditScreen( {route, navigation }) {
   const [loading, setLoading] = useState(true)
   const [card, setCard] = useState()
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log('loading layout screen')
-    getUser()
+    getUserFunc()
   }, [])
-  useEffect(()=>{//sets the defaults when defaultValue is changed
+  useEffect(() => {//sets the defaults when defaultValue is changed
     reset(defaultValue)
   }, [defaultValue])
-  useEffect(()=>{
-    if(updated){
+  useEffect(() => {
+    if (updated) {
       console.log('layout finished updating, going to home screen')
       navigation.navigate('homeTabs')
     }
-  },[updated])
-  useEffect(()=>{
-    if(email!=null){
-      console.log('layout screen retrieved props:', email,cardId)
+  }, [updated])
+  useEffect(() => {
+    if (email != null) {
+      console.log('layout screen retrieved props:', userId, cardId)
       setDefaultValues()
     }
-  },[email])
-  useEffect(()=>{
-    if(card != null){
+  }, [email])
+  useEffect(() => {
+    if (card != null) {
       setLoading(false)
     }
-  },[card])
-  useEffect(()=>{
-    if(cardData != null){
+  }, [card])
+  useEffect(() => {
+    if (cardData != null) {
       console.log('updating card style from', cardData.style, 'to', selectedStyle)
       cardData.style = selectedStyle
       let c =
-        <View style = {[styles.cards]}>
+        <View style={[styles.cards]}>
           <Card1
-            containerStyle = {styles.card}
-            data = {cardData}
+            containerStyle={styles.card}
+            data={cardData}
           />
         </View>
       setCard(c)
       console.log('new card style', cardData)
     }
-  },[selectedStyle])
-  async function setDefaultValues(){
-    const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
-    const user = fetchedUserData.data.listUsers.items[0]
+  }, [selectedStyle])
+  async function setDefaultValues() {
+    const fetchedUserData = await API.graphql(graphqlOperation(getUser, { id: userId }))
+    const user = fetchedUserData.data.getUser
+    console.log('found user:', user)
     const currentCardIndex = user.cardsCreated.findIndex(x => x.id === cardId)
     const card = user.cardsCreated[currentCardIndex]
     setCardData(card)
@@ -78,35 +80,35 @@ export default function layoutEditScreen( {route, navigation }) {
     if (card.title.length > 0) {
       defaultValueObj['nickname'] = card.title
     }
-    if(card.style == 1){
+    if (card.style == 1) {
       setBorderX('6.8%')
     }
-    else if(card.style == 2){
+    else if (card.style == 2) {
       setBorderX('37.8%')
     }
-    else{
+    else {
       setBorderX('68.9%')
     }
     console.log('created default values', defaultValueObj)
     setDefaultValue(defaultValueObj)
   }
-  async function getUser(){
+  async function getUserFunc() {
     const { attributes } = await Auth.currentAuthenticatedUser();
     setEmail(attributes.email)
   }
 
-  function onSubmit(data){
+  function onSubmit(data) {
     data.style = selectedStyle
     console.log('submitting with data:', data)
     setInformation(data)
   }
   const toHome = () => {
-    navigation.navigate('homeTabs', {email: email})
+    navigation.navigate('homeTabs', { email: email })
   }
-  async function setInformation(data){
-    try{
-      const fetchedUserData = await API.graphql(graphqlOperation(listUsers, {filter: {email: {eq: email}}}))
-      const user = fetchedUserData.data.listUsers.items[0]
+  async function setInformation(data) {
+    try {
+      const fetchedUserData = await API.graphql(graphqlOperation(getUser, { id: userId }))
+      const user = fetchedUserData.data.getUser
       const cardsCreated = user.cardsCreated
       const currentCardIndex = cardsCreated.findIndex(card => card.id === cardId)//get the index of current card from the cardsCreated array
       const currentCard = cardsCreated[currentCardIndex]
@@ -119,43 +121,43 @@ export default function layoutEditScreen( {route, navigation }) {
         cardsCreated: cardsCreated,
         savedCards: user.savedCards
       }
-      const output = await API.graphql(graphqlOperation(updateUser, {input: newUpdateUser}))
+      const output = await API.graphql(graphqlOperation(updateUser, { input: newUpdateUser }))
       setUpdated(true)
       console.log('layout screen successfully updated data')
     }
-    catch (error){
+    catch (error) {
       console.log('error on setInformation', error);
     }
   }
-  function cancel(){ //called by cancel button
+  function cancel() { //called by cancel button
     console.log('cancel button doesnt actually cancel (yet)')
-    navigation.navigate('informationEditScreen',{email:email,card:cardId})
+    navigation.navigate('informationEditScreen', { email: email, card: cardId })
   }
-  if (loading){
+  if (loading) {
     return (
       <Text>loading</Text>
     )
   }
   return (
-    <LinearGradient colors={['#fff','#F4F4F4']} style={styles.container}>
-      <Text style = {[styles.text, {top: '5%'}]}>Edit Layout</Text>
-      <TouchableOpacity style = {[styles.touchable, {left: '5%'}]} onPress={cancel}>
-        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Back</Text>
+    <LinearGradient colors={['#fff', '#F4F4F4']} style={styles.container}>
+      <Text style={[styles.text, { top: '5%' }]}>Edit Layout</Text>
+      <TouchableOpacity style={[styles.touchable, { left: '5%' }]} onPress={cancel}>
+        <Text style={[styles.text, { top: '4.5%' }, { fontSize: 15 }]}>Back</Text>
       </TouchableOpacity>
-      <TouchableOpacity style = {[styles.touchable, {left: '85%'}]} onPress={handleSubmit(onSubmit)}>
-        <Text style = {[styles.text, {top: '4.5%'}, {fontSize: 15}]}>Done</Text>
+      <TouchableOpacity style={[styles.touchable, { left: '85%' }]} onPress={handleSubmit(onSubmit)}>
+        <Text style={[styles.text, { top: '4.5%' }, { fontSize: 15 }]}>Done</Text>
       </TouchableOpacity>
 
       <Controller
         name='nickname'
         control={control}
         rules={{
-          required: {value: true, message: 'Please enter a name for your card'},
+          required: { value: true, message: 'Please enter a name for your card' },
         }}
-        render={({field: {onChange, value}})=>(
+        render={({ field: { onChange, value } }) => (
           <FieldInput
             error={errors.nickname}
-            containerStyle={[styles.fieldInputPart, {top: '10%'}]}
+            containerStyle={[styles.fieldInputPart, { top: '10%' }]}
             label='Card Nickname'
             onChangeText={(text) => onChange(text)}
             value={value}
@@ -163,9 +165,31 @@ export default function layoutEditScreen( {route, navigation }) {
           />
         )}
       />
-      <Text style = {[styles.smallText,{top:'20%'}]}>Select a style</Text>
-      <View style={[styles.styleContainer,{top:'32%'}]}>
-        <TouchableOpacity onPress={()=>{setSelectedStyle(1); setBorderX('6.8%');}}>
+      <Text style={[styles.smallText, { top: '20%' }]}>Select a style</Text>
+      <View style={[styles.styleContainer, { top: '32%' }]}>
+        <TouchableOpacity onPress={() => { setSelectedStyle(1); setBorderX('6.8%'); }}>
+          <Image source={Style1} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => { setSelectedStyle(2); setBorderX('37.8%') }}>
+          <Image source={Style2} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => { setSelectedStyle(3); setBorderX('68.9%') }}>
+          <Image source={Style3} />
+        </TouchableOpacity>
+        <View style={[styles.border, { left: borderX }]} />
+      </View>
+      <View style={styles.cardWrapper}>
+        {card}
+      </View>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor='#000' />
+    </LinearGradient>
+  );
+}
+/*
+<View style={[styles.styleContainer,{top:'32%'}]}>
+        <TouchableOpacity onPress={()=>{setSelectedStyle(0); setBorderX('6.8%');}}>
           <Style1/>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>{setSelectedStyle(2); setBorderX('37.8%')}}>
@@ -176,31 +200,22 @@ export default function layoutEditScreen( {route, navigation }) {
         </TouchableOpacity>
         <View style = {[styles.border, {left: borderX}]}/>
       </View>
-      <View style = {styles.cardWrapper}>
-        {card}
-      </View>
-      <StatusBar
-        barStyle = "light-content"
-        backgroundColor = '#000'/>
-    </LinearGradient>
-  );
-}
-
+*/
 //https://reactnative.dev/docs/style
 const styles = StyleSheet.create({
-  cardWrapper:{
+  cardWrapper: {
     position: 'absolute',
-    top:'40%',
+    top: '40%',
     width: '100%',
   },
-  cards:{
+  cards: {
   },
-  border:{//6.8, 37.8,68.9
+  border: {//6.8, 37.8,68.9
     position: 'absolute',
     backgroundColor: 'transparent',
     width: 80,
     height: 80,
-    borderRadius:10,
+    borderRadius: 10,
     borderWidth: 3,
     borderColor: '#000',
   },
@@ -214,12 +229,12 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'Nunito_700Bold',
   },
-  styleContainer:{
+  styleContainer: {
     width: '80%',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
-  smallText:{
+  smallText: {
     position: 'absolute',
     left: '7.5%',
     fontSize: 15,
@@ -227,12 +242,12 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'Nunito_700Bold',
   },
-  input:{
+  input: {
     position: 'absolute',
     left: "6.2%",
     borderRadius: 5,
   },
-  touchable:{
+  touchable: {
     position: 'absolute',
     top: '5.5%',
   },

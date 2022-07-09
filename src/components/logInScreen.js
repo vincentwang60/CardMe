@@ -57,7 +57,7 @@ export default function logInScreen( {navigation }) {
     console.log('google login TODO')
   }
   function quickLogin(){
-    signIn('vincent.wang.60@gmail.com', 'password')
+    signIn('vkwang@mit.edu', 'password')
   }
   function signIn (email, password){
     console.log('signing in with:', email, password)
@@ -81,7 +81,7 @@ export default function logInScreen( {navigation }) {
         </View>
         {appleIdButton}
         <Button
-          containerStyle={[styles.input, { top: '51%'}]}
+          containerStyle={[styles.input, { top: '151%'}]}
           label='Quick login for debug'
           onPress={() => {quickLogin()}}
         />
